@@ -6,33 +6,28 @@ export async function GET(req: NextRequest) {
   const admin = await getAdminFromRequest(req);
   if (!admin) return NextResponse.json({ error: 'No autorizado' }, { status: 401 });
 
-  const { data: grupos, error } = await getSupabaseAdmin()
-    .from('grupos')
+  const { data: reservas, error } = await getSupabaseAdmin()
+    .from('reservas')
     .select(`*, invitados(*)`)
-    .order('nombre');
+    .order('codigo');
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
-  // Generar CSV
   const rows: string[] = [
-    'Grupo,Código,Invitado,Confirmado,Asistió,WhatsApp'
+    'Código,Nombre,WhatsApp,1ra Confirmación,2da Confirmación,3ra Confirmación,Asistió'
   ];
 
-  for (const g of grupos ?? []) {
-    const invitados = g.invitados ?? [];
-    if (invitados.length === 0) {
-      rows.push(`"${g.nombre}","${g.codigo}","(sin invitados)","","",""`)
-    } else {
-      for (const inv of invitados) {
-        rows.push([
-          `"${g.nombre}"`,
-          `"${g.codigo}"`,
-          `"${inv.nombre}"`,
-          inv.confirmado ? 'Sí' : 'No',
-          inv.asistio   ? 'Sí' : 'No',
-          `"${inv.whatsapp ?? ''}"`,
-        ].join(','));
-      }
+  for (const r of reservas ?? []) {
+    for (const inv of r.invitados ?? []) {
+      rows.push([
+        r.codigo,
+        `"${inv.nombre}"`,
+        `"${inv.whatsapp ?? ''}"`,
+        inv.confirmacion_1 ? (inv.confirmacion_1_fecha ? new Date(inv.confirmacion_1_fecha).toLocaleDateString('es-VE') : 'Sí') : 'No',
+        inv.confirmacion_2 ? (inv.confirmacion_2_fecha ? new Date(inv.confirmacion_2_fecha).toLocaleDateString('es-VE') : 'Sí') : 'No',
+        inv.confirmacion_3 ? (inv.confirmacion_3_fecha ? new Date(inv.confirmacion_3_fecha).toLocaleDateString('es-VE') : 'Sí') : 'No',
+        inv.asistio ? 'Sí' : 'No',
+      ].join(','));
     }
   }
 

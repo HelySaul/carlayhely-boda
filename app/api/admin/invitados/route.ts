@@ -8,7 +8,26 @@ async function auth(req: NextRequest) {
   return null;
 }
 
-// PATCH /api/admin/invitados?id=xxx — actualizar confirmado/asistio/nombre/whatsapp
+// POST — agregar invitado a reserva existente
+export async function POST(req: NextRequest) {
+  const deny = await auth(req); if (deny) return deny;
+
+  const { reserva_id, nombre, whatsapp } = await req.json();
+  if (!reserva_id || !nombre) {
+    return NextResponse.json({ error: 'reserva_id y nombre requeridos' }, { status: 400 });
+  }
+
+  const { data, error } = await getSupabaseAdmin()
+    .from('invitados')
+    .insert({ reserva_id, nombre: nombre.trim(), whatsapp: whatsapp?.trim() || null })
+    .select()
+    .single();
+
+  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  return NextResponse.json(data, { status: 201 });
+}
+
+// PATCH — actualizar confirmaciones, asistencia, nombre, whatsapp
 export async function PATCH(req: NextRequest) {
   const deny = await auth(req); if (deny) return deny;
 
@@ -16,10 +35,21 @@ export async function PATCH(req: NextRequest) {
   if (!id) return NextResponse.json({ error: 'ID requerido' }, { status: 400 });
 
   const body = await req.json();
-  const allowed = ['confirmado', 'asistio', 'nombre', 'whatsapp'];
+  const allowed = ['nombre', 'whatsapp', 'confirmacion_1', 'confirmacion_2', 'confirmacion_3', 'asistio'];
   const update: Record<string, unknown> = {};
+
   for (const key of allowed) {
-    if (key in body) update[key] = body[key];
+    if (key in body) {
+      update[key] = body[key];
+      // Si se marca confirmación, guardar fecha automáticamente
+      if (key === 'confirmacion_1' && body[key]) update['confirmacion_1_fecha'] = new Date().toISOString();
+      if (key === 'confirmacion_2' && body[key]) update['confirmacion_2_fecha'] = new Date().toISOString();
+      if (key === 'confirmacion_3' && body[key]) update['confirmacion_3_fecha'] = new Date().toISOString();
+      // Si se desmarca, limpiar fecha
+      if (key === 'confirmacion_1' && !body[key]) update['confirmacion_1_fecha'] = null;
+      if (key === 'confirmacion_2' && !body[key]) update['confirmacion_2_fecha'] = null;
+      if (key === 'confirmacion_3' && !body[key]) update['confirmacion_3_fecha'] = null;
+    }
   }
 
   const { data, error } = await getSupabaseAdmin()
@@ -33,7 +63,7 @@ export async function PATCH(req: NextRequest) {
   return NextResponse.json(data);
 }
 
-// DELETE /api/admin/invitados?id=xxx
+// DELETE — eliminar invitado
 export async function DELETE(req: NextRequest) {
   const deny = await auth(req); if (deny) return deny;
 
@@ -43,23 +73,4 @@ export async function DELETE(req: NextRequest) {
   const { error } = await getSupabaseAdmin().from('invitados').delete().eq('id', id);
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
   return NextResponse.json({ ok: true });
-}
-
-// POST /api/admin/invitados — agregar invitado a grupo existente
-export async function POST(req: NextRequest) {
-  const deny = await auth(req); if (deny) return deny;
-
-  const { grupo_id, nombre, whatsapp } = await req.json();
-  if (!grupo_id || !nombre) {
-    return NextResponse.json({ error: 'grupo_id y nombre requeridos' }, { status: 400 });
-  }
-
-  const { data, error } = await getSupabaseAdmin()
-    .from('invitados')
-    .insert({ grupo_id, nombre, whatsapp: whatsapp || null })
-    .select()
-    .single();
-
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
-  return NextResponse.json(data, { status: 201 });
 }
