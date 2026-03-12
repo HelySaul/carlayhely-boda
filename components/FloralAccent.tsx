@@ -53,7 +53,7 @@ export default function FloralAccent({
       pointerEvents: "none",
       opacity,
       transform: flip,
-      zIndex: 0,
+      zIndex: 10,
     }}>
       {/* Tulipán principal */}
       <div style={{ position: "relative", display: "inline-block" }}>
