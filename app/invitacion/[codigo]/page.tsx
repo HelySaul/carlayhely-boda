@@ -152,7 +152,7 @@ export default function PaginaInvitacion() {
   return (
     <div style={{
       minHeight: "100svh",
-      background: "linear-gradient(160deg, #F2E8D5 0%, #E8D5B8 40%, #DEC89A 100%)",
+      background: "linear-gradient(160deg, #F7EEE8 0%, #F0E0D6 50%, #EDD5C8 100%)",
       display: "flex", flexDirection: "column",
       alignItems: "center", justifyContent: "center",
       padding: "2rem 1rem",
@@ -179,11 +179,11 @@ export default function PaginaInvitacion() {
 
           {/* Indicación */}
           <div style={{ textAlign: "center" }}>
-            <p style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "1.1rem", color: "#8A7060", fontStyle: "italic", marginBottom: "0.3rem" }}>
+            <p style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "1.1rem", color: "#9A7070", fontStyle: "italic", marginBottom: "0.3rem" }}>
               Tienes una invitación
             </p>
             <p style={{ fontSize: "0.65rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "#B5A090" }}>
-              {fase === "sobre" ? "Desliza para abrir →" : "Sigue deslizando..."}
+              {fase === "sobre" ? "Desliza el sello para abrir →" : "Sigue deslizando..."}
             </p>
           </div>
 
@@ -197,107 +197,123 @@ export default function PaginaInvitacion() {
               width: "min(340px, 90vw)", height: "min(240px, 63vw)",
               cursor: fase === "sobre" ? "grab" : "grabbing",
               userSelect: "none", touchAction: "none",
-              filter: "drop-shadow(0 12px 40px rgba(0,0,0,0.18))",
+              filter: "drop-shadow(0 8px 30px rgba(160,100,90,0.22)) drop-shadow(0 2px 6px rgba(160,100,90,0.12))",
               animation: fase === "sobre" ? "sobreTemblar 3s ease-in-out infinite" : "none",
             }}
           >
-            {/* Cuerpo del sobre */}
+            {/* Sobre blanco elegante con flores */}
             <svg viewBox="0 0 340 240" style={{ position: "absolute", inset: 0, width: "100%", height: "100%" }} xmlns="http://www.w3.org/2000/svg">
               <defs>
-                <filter id="papel">
-                  <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="4" result="noise"/>
-                  <feDisplacementMap in="SourceGraphic" in2="noise" scale="2" xChannelSelector="R" yChannelSelector="G"/>
+                <linearGradient id="sobreBlanco" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="#FFFFFF"/>
+                  <stop offset="100%" stopColor="#F8F4F2"/>
+                </linearGradient>
+                <linearGradient id="solapaGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" stopColor="#FFFFFF"/>
+                  <stop offset="100%" stopColor="#F2EBE8"/>
+                </linearGradient>
+                <linearGradient id="lateralIzq" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stopColor="#F0E8E4"/>
+                  <stop offset="100%" stopColor="#F8F4F2"/>
+                </linearGradient>
+                <linearGradient id="lateralDer" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stopColor="#F8F4F2"/>
+                  <stop offset="100%" stopColor="#EEE6E2"/>
+                </linearGradient>
+                <linearGradient id="solapaCorte" x1="0%" y1="100%" x2="0%" y2="0%">
+                  <stop offset="0%" stopColor="#F8F0ED"/>
+                  <stop offset="100%" stopColor="#FFFFFF"/>
+                </linearGradient>
+                <filter id="sombra" x="-5%" y="-5%" width="110%" height="120%">
+                  <feDropShadow dx="0" dy="2" stdDeviation="3" floodColor="rgba(180,140,130,0.2)"/>
                 </filter>
-                <linearGradient id="sobreGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stopColor="#F5EDD8"/>
-                  <stop offset="50%" stopColor="#EDE0C4"/>
-                  <stop offset="100%" stopColor="#E2D0AA"/>
-                </linearGradient>
-                <linearGradient id="sobreGradOscuro" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stopColor="#E8D9BC"/>
-                  <stop offset="100%" stopColor="#D4C090"/>
-                </linearGradient>
               </defs>
 
-              {/* Cuerpo principal */}
-              <rect x="2" y="2" width="336" height="236" rx="4" fill="url(#sobreGrad)" filter="url(#papel)" stroke="#C8B080" strokeWidth="1"/>
+              {/* Cuerpo del sobre */}
+              <rect x="1" y="1" width="338" height="238" rx="3" fill="url(#sobreBlanco)" stroke="#E8D8D2" strokeWidth="1" filter="url(#sombra)"/>
 
-              {/* Triángulo inferior (solapa trasera) */}
-              <polygon points="2,238 170,130 338,238" fill="url(#sobreGradOscuro)" stroke="#C8B080" strokeWidth="0.5"/>
+              {/* Triángulo inferior */}
+              <polygon points="1,239 170,138 339,239" fill="#F2EAE6" stroke="#E8D8D2" strokeWidth="0.5"/>
 
-              {/* Triángulo izquierdo */}
-              <polygon points="2,2 2,238 120,130" fill="#EAD9B8" stroke="#C8B080" strokeWidth="0.5"/>
+              {/* Lateral izquierdo */}
+              <polygon points="1,1 1,239 118,138" fill="url(#lateralIzq)" stroke="#EAD8D4" strokeWidth="0.5"/>
 
-              {/* Triángulo derecho */}
-              <polygon points="338,2 338,238 220,130" fill="#E6D4B2" stroke="#C8B080" strokeWidth="0.5"/>
+              {/* Lateral derecho */}
+              <polygon points="339,1 339,239 222,138" fill="url(#lateralDer)" stroke="#EAD8D4" strokeWidth="0.5"/>
 
-              {/* Solapa superior — se "corta" según progreso */}
+              {/* Solapa superior — animada al cortar */}
               <polygon
-                points={`2,2 338,2 170,${110 - cortePct * 0.5}`}
-                fill={cortePct > 20 ? "#DFC99A" : "#EAD9B8"}
-                stroke="#C8B080" strokeWidth="0.5"
-                style={{ transition: "fill 0.2s" }}
+                points={`1,1 339,1 170,${108 - cortePct * 0.5}`}
+                fill="url(#solapaCorte)"
+                stroke="#E8D8D2" strokeWidth="0.5"
               />
 
-              {/* Línea de corte animada */}
+              {/* Línea de corte */}
               {fase === "cortando" && cortePct > 5 && (
                 <line
-                  x1="2" y1="2"
-                  x2={2 + (cortePct / 100) * 336} y2="2"
-                  stroke="white" strokeWidth="2.5" strokeLinecap="round"
-                  opacity={0.8}
-                  style={{ filter: "drop-shadow(0 0 3px rgba(255,255,255,0.9))" }}
+                  x1="1" y1="1"
+                  x2={1 + (cortePct / 100) * 338} y2="1"
+                  stroke="#D4A0A0" strokeWidth="1.5" strokeLinecap="round"
+                  opacity={0.7}
                 />
               )}
 
-              {/* Borde decorativo interior */}
-              <rect x="10" y="10" width="320" height="220" rx="2" fill="none" stroke="#C8B080" strokeWidth="0.5" strokeDasharray="3,3" opacity="0.5"/>
+              {/* Ribete rosa sutil en el borde */}
+              <rect x="1" y="1" width="338" height="238" rx="3" fill="none" stroke="#E8C4BE" strokeWidth="0.8" opacity="0.6"/>
 
-              {/* Sello rojo en el centro */}
-              <g transform="translate(170, 130)">
-                {/* Círculo exterior dentado */}
-                {Array.from({ length: 24 }).map((_, i) => {
-                  const a = (i / 24) * Math.PI * 2;
-                  const r1 = 34, r2 = 30;
-                  const x1 = Math.cos(a) * r1, y1 = Math.sin(a) * r1;
-                  const a2 = ((i + 0.5) / 24) * Math.PI * 2;
-                  const x2 = Math.cos(a2) * r2, y2 = Math.sin(a2) * r2;
-                  return <circle key={i} cx={(x1+x2)/2} cy={(y1+y2)/2} r="2.5" fill={cortePct > 10 ? "#A83228" : "#C0392B"} />;
-                })}
-                {/* Círculo rojo */}
-                <circle cx="0" cy="0" r="28"
-                  fill={cortePct > 10 ? "#A83228" : "#C0392B"}
-                  style={{ transition: "fill 0.3s" }}
-                />
-                <circle cx="0" cy="0" r="24" fill="none" stroke="rgba(255,255,255,0.25)" strokeWidth="1"/>
-                {/* Iniciales */}
-                <text x="0" y="6" textAnchor="middle" fontFamily="'PinyonScript', serif" fontSize="20" fill="white" opacity="0.95">C &amp; H</text>
+              {/* Línea decorativa interior */}
+              <rect x="9" y="9" width="322" height="222" rx="2" fill="none" stroke="#EDD4CE" strokeWidth="0.5" opacity="0.8"/>
+
+              {/* ── FLORES en la esquina inferior izquierda ── */}
+              <g transform="translate(68, 158)">
+                {/* Rosa grande central */}
+                <g>
+                  <circle cx="0" cy="0" r="14" fill="#F9F0EE" stroke="#E8C4BE" strokeWidth="0.5"/>
+                  <path d="M0,-10 Q5,-5 8,0 Q5,5 0,10 Q-5,5 -8,0 Q-5,-5 0,-10Z" fill="#F4D8D4" opacity="0.9"/>
+                  <path d="M0,-7 Q4,-3 6,0 Q4,3 0,7 Q-4,3 -6,0 Q-4,-3 0,-7Z" fill="#EFC4BE" opacity="0.8"/>
+                  <path d="M0,-4 Q2.5,-2 3.5,0 Q2.5,2 0,4 Q-2.5,2 -3.5,0 Q-2.5,-2 0,-4Z" fill="#E8B4AE"/>
+                  <circle cx="0" cy="0" r="1.5" fill="#D4908A"/>
+                  {/* Pétalos exteriores */}
+                  <path d="M-14,0 Q-10,-8 -5,-10 Q-2,-6 0,-4 Q-4,-2 -8,0 Q-4,2 0,4 Q-2,6 -5,10 Q-10,8 -14,0Z" fill="#F9F0EE" stroke="#EDD4CE" strokeWidth="0.3" opacity="0.7"/>
+                  <path d="M14,0 Q10,-8 5,-10 Q2,-6 0,-4 Q4,-2 8,0 Q4,2 0,4 Q2,6 5,10 Q10,8 14,0Z" fill="#F9F0EE" stroke="#EDD4CE" strokeWidth="0.3" opacity="0.7"/>
+                </g>
+                {/* Rosa pequeña arriba derecha */}
+                <g transform="translate(20, -14)">
+                  <circle cx="0" cy="0" r="9" fill="#FBF4F2" stroke="#EDD4CE" strokeWidth="0.4"/>
+                  <path d="M0,-6 Q3,-3 5,0 Q3,3 0,6 Q-3,3 -5,0 Q-3,-3 0,-6Z" fill="#F4D8D4" opacity="0.85"/>
+                  <path d="M0,-3.5 Q2,-1.5 3,0 Q2,1.5 0,3.5 Q-2,1.5 -3,0 Q-2,-1.5 0,-3.5Z" fill="#EFC4BE"/>
+                  <circle cx="0" cy="0" r="1" fill="#E0A8A2"/>
+                </g>
+                {/* Rosa pequeña abajo derecha */}
+                <g transform="translate(22, 10)">
+                  <circle cx="0" cy="0" r="8" fill="#FBF4F2" stroke="#EDD4CE" strokeWidth="0.4"/>
+                  <path d="M0,-5.5 Q3,-2.5 4.5,0 Q3,2.5 0,5.5 Q-3,2.5 -4.5,0 Q-3,-2.5 0,-5.5Z" fill="#F4D8D4" opacity="0.85"/>
+                  <path d="M0,-3 Q1.8,-1.5 2.5,0 Q1.8,1.5 0,3 Q-1.8,1.5 -2.5,0 Q-1.8,-1.5 0,-3Z" fill="#EFC4BE"/>
+                  <circle cx="0" cy="0" r="0.8" fill="#E0A8A2"/>
+                </g>
+                {/* Hojitas */}
+                <path d="M-12,8 Q-18,4 -20,10 Q-16,14 -12,8Z" fill="#C8D8B0" opacity="0.7"/>
+                <path d="M-10,-12 Q-14,-18 -8,-20 Q-4,-16 -10,-12Z" fill="#C8D8B0" opacity="0.6"/>
+                <path d="M10,16 Q8,22 14,22 Q16,18 10,16Z" fill="#C8D8B0" opacity="0.6"/>
+                {/* Pequeños detalles plateados */}
+                <circle cx="-6" cy="-18" r="1.2" fill="#D8D0C8" opacity="0.6"/>
+                <circle cx="28" cy="-18" r="0.8" fill="#D8D0C8" opacity="0.5"/>
+                <circle cx="30" cy="16" r="1" fill="#D8D0C8" opacity="0.5"/>
               </g>
 
-              {/* Textura de puntos sutiles */}
-              {fase === "sobre" && (
-                <g opacity="0.08">
-                  {Array.from({ length: 20 }).map((_, i) =>
-                    Array.from({ length: 14 }).map((_, j) => (
-                      <circle key={`${i}-${j}`} cx={i * 18 + 2} cy={j * 18 + 2} r="0.8" fill="#8A7060"/>
-                    ))
-                  )}
-                </g>
-              )}
+              {/* Ribete central vertical (cinta) */}
+              <rect x="168" y="108" width="4" height="131" fill="url(#sobreBlanco)" opacity="0.4"/>
+              <line x1="170" y1="108" x2="170" y2="239" stroke="#E8C4BE" strokeWidth="0.8" opacity="0.5"/>
+
+              {/* Sello central — iniciales elegantes */}
+              <g transform="translate(170, 135)">
+                <circle cx="0" cy="0" r="22" fill="white" stroke="#E8C4BE" strokeWidth="1"/>
+                <circle cx="0" cy="0" r="19" fill="none" stroke="#EDD4CE" strokeWidth="0.5"/>
+                <text x="0" y="6" textAnchor="middle" fontFamily="'PinyonScript', serif" fontSize="18" fill="#C4908A" opacity="0.9">C &amp; H</text>
+              </g>
             </svg>
 
-            {/* Brillo del corte */}
-            {fase === "cortando" && cortePct > 0 && (
-              <div style={{
-                position: "absolute", top: "1px", left: 0,
-                height: "3px",
-                width: `${cortePct}%`,
-                background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.9), transparent)",
-                borderRadius: "2px",
-                transition: "width 0.05s",
-                pointerEvents: "none",
-              }} />
-            )}
+
           </div>
 
           {/* Fallback: botón tap */}
@@ -305,11 +321,11 @@ export default function PaginaInvitacion() {
             onClick={() => abrirSobre()}
             style={{
               marginTop: "0.5rem",
-              background: "none", border: "1px solid #C8B080",
+              background: "none", border: "1px solid #D4A8A0",
               padding: "0.6rem 1.8rem", borderRadius: "2px",
               fontFamily: "'Montserrat',sans-serif", fontSize: "0.65rem",
               letterSpacing: "0.2em", textTransform: "uppercase",
-              color: "#8A7060", cursor: "pointer",
+              color: "#9A7070", cursor: "pointer",
             }}
           >
             Toca para abrir
