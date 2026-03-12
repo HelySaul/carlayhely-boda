@@ -5,7 +5,7 @@ import FloralAccent from "./FloralAccent";
 const TIPS = [
   { label: "Al aire libre",   desc: "La ceremonia y la fiesta se celebran en espacios abiertos. Un cielo como techo, naturaleza como decoración.", color: "var(--olive)" },
   { label: "Calzado cómodo",  desc: "El terreno es de jardín. Tacones muy finos pueden dificultar el caminar; un tacón ancho o plataforma funciona perfecto.", color: "var(--terracotta)" },
-  { label: "Clima de junio",  desc: "Junio en la vía Coro–Churuguara suele ser cálido. Considera un abanico y mantenerte hidratado durante la noche.", color: "var(--gold)" },
+  { label: "Clima de junio",  desc: "La vía Coro–Churuguara es conocida por su brisa fresca, especialmente en la noche. Te recomendamos llevar un abrigo por si acaso.", color: "var(--gold)" },
   { label: "Estacionamiento", desc: "Hay espacio disponible en el local. Llegar con tiempo te garantizará un buen lugar.", color: "var(--red)" },
 ];
 
@@ -15,7 +15,7 @@ export default function Venue() {
       {/* Manchas decorativas */}
       <div style={{ position: "absolute", top: "-5%", right: "-8%", width: "clamp(160px,38vw,300px)", height: "clamp(160px,38vw,300px)", borderRadius: "50%", background: "radial-gradient(circle, rgba(122,148,56,0.18) 0%, transparent 70%)", pointerEvents: "none" }} />
       <div style={{ position: "absolute", bottom: "10%", left: "-6%", width: "clamp(120px,28vw,220px)", height: "clamp(120px,28vw,220px)", borderRadius: "50%", background: "radial-gradient(circle, rgba(212,168,50,0.16) 0%, transparent 70%)", pointerEvents: "none" }} />
-      <FloralAccent side="right" x="-30px" y="bottom: -55px" size={75} petalColor="#7A9438" petalColor2="#D4A832" rotate={5}  opacity={0.82} />
+      <FloralAccent side="right" x="-30px" y="bottom: -55px" size={75} petalColor="#7A9438" petalColor2="#D4A832" rotate={5} opacity={0.82} />
       <div style={{ maxWidth: "540px", margin: "0 auto" }}>
 
         <Reveal>
@@ -34,25 +34,31 @@ export default function Venue() {
           <div style={{ width: "60px", height: "1px", background: "linear-gradient(90deg, transparent, var(--gold), transparent)", margin: "1.5rem auto 2rem" }} />
         </Reveal>
 
-        {/* Mapa placeholder */}
+        {/* Mapa embed */}
         <Reveal delay={0.22}>
-          <div style={{ width: "100%", height: "230px", background: "linear-gradient(150deg, var(--cream-deep) 0%, var(--blush-pale) 100%)", border: "1px solid var(--border-subtle)", borderRadius: "2px", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", marginBottom: "1rem", overflow: "hidden", position: "relative" }}>
-            <div style={{ position: "absolute", inset: "8px", border: "1px solid var(--border-subtle)", borderRadius: "1px", pointerEvents: "none" }} />
-            <p className="serif" style={{ fontStyle: "italic", color: "var(--ink-light)", fontSize: "1rem" }}>Mapa próximamente</p>
-            <p className="sans" style={{ fontSize: "0.65rem", color: "var(--ink-light)", letterSpacing: "0.15em", textTransform: "uppercase", marginTop: "0.5rem" }}>coordenadas del local</p>
+          <div style={{ width: "100%", height: "230px", border: "1px solid var(--border-subtle)", borderRadius: "2px", overflow: "hidden", marginBottom: "1rem" }}>
+            <iframe
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3921.!2d-69.5855451!3d11.3661906!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8e842bfeee5f598d%3A0xf403a1c864647f4f!2sCentro%20Recreacional%20Brisas%20del%20Renacer!5e0!3m2!1ses!2sve!4v1"
+              width="100%"
+              height="230"
+              style={{ border: 0, display: "block", filter: "saturate(0.85) brightness(1.02)" }}
+              allowFullScreen
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+            />
           </div>
         </Reveal>
 
         {/* Botón */}
         <Reveal delay={0.28}>
-          <a href="https://maps.google.com/?q=Brisas+del+Renacer+Coro+Churuguara+Falcon+Venezuela" target="_blank" rel="noopener noreferrer"
+          <a href="https://maps.app.goo.gl/oxGza7wqVdfY5rWN6" target="_blank" rel="noopener noreferrer"
             style={{ display: "inline-block", padding: "0.85rem 2.2rem", border: "1px solid var(--terracotta)", color: "var(--terracotta)", fontFamily: "'Montserrat', sans-serif", fontSize: "0.68rem", letterSpacing: "0.22em", textTransform: "uppercase", textDecoration: "none", fontWeight: 400, borderRadius: "1px", marginBottom: "3rem", transition: "background 0.3s ease, color 0.3s ease" }}
             onMouseEnter={e => { const el = e.currentTarget as HTMLAnchorElement; el.style.background = "var(--terracotta)"; el.style.color = "var(--cream)"; }}
             onMouseLeave={e => { const el = e.currentTarget as HTMLAnchorElement; el.style.background = "transparent"; el.style.color = "var(--terracotta)"; }}
           >Cómo llegar</a>
         </Reveal>
 
-        {/* Tips con color por categoría */}
+        {/* Tips */}
         <Reveal delay={0.1}>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem", textAlign: "left" }}>
             {TIPS.map((tip, i) => (
