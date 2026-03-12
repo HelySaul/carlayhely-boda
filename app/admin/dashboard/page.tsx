@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 
 // ── Types ──────────────────────────────────────────────
 interface Invitado {
-  id: string; invitacion_id: string; nombre: string; whatsapp: string | null;
+  id: string; invitacion_id: string; nombre: string; whatsapp: string | null; sexo: "M" | "F" | null;
   confirmacion_1: boolean; confirmacion_1_fecha: string | null;
   confirmacion_2: boolean; confirmacion_2_fecha: string | null;
   confirmacion_3: boolean; confirmacion_3_fecha: string | null;
@@ -295,12 +295,12 @@ function BarraFiltros({
 
 // ── Modal nueva invitación ─────────────────────────────
 function ModalNuevaInvitacion({ onClose, onCreated, nombreAdmin }: { onClose: () => void; onCreated: (r: Invitacion) => void; nombreAdmin: string }) {
-  const [personas, setPersonas]       = useState([{ nombre: "", whatsapp: "" }]);
+  const [personas, setPersonas]       = useState([{ nombre: "", whatsapp: "", sexo: "" }]);
   const [nombreGrupo, setNombreGrupo] = useState("");
   const [error, setError]             = useState("");
   const [loading, setLoading]         = useState(false);
 
-  function agregar() { setPersonas(p => [...p, { nombre: "", whatsapp: "" }]); }
+  function agregar() { setPersonas(p => [...p, { nombre: "", whatsapp: "", sexo: "" }]); }
   function quitar(idx: number) { setPersonas(p => p.filter((_, i) => i !== idx)); }
   function actualizar(idx: number, field: string, val: string) { setPersonas(p => p.map((x, i) => i === idx ? { ...x, [field]: val } : x)); }
 
@@ -310,7 +310,7 @@ function ModalNuevaInvitacion({ onClose, onCreated, nombreAdmin }: { onClose: ()
     setLoading(true); setError("");
     const res = await fetch("/api/admin/invitaciones", {
       method: "POST", headers: authHeaders(),
-      body: JSON.stringify({ invitados: validos, nombre: nombreGrupo.trim() || null, creado_por: nombreAdmin }),
+      body: JSON.stringify({ invitados: validos.map(p => ({ ...p, sexo: p.sexo || null })), nombre: nombreGrupo.trim() || null, creado_por: nombreAdmin }),
     });
     const data = await res.json();
     setLoading(false);
@@ -333,6 +333,14 @@ function ModalNuevaInvitacion({ onClose, onCreated, nombreAdmin }: { onClose: ()
               <div style={{ flex: "2 1 140px" }}>
                 <label style={labelStyle}>Nombre</label>
                 <input value={p.nombre} onChange={e => actualizar(idx, "nombre", e.target.value)} placeholder="Nombre completo" style={inputStyle} />
+              </div>
+              <div style={{ flex: "0 0 80px" }}>
+                <label style={labelStyle}>Sexo</label>
+                <select value={p.sexo} onChange={e => actualizar(idx, "sexo", e.target.value)} style={{ ...inputStyle, cursor: "pointer" }}>
+                  <option value="">—</option>
+                  <option value="M">M</option>
+                  <option value="F">F</option>
+                </select>
               </div>
               <div style={{ flex: "1 1 100px" }}>
                 <label style={labelStyle}>WhatsApp</label>
@@ -360,12 +368,12 @@ function ModalNuevaInvitacion({ onClose, onCreated, nombreAdmin }: { onClose: ()
 
 // ── Modal agregar persona ──────────────────────────────
 function ModalAgregarPersona({ invitacion, onClose, onAdded }: { invitacion: Invitacion; onClose: () => void; onAdded: (inv: Invitado) => void }) {
-  const [nombre, setNombre] = useState(""); const [whatsapp, setWhatsapp] = useState("");
+  const [nombre, setNombre] = useState(""); const [whatsapp, setWhatsapp] = useState(""); const [sexo, setSexo] = useState("");
   const [error, setError] = useState(""); const [loading, setLoading] = useState(false);
   async function agregar() {
     if (!nombre.trim()) { setError("Nombre requerido"); return; }
     setLoading(true); setError("");
-    const res = await fetch("/api/admin/invitados", { method: "POST", headers: authHeaders(), body: JSON.stringify({ invitacion_id: invitacion.id, nombre, whatsapp }) });
+    const res = await fetch("/api/admin/invitados", { method: "POST", headers: authHeaders(), body: JSON.stringify({ invitacion_id: invitacion.id, nombre, whatsapp, sexo: sexo || null }) });
     const data = await res.json(); setLoading(false);
     if (!res.ok) { setError(data.error); return; }
     onAdded(data); onClose();
@@ -377,7 +385,7 @@ function ModalAgregarPersona({ invitacion, onClose, onAdded }: { invitacion: Inv
         <p className="sans" style={{ fontSize: "0.68rem", color: "var(--ink-light)", marginBottom: "1.5rem" }}>Invitación <strong>{invitacion.codigo}</strong></p>
         <div style={{ display: "flex", flexDirection: "column", gap: "0.8rem" }}>
           <div><label style={labelStyle}>Nombre</label><input value={nombre} onChange={e => setNombre(e.target.value)} placeholder="Nombre completo" style={inputStyle} /></div>
-          <div><label style={labelStyle}>WhatsApp (opcional)</label><input value={whatsapp} onChange={e => setWhatsapp(e.target.value)} placeholder="+58 412 0000000" style={inputStyle} /></div>
+          <div style={{ display: "flex", gap: "0.6rem" }}><div style={{ flex: 1 }}><label style={labelStyle}>WhatsApp (opcional)</label><input value={whatsapp} onChange={e => setWhatsapp(e.target.value)} placeholder="+58 412 0000000" style={inputStyle} /></div><div style={{ flex: "0 0 80px" }}><label style={labelStyle}>Sexo</label><select value={sexo} onChange={e => setSexo(e.target.value)} style={{ ...inputStyle, cursor: "pointer" }}><option value="">—</option><option value="M">M</option><option value="F">F</option></select></div></div>
           {error && <p style={{ color: "var(--red)", fontSize: "0.75rem" }}>{error}</p>}
           <div style={{ display: "flex", gap: "0.8rem", justifyContent: "flex-end" }}>
             <button onClick={onClose} style={btnOutline}>Cancelar</button>
@@ -435,14 +443,15 @@ function CheckConfirm({ checked, fecha, label, color, onChange }: { checked: boo
 function FilaInvitado({ inv, codigo, onUpdate, onUpdateTexto, onDelete }: {
   inv: Invitado; codigo: string;
   onUpdate: (id: string, field: string, val: boolean) => void;
-  onUpdateTexto: (id: string, nombre: string, whatsapp: string) => void;
+  onUpdateTexto: (id: string, nombre: string, whatsapp: string, sexo: string | null) => void;
   onDelete: (id: string) => void;
 }) {
   const [editando, setEditando] = useState(false);
   const [nombre, setNombre]     = useState(inv.nombre);
   const [whatsapp, setWhatsapp] = useState(inv.whatsapp ?? "");
+  const [sexo, setSexo]         = useState(inv.sexo ?? "");
 
-  function guardar() { onUpdateTexto(inv.id, nombre.trim() || inv.nombre, whatsapp.trim()); setEditando(false); }
+  function guardar() { onUpdateTexto(inv.id, nombre.trim() || inv.nombre, whatsapp.trim(), sexo || null); setEditando(false); }
 
   return (
     <div style={{ background: "var(--cream)", border: "1px solid var(--border-subtle)", borderRadius: "2px", marginBottom: "0.35rem", padding: "0.65rem 0.8rem" }}>
@@ -451,7 +460,7 @@ function FilaInvitado({ inv, codigo, onUpdate, onUpdateTexto, onDelete }: {
           {editando ? (
             <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem" }}>
               <input value={nombre} onChange={e => setNombre(e.target.value)} placeholder="Nombre" style={{ ...inputStyle, fontSize: "16px" }} />
-              <input value={whatsapp} onChange={e => setWhatsapp(e.target.value)} placeholder="WhatsApp (opcional)" style={{ ...inputStyle, fontSize: "16px" }} />
+              <div style={{ display: "flex", gap: "0.5rem" }}><input value={whatsapp} onChange={e => setWhatsapp(e.target.value)} placeholder="WhatsApp (opcional)" style={{ ...inputStyle, fontSize: "16px", flex: 1 }} /><select value={sexo} onChange={e => setSexo(e.target.value)} style={{ ...inputStyle, fontSize: "16px", flex: "0 0 70px", cursor: "pointer" }}><option value="">—</option><option value="M">M</option><option value="F">F</option></select></div>
               <div style={{ display: "flex", gap: "0.5rem" }}>
                 <button onClick={guardar} style={{ ...btnPrimary, padding: "0.35rem 0.8rem", fontSize: "0.6rem" }}>Guardar</button>
                 <button onClick={() => { setEditando(false); setNombre(inv.nombre); setWhatsapp(inv.whatsapp ?? ""); }} style={{ ...btnOutline, padding: "0.35rem 0.8rem", fontSize: "0.6rem" }}>Cancelar</button>
@@ -460,6 +469,7 @@ function FilaInvitado({ inv, codigo, onUpdate, onUpdateTexto, onDelete }: {
           ) : (
             <div style={{ display: "flex", alignItems: "center", gap: "0.6rem", flexWrap: "wrap" }}>
               <span className="sans" style={{ fontSize: "0.9rem", fontWeight: 500, color: "var(--ink)" }}>{inv.nombre}</span>
+              {inv.sexo && <span className="sans" style={{ fontSize: "0.6rem", color: "var(--ink-light)", background: "var(--cream-mid)", padding: "0.1rem 0.4rem", borderRadius: "2px" }}>{inv.sexo}</span>}
               {inv.whatsapp && <span className="sans" style={{ fontSize: "0.6rem", color: "var(--ink-light)" }}>{inv.whatsapp}</span>}
               <button onClick={() => setEditando(true)} style={{ background: "none", border: "none", color: "var(--terracotta)", cursor: "pointer", fontSize: "0.62rem", fontFamily: "'Montserrat',sans-serif", letterSpacing: "0.1em", textTransform: "uppercase", textDecoration: "underline", padding: 0 }}>editar</button>
             </div>
@@ -488,7 +498,7 @@ function FilaInvitado({ inv, codigo, onUpdate, onUpdateTexto, onDelete }: {
 function TarjetaInvitacion({ invitacion, onUpdateInv, onUpdateTexto, onUpdateNombreGrupo, onDeleteInv, onDeleteInvitacion, onAddPersona }: {
   invitacion: Invitacion;
   onUpdateInv: (invId: string, invId2: string, field: string, val: boolean) => void;
-  onUpdateTexto: (invitacionId: string, invId: string, nombre: string, whatsapp: string) => void;
+  onUpdateTexto: (invitacionId: string, invId: string, nombre: string, whatsapp: string, sexo?: string | null) => void;
   onUpdateNombreGrupo: (id: string, nombre: string | null) => void;
   onDeleteInv: (invId: string, invId2: string) => void;
   onDeleteInvitacion: (id: string) => void;
@@ -543,7 +553,7 @@ function TarjetaInvitacion({ invitacion, onUpdateInv, onUpdateTexto, onUpdateNom
           {invitacion.invitados.map(inv => (
             <FilaInvitado key={inv.id} inv={inv} codigo={invitacion.codigo}
               onUpdate={(id, field, val) => onUpdateInv(invitacion.id, id, field, val)}
-              onUpdateTexto={(id, nombre, whatsapp) => onUpdateTexto(invitacion.id, id, nombre, whatsapp)}
+              onUpdateTexto={(id, nombre, whatsapp, sexo) => onUpdateTexto(invitacion.id, id, nombre, whatsapp, sexo)}
               onDelete={(id) => onDeleteInv(invitacion.id, id)}
             />
           ))}
@@ -641,10 +651,11 @@ export default function AdminDashboard() {
     }));
   }
 
-  async function updateInvitadoTexto(invitacionId: string, invId: string, nombre: string, whatsapp: string) {
-    await fetch(`/api/admin/invitados?id=${invId}`, { method: "PATCH", headers: authHeaders(), body: JSON.stringify({ nombre, whatsapp: whatsapp || null }) });
+  async function updateInvitadoTexto(invitacionId: string, invId: string, nombre: string, whatsapp: string, sexo: string | null = null) {
+    const sexoVal = (sexo === "M" || sexo === "F" ? sexo : null) as "M" | "F" | null;
+    await fetch(`/api/admin/invitados?id=${invId}`, { method: "PATCH", headers: authHeaders(), body: JSON.stringify({ nombre, whatsapp: whatsapp || null, sexo: sexoVal }) });
     setInvitaciones(rs => rs.map(r => r.id !== invitacionId ? r : {
-      ...r, invitados: r.invitados.map(i => i.id !== invId ? i : { ...i, nombre, whatsapp: whatsapp || null }),
+      ...r, invitados: r.invitados.map(i => i.id !== invId ? i : { ...i, nombre, whatsapp: whatsapp || null, sexo: sexoVal }),
     }));
   }
 

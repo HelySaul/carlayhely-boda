@@ -6,6 +6,7 @@ interface Invitado {
   id: string;
   nombre: string;
   whatsapp: string | null;
+  sexo: "M" | "F" | null;
   confirmacion_1: boolean;
   confirmacion_2: boolean;
   confirmacion_3: boolean;
@@ -25,10 +26,14 @@ function nombresLista(invitados: Invitado[]) {
 }
 function saludo(invitados: Invitado[]) {
   if (invitados.length === 1) {
-    return `Querido/a ${invitados[0].nombre.split(" ")[0]},`;
+    const i = invitados[0];
+    const tratamiento = i.sexo === "F" ? "Querida" : i.sexo === "M" ? "Querido" : "Querido/a";
+    return `${tratamiento} ${i.nombre.split(" ")[0]},`;
   }
   const primeros = invitados.map(i => i.nombre.split(" ")[0]);
-  return `Queridos ${primeros.slice(0, -1).join(", ")} y ${primeros[primeros.length - 1]},`;
+  const todasF = invitados.every(i => i.sexo === "F");
+  const tratamiento = todasF ? "Queridas" : "Queridos";
+  return `${tratamiento} ${primeros.slice(0, -1).join(", ")} y ${primeros[primeros.length - 1]},`;
 }
 
 export default function PaginaInvitacion() {
@@ -147,7 +152,7 @@ export default function PaginaInvitacion() {
   return (
     <div style={{
       minHeight: "100svh",
-      background: "linear-gradient(160deg, #F9F4EE 0%, #F2EBE0 50%, #EDE3D5 100%)",
+      background: "linear-gradient(160deg, #F2E8D5 0%, #E8D5B8 40%, #DEC89A 100%)",
       display: "flex", flexDirection: "column",
       alignItems: "center", justifyContent: "center",
       padding: "2rem 1rem",
@@ -355,35 +360,40 @@ function Tarjeta({ inv, esIndividual, todosConfirmaron, algunoConfirmo, rondaAct
 }) {
   return (
     <div style={{
-      background: "#FDFAF6",
-      border: "1px solid #E2D5C0",
-      borderRadius: "3px",
+      background: "linear-gradient(160deg, #FDFAF6 0%, #F7F0E4 60%, #F2E8D5 100%)",
+      border: "1px solid #C8A96E",
+      borderRadius: "2px",
       padding: "2.5rem 2rem",
-      boxShadow: "0 4px 32px rgba(0,0,0,0.1), inset 0 0 0 6px rgba(212,168,50,0.08)",
+      boxShadow: "0 8px 40px rgba(80,50,20,0.18), 0 2px 8px rgba(80,50,20,0.10), inset 0 0 0 1px rgba(212,168,50,0.15)",
       position: "relative",
+      backgroundImage: `linear-gradient(160deg, #FDFAF6 0%, #F7F0E4 60%, #F2E8D5 100%), url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E")`,
     }}>
+      {/* Línea dorada superior */}
+      <div style={{ position: "absolute", top: "14px", left: "14px", right: "14px", height: "1px", background: "linear-gradient(90deg, transparent, #D4A832, #C94F4F, #D4A832, transparent)", opacity: 0.5 }} />
+      {/* Línea dorada inferior */}
+      <div style={{ position: "absolute", bottom: "14px", left: "14px", right: "14px", height: "1px", background: "linear-gradient(90deg, transparent, #D4A832, #C94F4F, #D4A832, transparent)", opacity: 0.5 }} />
       {/* Esquinas decorativas */}
       <CornerDecor />
 
       {/* Encabezado */}
       <div style={{ textAlign: "center", marginBottom: "1.8rem" }}>
-        <p style={{ fontFamily: "'Montserrat',sans-serif", fontSize: "0.6rem", letterSpacing: "0.3em", textTransform: "uppercase", color: "#B5A090", marginBottom: "0.8rem" }}>
+        <p style={{ fontFamily: "'Montserrat',sans-serif", fontSize: "0.6rem", letterSpacing: "0.3em", textTransform: "uppercase", color: "#9A7850", marginBottom: "0.8rem" }}>
           Con alegría en el corazón
         </p>
-        <h1 style={{ fontFamily: "'PinyonScript', serif", fontSize: "3.2rem", color: "#3D2B1F", lineHeight: 1, marginBottom: "0.3rem" }}>
+        <h1 style={{ fontFamily: "'PinyonScript', serif", fontSize: "3.2rem", color: "#2C1A0E", lineHeight: 1, marginBottom: "0.3rem" }}>
           Carla &amp; Hely
         </h1>
-        <p style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "0.85rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "#8A7060" }}>
+        <p style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "0.85rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "#7A5C3A" }}>
           te invitan a su boda
         </p>
       </div>
 
       {/* Saludo personalizado */}
-      <div style={{ borderTop: "1px solid #E2D5C0", borderBottom: "1px solid #E2D5C0", padding: "1.2rem 0", marginBottom: "1.5rem", textAlign: "center" }}>
+      <div style={{ borderTop: "1px solid #C8A96E", borderBottom: "1px solid #C8A96E", padding: "1.2rem 0", marginBottom: "1.5rem", textAlign: "center" }}>
         <p style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "1.3rem", color: "#3D2B1F", fontStyle: "italic" }}>
           {saludo(inv.invitados)}
         </p>
-        <p style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "1rem", color: "#6A5040", marginTop: "0.5rem", lineHeight: 1.6 }}>
+        <p style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "1rem", color: "#5A3E28", marginTop: "0.5rem", lineHeight: 1.6 }}>
           {esIndividual
             ? "Queremos que seas parte de este día tan especial para nosotros."
             : "Queremos que sean parte de este día tan especial para nosotros."}
@@ -392,10 +402,10 @@ function Tarjeta({ inv, esIndividual, todosConfirmaron, algunoConfirmo, rondaAct
 
       {/* Fecha y hora */}
       <div style={{ textAlign: "center", marginBottom: "1.5rem" }}>
-        <p style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "1.8rem", color: "#3D2B1F", letterSpacing: "0.05em", lineHeight: 1.2 }}>
+        <p style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "1.8rem", color: "#2C1A0E", letterSpacing: "0.05em", lineHeight: 1.2 }}>
           Sábado, 13 de Junio
         </p>
-        <p style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "1.4rem", color: "#C94F4F", letterSpacing: "0.08em" }}>
+        <p style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "1.4rem", color: "#C94F4F", fontWeight: 300, letterSpacing: "0.08em" }}>
           2026
         </p>
         <div style={{ display: "flex", justifyContent: "center", gap: "2rem", marginTop: "0.8rem" }}>
@@ -415,7 +425,7 @@ function Tarjeta({ inv, esIndividual, todosConfirmaron, algunoConfirmo, rondaAct
       <div style={{ textAlign: "center", marginBottom: "1.8rem" }}>
         <p style={{ fontSize: "0.55rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "#B5A090", marginBottom: "0.3rem" }}>Lugar</p>
         <p style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "1.1rem", color: "#3D2B1F" }}>Brisas del Renacer</p>
-        <p style={{ fontFamily: "'Montserrat',sans-serif", fontSize: "0.72rem", color: "#8A7060", lineHeight: 1.5 }}>
+        <p style={{ fontFamily: "'Montserrat',sans-serif", fontSize: "0.72rem", color: "#7A5C3A", lineHeight: 1.5 }}>
           A 600 metros de la entrada de Zambrano<br />
           Vía Coro–Churuguara, Falcón
         </p>
@@ -423,7 +433,7 @@ function Tarjeta({ inv, esIndividual, todosConfirmaron, algunoConfirmo, rondaAct
 
       {/* Versículo */}
       <div style={{ textAlign: "center", padding: "1rem 1.5rem", marginBottom: "1.8rem", borderTop: "1px solid #E2D5C0" }}>
-        <p style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "1rem", fontStyle: "italic", color: "#8A7060", lineHeight: 1.7 }}>
+        <p style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "1rem", fontStyle: "italic", color: "#7A5C3A", lineHeight: 1.7 }}>
           &ldquo;Todo lo hizo hermoso en su tiempo&rdquo;
         </p>
         <p style={{ fontSize: "0.6rem", letterSpacing: "0.15em", textTransform: "uppercase", color: "#B5A090", marginTop: "0.3rem" }}>
