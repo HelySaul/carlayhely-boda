@@ -29,7 +29,7 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   const deny = await auth(req); if (deny) return deny;
 
-  const { invitados } = await req.json();
+  const { invitados, nombre } = await req.json();
 
   if (!invitados || invitados.length === 0) {
     return NextResponse.json({ error: 'Al menos un invitado es requerido' }, { status: 400 });
@@ -48,7 +48,7 @@ export async function POST(req: NextRequest) {
   // Crear invitacion
   const { data: invitacion, error: rError } = await getSupabaseAdmin()
     .from('invitaciones')
-    .insert({ codigo })
+    .insert({ codigo, nombre: nombre || null })
     .select()
     .single();
 

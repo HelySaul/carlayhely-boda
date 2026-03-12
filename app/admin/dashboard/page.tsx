@@ -17,6 +17,7 @@ interface Invitado {
   asistio: boolean;
 }
 interface Invitación {
+  nombre: string | null;
   id: string;
   codigo: string;
   created_at: string;
@@ -70,6 +71,7 @@ function StatCard({ value, label, color }: { value: number; label: string; color
 // ── Modal nueva invitación ────────────────────────────────
 function ModalNuevaInvitación({ onClose, onCreated }: { onClose: () => void; onCreated: (r: Invitación) => void }) {
   const [personas, setPersonas] = useState([{ nombre: "", whatsapp: "" }]);
+  const [nombreGrupo, setNombreGrupo] = useState("");
   const [error, setError]       = useState("");
   const [loading, setLoading]   = useState(false);
 
@@ -86,7 +88,7 @@ function ModalNuevaInvitación({ onClose, onCreated }: { onClose: () => void; on
 
     const res = await fetch("/api/admin/invitaciones", {
       method: "POST", headers: authHeaders(),
-      body: JSON.stringify({ invitados: validos }),
+      body: JSON.stringify({ invitados: validos, nombre: nombreGrupo.trim() || null }),
     });
     const data = await res.json();
     setLoading(false);
@@ -123,6 +125,13 @@ function ModalNuevaInvitación({ onClose, onCreated }: { onClose: () => void; on
             </div>
           </div>
         ))}
+
+        {personas.length > 1 && (
+          <div style={{ marginBottom: "1rem" }}>
+            <label style={labelStyle}>Nombre del grupo <span style={{ color: "var(--ink-light)" }}>(opcional)</span></label>
+            <input value={nombreGrupo} onChange={e => setNombreGrupo(e.target.value)} placeholder="Ej: Familia García" style={inputStyle} />
+          </div>
+        )}
 
         <button onClick={agregar} style={{ ...btnOutline, width: "100%", marginBottom: "1.2rem" }}>
           + Agregar otra persona a esta invitación
@@ -235,7 +244,10 @@ function TarjetaInvitación({ invitación, onUpdateInv, onDeleteInv, onDeleteInv
       <div onClick={() => setOpen(o => !o)} style={{ display: "flex", alignItems: "center", gap: "0.8rem", padding: "0.9rem 1.2rem", cursor: "pointer" }}>
         <span className="sans" style={{ fontSize: "1rem", letterSpacing: "0.1em", color: "var(--terracotta)", fontWeight: 600 }}>{invitación.codigo}</span>
         <span className="serif" style={{ flex: 1, fontSize: "0.9rem", color: "var(--ink-light)" }}>
-          {invitación.invitados.map(i => i.nombre).join(", ")}
+          {invitación.nombre
+            ? <><strong style={{ color: "var(--ink)" }}>{invitación.nombre}</strong> · {invitación.invitados.map(i => i.nombre).join(", ")}</>
+            : invitación.invitados.map(i => i.nombre).join(", ")
+          }
         </span>
         <span className="sans" style={{ fontSize: "0.62rem", color: "var(--ink-light)" }}>{total} {total === 1 ? "persona" : "personas"} · {conf1} conf · {conf3} 3ra</span>
         <span style={{ color: "var(--ink-light)", fontSize: "0.7rem" }}>{open ? "▲" : "▼"}</span>
