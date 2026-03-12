@@ -11,11 +11,11 @@ const TIPS = [
 
 export default function Venue() {
   return (
-    <section id="lugar" style={{ padding: "6rem 1.5rem", background: "var(--bg-venue)", textAlign: "center", position: "relative", overflow: "hidden" }}>
+    <section id="lugar" style={{ padding: "6rem 1.5rem", background: "var(--bg-venue)", textAlign: "center", position: "relative", overflow: "visible" }}>
       {/* Manchas decorativas */}
       <div style={{ position: "absolute", top: "-5%", right: "-8%", width: "clamp(160px,38vw,300px)", height: "clamp(160px,38vw,300px)", borderRadius: "50%", background: "radial-gradient(circle, rgba(122,148,56,0.18) 0%, transparent 70%)", pointerEvents: "none" }} />
       <div style={{ position: "absolute", bottom: "10%", left: "-6%", width: "clamp(120px,28vw,220px)", height: "clamp(120px,28vw,220px)", borderRadius: "50%", background: "radial-gradient(circle, rgba(212,168,50,0.16) 0%, transparent 70%)", pointerEvents: "none" }} />
-      <FloralAccent side="right" x="-10px" y="bottom: -45px" size={85} petalColor="#7A9438" petalColor2="#D4A832" rotate={-5} opacity={0.70} />
+      <FloralAccent side="right" x="-10px" y="bottom: -30px" size={85} petalColor="#7A9438" petalColor2="#D4A832" rotate={-5} opacity={0.70} />
       <div style={{ maxWidth: "540px", margin: "0 auto" }}>
 
         <Reveal>

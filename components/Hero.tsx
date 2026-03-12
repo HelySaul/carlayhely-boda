@@ -37,15 +37,15 @@ export default function Hero() {
       alignItems: "center", justifyContent: "center",
       padding: "6rem 1.5rem 4rem", textAlign: "center",
       background: "var(--bg-hero)",
-      position: "relative", overflow: "hidden",
+      position: "relative", overflow: "visible",
     }}>
       {/* Manchas de color */}
       <div style={{ position: "absolute", top: "-10%", right: "-10%", width: "clamp(220px,55vw,420px)", height: "clamp(220px,55vw,420px)", borderRadius: "50%", background: "radial-gradient(circle, rgba(201,79,79,0.22) 0%, rgba(212,105,58,0.10) 50%, transparent 75%)", pointerEvents: "none" }} />
       <div style={{ position: "absolute", bottom: "0%", left: "-10%", width: "clamp(180px,45vw,340px)", height: "clamp(180px,45vw,340px)", borderRadius: "50%", background: "radial-gradient(circle, rgba(122,148,56,0.22) 0%, rgba(122,148,56,0.08) 55%, transparent 75%)", pointerEvents: "none" }} />
       <div style={{ position: "absolute", top: "40%", left: "5%", width: "clamp(80px,18vw,140px)", height: "clamp(80px,18vw,140px)", borderRadius: "50%", background: "radial-gradient(circle, rgba(212,168,50,0.18) 0%, transparent 70%)", pointerEvents: "none" }} />
       {/* Tulipanes */}
-      <FloralAccent side="left"  x="-8px"  y="bottom: -40px" size={100} petalColor="#C94F4F" petalColor2="#D4693A" rotate={8}   opacity={0.72} />
-      <FloralAccent side="right" x="-8px"  y="top: -35px"    size={88}  petalColor="#D4A832" petalColor2="#9B8BB4" rotate={-10}  opacity={0.68} />
+      <FloralAccent side="left"  x="-8px"  y="bottom: -30px" size={100} petalColor="#C94F4F" petalColor2="#D4693A" rotate={8}   opacity={0.72} />
+      <FloralAccent side="right" x="-8px"  y="top: -25px"    size={88}  petalColor="#D4A832" petalColor2="#9B8BB4" rotate={-10}  opacity={0.68} />
       {/* Flores */}
 
       <div style={{ position: "relative", zIndex: 1, maxWidth: "520px", width: "100%" }}>
