@@ -74,6 +74,19 @@ export async function POST(req: NextRequest) {
   return NextResponse.json(full, { status: 201 });
 }
 
+// PATCH — actualizar nombre del grupo
+export async function PATCH(req: NextRequest) {
+  const deny = await auth(req); if (deny) return deny;
+
+  const id = req.nextUrl.searchParams.get('id');
+  if (!id) return NextResponse.json({ error: 'ID requerido' }, { status: 400 });
+
+  const { nombre } = await req.json();
+  const { error } = await getSupabaseAdmin().from('invitaciones').update({ nombre: nombre || null }).eq('id', id);
+  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  return NextResponse.json({ ok: true });
+}
+
 // DELETE — eliminar invitacion
 export async function DELETE(req: NextRequest) {
   const deny = await auth(req); if (deny) return deny;
