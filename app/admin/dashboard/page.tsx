@@ -72,7 +72,7 @@ function StatCard({ value, label, color }: { value: number; label: string; color
 }
 
 // ── Modal nueva invitación ─────────────────────────────
-function ModalNuevaInvitacion({ onClose, onCreated, username }: { onClose: () => void; onCreated: (r: Invitacion) => void; username: string }) {
+function ModalNuevaInvitacion({ onClose, onCreated, nombreAdmin }: { onClose: () => void; onCreated: (r: Invitacion) => void; nombreAdmin: string }) {
   const [personas, setPersonas]       = useState([{ nombre: "", whatsapp: "" }]);
   const [nombreGrupo, setNombreGrupo] = useState("");
   const [error, setError]             = useState("");
@@ -90,7 +90,7 @@ function ModalNuevaInvitacion({ onClose, onCreated, username }: { onClose: () =>
     setLoading(true); setError("");
     const res = await fetch("/api/admin/invitaciones", {
       method: "POST", headers: authHeaders(),
-      body: JSON.stringify({ invitados: validos, nombre: nombreGrupo.trim() || null, creado_por: username }),
+      body: JSON.stringify({ invitados: validos, nombre: nombreGrupo.trim() || null, creado_por: nombreAdmin }),
     });
     const data = await res.json();
     setLoading(false);
@@ -255,9 +255,10 @@ function CheckConfirm({ checked, fecha, label, color, onChange }: { checked: boo
 }
 
 // ── Fila invitado ──────────────────────────────────────
-function FilaInvitado({ inv, codigo, onUpdate, onDelete }: {
+function FilaInvitado({ inv, codigo, onUpdate, onUpdateTexto, onDelete }: {
   inv: Invitado; codigo: string;
   onUpdate: (id: string, field: string, val: boolean) => void;
+  onUpdateTexto: (id: string, nombre: string, whatsapp: string) => void;
   onDelete: (id: string) => void;
 }) {
   return (
@@ -285,9 +286,10 @@ function FilaInvitado({ inv, codigo, onUpdate, onDelete }: {
 }
 
 // ── Tarjeta invitación ─────────────────────────────────
-function TarjetaInvitacion({ invitacion, onUpdateInv, onDeleteInv, onDeleteInvitacion, onAddPersona }: {
+function TarjetaInvitacion({ invitacion, onUpdateInv, onUpdateTexto, onDeleteInv, onDeleteInvitacion, onAddPersona }: {
   invitacion: Invitacion;
   onUpdateInv: (invId: string, invId2: string, field: string, val: boolean) => void;
+  onUpdateTexto: (invitacionId: string, invId: string, nombre: string, whatsapp: string) => void;
   onDeleteInv: (invId: string, invId2: string) => void;
   onDeleteInvitacion: (id: string) => void;
   onAddPersona: (r: Invitacion) => void;
@@ -312,7 +314,7 @@ function TarjetaInvitacion({ invitacion, onUpdateInv, onDeleteInv, onDeleteInvit
         <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "0.2rem" }}>
           <span className="sans" style={{ fontSize: "0.58rem", color: "var(--ink-light)" }}>{total} {total === 1 ? "persona" : "personas"} · {conf1} conf · {conf3} 3ra</span>
           {invitacion.creado_por && (
-            <span className="sans" style={{ fontSize: "0.62rem", color: "var(--ink)", background: "rgba(0,0,0,0.06)", padding: "0.15rem 0.6rem", borderRadius: "2px", letterSpacing: "0.05em" }}>por {invitacion.creado_por}</span>
+            <span className="sans" style={{ fontSize: "0.72rem", fontWeight: 600, color: "var(--terracotta)", background: "rgba(212,105,58,0.1)", padding: "0.2rem 0.7rem", borderRadius: "2px" }}>por {invitacion.creado_por}</span>
           )}
         </div>
         <span style={{ color: "var(--ink-light)", fontSize: "0.7rem" }}>{open ? "▲" : "▼"}</span>
@@ -324,6 +326,7 @@ function TarjetaInvitacion({ invitacion, onUpdateInv, onDeleteInv, onDeleteInvit
             <FilaInvitado
               key={inv.id} inv={inv} codigo={invitacion.codigo}
               onUpdate={(id, field, val) => onUpdateInv(invitacion.id, id, field, val)}
+              onUpdateTexto={(id, nombre, whatsapp) => onUpdateTexto(invitacion.id, id, nombre, whatsapp)}
               onDelete={(id) => onDeleteInv(invitacion.id, id)}
             />
           ))}
@@ -395,6 +398,16 @@ export default function AdminDashboard() {
         if (field === "confirmacion_3") u.confirmacion_3_fecha = val ? new Date().toISOString() : null;
         return u;
       }),
+    }));
+  }
+
+  async function updateInvitadoTexto(invitacionId: string, invId: string, nombre: string, whatsapp: string) {
+    await fetch(`/api/admin/invitados?id=${invId}`, {
+      method: "PATCH", headers: authHeaders(),
+      body: JSON.stringify({ nombre, whatsapp: whatsapp || null }),
+    });
+    setInvitaciones(rs => rs.map(r => r.id !== invitacionId ? r : {
+      ...r, invitados: r.invitados.map(i => i.id !== invId ? i : { ...i, nombre, whatsapp: whatsapp || null }),
     }));
   }
 
@@ -498,7 +511,7 @@ export default function AdminDashboard() {
             ? <p className="sans" style={{ textAlign: "center", color: "var(--ink-light)", padding: "3rem 0", fontSize: "0.8rem" }}>{search ? "Sin resultados." : "Aún no hay invitaciones."}</p>
             : invitacionesFiltradas.map(r => (
               <TarjetaInvitacion key={r.id} invitacion={r}
-                onUpdateInv={updateInvitado} onDeleteInv={deleteInvitado}
+                onUpdateInv={updateInvitado} onUpdateTexto={updateInvitadoTexto} onDeleteInv={deleteInvitado}
                 onDeleteInvitacion={deleteInvitacion} onAddPersona={setModalAdd}
               />
             ))
@@ -510,7 +523,7 @@ export default function AdminDashboard() {
                   <span className="serif" style={{ fontSize: "0.95rem", color: "var(--ink)" }}>{inv.nombre}</span>
                   <div style={{ display: "flex", gap: "0.5rem", alignItems: "center", flexWrap: "wrap" }}>
                     <span className="sans" style={{ fontSize: "0.62rem", color: "var(--terracotta)" }}>{inv.codigo}</span>
-                    {inv.creado_por && <span className="sans" style={{ fontSize: "0.62rem", color: "var(--ink)", background: "rgba(0,0,0,0.06)", padding: "0.15rem 0.6rem", borderRadius: "2px" }}>por {inv.creado_por}</span>}
+                    {inv.creado_por && <span className="sans" style={{ fontSize: "0.72rem", fontWeight: 600, color: "var(--terracotta)", background: "rgba(212,105,58,0.1)", padding: "0.2rem 0.7rem", borderRadius: "2px" }}>por {inv.creado_por}</span>}
                   </div>
                 </div>
                 <div style={{ display: "flex", gap: "0.8rem", marginTop: "0.4rem", flexWrap: "wrap" }}>
@@ -563,7 +576,7 @@ export default function AdminDashboard() {
         )}
       </main>
 
-      {modalNueva   && <ModalNuevaInvitacion onClose={() => setModalNueva(false)} onCreated={r => setInvitaciones(rs => [r, ...rs])} username={nombreAdmin} />}
+      {modalNueva   && <ModalNuevaInvitacion onClose={() => setModalNueva(false)} onCreated={r => setInvitaciones(rs => [r, ...rs])} nombreAdmin={nombreAdmin} />}
       {modalAdd     && <ModalAgregarPersona invitacion={modalAdd} onClose={() => setModalAdd(null)} onAdded={inv => { setInvitaciones(rs => rs.map(r => r.id !== modalAdd.id ? r : { ...r, invitados: [...r.invitados, inv] })); }} />}
       {modalUsuario && <ModalNuevoUsuario onClose={() => setModalUsuario(false)} onCreated={cargarUsuarios} />}
     </div>
