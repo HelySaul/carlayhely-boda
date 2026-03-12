@@ -84,7 +84,7 @@ function ModalNuevaInvitación({ onClose, onCreated }: { onClose: () => void; on
     if (validos.length === 0) { setError("Agrega al menos un nombre"); return; }
     setLoading(true); setError("");
 
-    const res = await fetch("/api/admin/invitacións", {
+    const res = await fetch("/api/admin/invitaciones", {
       method: "POST", headers: authHeaders(),
       body: JSON.stringify({ invitados: validos }),
     });
@@ -274,7 +274,7 @@ export default function AdminDashboard() {
     if (!localStorage.getItem("admin_token")) { router.push("/admin"); return; }
     const fetchData = async () => {
       setLoading(true);
-      const res = await fetch("/api/admin/invitacións", { headers: { Authorization: `Bearer ${token()}` } });
+      const res = await fetch("/api/admin/invitaciones", { headers: { Authorization: `Bearer ${token()}` } });
       if (res.status === 401) { router.push("/admin"); return; }
       setInvitacións(await res.json());
       setLoading(false);
@@ -307,7 +307,7 @@ export default function AdminDashboard() {
   }
 
   async function deleteInvitación(id: string) {
-    await fetch(`/api/admin/invitacións?id=${id}`, { method: "DELETE", headers: { Authorization: `Bearer ${token()}` } });
+    await fetch(`/api/admin/invitaciones?id=${id}`, { method: "DELETE", headers: { Authorization: `Bearer ${token()}` } });
     setInvitacións(rs => rs.filter(r => r.id !== id));
   }
 
