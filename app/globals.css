@@ -1,0 +1,101 @@
+@import url('https://fonts.googleapis.com/css2?family=Pinyon+Script&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500;1,600&family=Montserrat:wght@300;400;500&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --cream:           #FDFAF6;
+  --cream-mid:       #F9F4EE;
+  --cream-deep:      #F2EBE0;
+
+  --red:             #C94F4F;
+  --red-muted:       rgba(201, 79, 79, 0.15);
+  --terracotta:      #D4693A;
+  --terracotta-muted:rgba(212, 105, 58, 0.15);
+  --gold:            #D4A832;
+  --gold-line:       rgba(212, 168, 50, 0.4);
+  --olive:           #7A9438;
+  --olive-muted:     rgba(122, 148, 56, 0.15);
+  --lavender:        #9B8BB4;
+  --periwinkle:      #7A8FBC;
+
+  /* aliases usados por componentes */
+  --blush:           #C94F4F;
+  --blush-light:     #E8A070;
+  --blush-pale:      #F5EDE8;
+  --coral:           #D4693A;
+  --wood:            #D4693A;
+  --wood-dark:       #A84A20;
+  --sage:            #7A9438;
+  --sage-light:      #A8BC6A;
+
+  --border-subtle:   rgba(212, 105, 58, 0.18);
+  --border-medium:   rgba(212, 105, 58, 0.28);
+
+  /* Fondos por sección — degradados con los colores de la boda */
+  --bg-hero:        linear-gradient(160deg, #FDF6EE 0%, #F5E4D0 40%, #EFF3E8 100%);
+  --bg-story:       linear-gradient(170deg, #FDF8F2 0%, #F8EBD8 50%, #EFF5E8 100%);
+  --bg-program:     linear-gradient(150deg, #F2EBE0 0%, #EDF2E6 45%, #EDE6F5 100%);
+  --bg-venue:       linear-gradient(165deg, #F5F0E4 0%, #E8F2E4 45%, #F5EBE0 100%);
+  --bg-dresscode:   linear-gradient(145deg, #EEE8F5 0%, #F5E8E0 50%, #E8F2E8 100%);
+  --bg-details:     linear-gradient(160deg, #F5EEE4 0%, #E8F5E8 45%, #F5E8E8 100%);
+  --bg-photos:      linear-gradient(155deg, #EEF4E6 0%, #F5ECE0 50%, #EDE6F5 100%);
+  --bg-footer:      linear-gradient(170deg, #EDE0D0 0%, #E4EED8 50%, #E4D8EE 100%);
+
+  --ink:             #2C2320;
+  --ink-mid:         #5C4A42;
+  --ink-light:       #9A8880;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  background-color: var(--cream);
+  color: var(--ink);
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 300;
+  overflow-x: hidden;
+  line-height: 1;
+}
+
+/* ── Tipografías ── */
+.script { font-family: 'Pinyon Script', cursive; }
+.serif  { font-family: 'Cormorant Garamond', serif; }
+.sans   { font-family: 'Montserrat', sans-serif; }
+
+/* ── Ornamentos ── */
+.ornament-line {
+  display: block;
+  width: 100%;
+  max-width: 320px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent 0%, var(--gold) 40%, var(--terracotta) 60%, transparent 100%);
+  margin: 0 auto;
+}
+
+.ornament-line-sm {
+  display: block;
+  width: 60px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  margin: 0 auto;
+}
+
+/* ── SVG draw animation ── */
+.svg-draw {
+  stroke-dasharray: 1000;
+  stroke-dashoffset: 1000;
+  animation: draw 2s ease forwards 0.5s;
+}
+
+@keyframes draw {
+  to { stroke-dashoffset: 0; }
+}
