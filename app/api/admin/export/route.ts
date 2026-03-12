@@ -6,8 +6,8 @@ export async function GET(req: NextRequest) {
   const admin = await getAdminFromRequest(req);
   if (!admin) return NextResponse.json({ error: 'No autorizado' }, { status: 401 });
 
-  const { data: invitacions, error } = await getSupabaseAdmin()
-    .from('invitacions')
+  const { data: invitaciones, error } = await getSupabaseAdmin()
+    .from('invitaciones')
     .select(`*, invitados(*)`)
     .order('codigo');
 
@@ -17,7 +17,7 @@ export async function GET(req: NextRequest) {
     'Código,Nombre,WhatsApp,1ra Confirmación,2da Confirmación,3ra Confirmación,Asistió'
   ];
 
-  for (const r of invitacions ?? []) {
+  for (const r of invitaciones ?? []) {
     for (const inv of r.invitados ?? []) {
       rows.push([
         r.codigo,

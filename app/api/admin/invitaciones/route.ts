@@ -12,12 +12,12 @@ function generarCodigo(): string {
   return String(Math.floor(100000 + Math.random() * 900000));
 }
 
-// GET — lista todas las invitacions con sus invitados
+// GET — lista todas las invitaciones con sus invitados
 export async function GET(req: NextRequest) {
   const deny = await auth(req); if (deny) return deny;
 
   const { data, error } = await getSupabaseAdmin()
-    .from('invitacions')
+    .from('invitaciones')
     .select(`*, invitados(*)`)
     .order('created_at', { ascending: false });
 
@@ -39,7 +39,7 @@ export async function POST(req: NextRequest) {
   let codigo = generarCodigo();
   let intentos = 0;
   while (intentos < 10) {
-    const { data } = await getSupabaseAdmin().from('invitacions').select('id').eq('codigo', codigo).single();
+    const { data } = await getSupabaseAdmin().from('invitaciones').select('id').eq('codigo', codigo).single();
     if (!data) break;
     codigo = generarCodigo();
     intentos++;
@@ -47,7 +47,7 @@ export async function POST(req: NextRequest) {
 
   // Crear invitacion
   const { data: invitacion, error: rError } = await getSupabaseAdmin()
-    .from('invitacions')
+    .from('invitaciones')
     .insert({ codigo })
     .select()
     .single();
@@ -66,7 +66,7 @@ export async function POST(req: NextRequest) {
 
   // Retornar invitacion completa
   const { data: full } = await getSupabaseAdmin()
-    .from('invitacions')
+    .from('invitaciones')
     .select(`*, invitados(*)`)
     .eq('id', invitacion.id)
     .single();
@@ -81,7 +81,7 @@ export async function DELETE(req: NextRequest) {
   const id = req.nextUrl.searchParams.get('id');
   if (!id) return NextResponse.json({ error: 'ID requerido' }, { status: 400 });
 
-  const { error } = await getSupabaseAdmin().from('invitacions').delete().eq('id', id);
+  const { error } = await getSupabaseAdmin().from('invitaciones').delete().eq('id', id);
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
   return NextResponse.json({ ok: true });
 }
