@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import FloralAccent from "./FloralAccent";
 
-const TARGET = new Date("2026-06-13T16:00:00");
+const TARGET = new Date("2026-06-13T18:00:00");
 function pad(n: number) { return String(n).padStart(2, "0"); }
 
 function Countdown() {
@@ -41,8 +41,8 @@ export default function Hero() {
     }}>
       {/* Manchas — clip propio para no crear scroll horizontal */}
       <div style={{ position: "absolute", inset: 0, overflow: "hidden", pointerEvents: "none", zIndex: 0 }}>
-        <div style={{ position: "absolute", top: "-10%", right: "-10%", width: "clamp(220px,55vw,420px)", height: "clamp(220px,55vw,420px)", borderRadius: "50%", background: "radial-gradient(circle, rgba(201,79,79,0.22) 0%, rgba(212,105,58,0.10) 50%, transparent 75%)" }} />
-        <div style={{ position: "absolute", bottom: "0%", left: "-10%", width: "clamp(180px,45vw,340px)", height: "clamp(180px,45vw,340px)", borderRadius: "50%", background: "radial-gradient(circle, rgba(122,148,56,0.22) 0%, rgba(122,148,56,0.08) 55%, transparent 75%)" }} />
+        <div style={{ position: "absolute", top: "-10%", right: "0", width: "clamp(220px,55vw,420px)", height: "clamp(220px,55vw,420px)", borderRadius: "50%", background: "radial-gradient(circle, rgba(201,79,79,0.22) 0%, rgba(212,105,58,0.10) 50%, transparent 75%)" }} />
+        <div style={{ position: "absolute", bottom: "0%", left: "0", width: "clamp(180px,45vw,340px)", height: "clamp(180px,45vw,340px)", borderRadius: "50%", background: "radial-gradient(circle, rgba(122,148,56,0.22) 0%, rgba(122,148,56,0.08) 55%, transparent 75%)" }} />
         <div style={{ position: "absolute", top: "40%", left: "5%", width: "clamp(80px,18vw,140px)", height: "clamp(80px,18vw,140px)", borderRadius: "50%", background: "radial-gradient(circle, rgba(212,168,50,0.18) 0%, transparent 70%)" }} />
       </div>
 

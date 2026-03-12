@@ -21,10 +21,10 @@ export default function DriveSection() {
 
       <div style={{ position: "absolute", inset: 0, overflow: "hidden", pointerEvents: "none", zIndex: 0 }}>
 
-      <div style={{ position: "absolute", top: "-8%", right: "-8%", width: "clamp(160px,36vw,280px)", height: "clamp(160px,36vw,280px)", borderRadius: "50%", background: "radial-gradient(circle, rgba(122,148,56,0.18) 0%, transparent 70%)", pointerEvents: "none" }} />
+      <div style={{ position: "absolute", top: "-8%", right: "0", width: "clamp(160px,36vw,280px)", height: "clamp(160px,36vw,280px)", borderRadius: "50%", background: "radial-gradient(circle, rgba(122,148,56,0.18) 0%, transparent 70%)", pointerEvents: "none" }} />
 
       </div>
-      <div style={{ position: "absolute", bottom: "-5%", left: "-6%", width: "clamp(140px,30vw,240px)", height: "clamp(140px,30vw,240px)", borderRadius: "50%", background: "radial-gradient(circle, rgba(155,139,180,0.18) 0%, transparent 70%)", pointerEvents: "none" }} />
+      <div style={{ position: "absolute", bottom: "-5%", left: "0", width: "clamp(140px,30vw,240px)", height: "clamp(140px,30vw,240px)", borderRadius: "50%", background: "radial-gradient(circle, rgba(155,139,180,0.18) 0%, transparent 70%)", pointerEvents: "none" }} />
       <div style={{ maxWidth: "540px", margin: "0 auto" }}>
 
         <Reveal>
