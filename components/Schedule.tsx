@@ -1,5 +1,6 @@
 "use client";
 import Reveal from "./Reveal";
+import FloralAccent from "./FloralAccent";
 
 export default function Schedule() {
   return (
@@ -7,6 +8,7 @@ export default function Schedule() {
       {/* Manchas decorativas */}
       <div style={{ position: "absolute", top: "10%", right: "-6%", width: "clamp(140px,30vw,240px)", height: "clamp(140px,30vw,240px)", borderRadius: "50%", background: "radial-gradient(circle, rgba(155,139,180,0.18) 0%, transparent 70%)", pointerEvents: "none" }} />
       <div style={{ position: "absolute", bottom: "5%", left: "-6%", width: "clamp(120px,25vw,200px)", height: "clamp(120px,25vw,200px)", borderRadius: "50%", background: "radial-gradient(circle, rgba(122,148,56,0.18) 0%, transparent 70%)", pointerEvents: "none" }} />
+      <FloralAccent side="left" x="-20px" y="bottom: 2%" size={68} petalColor="#D4A832" petalColor2="#7A9438" rotate={10} opacity={0.80} />
       <div style={{ maxWidth: "540px", margin: "0 auto" }}>
 
         <Reveal>

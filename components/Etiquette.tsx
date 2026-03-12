@@ -1,8 +1,9 @@
 "use client";
 import Reveal from "./Reveal";
+import FloralAccent from "./FloralAccent";
 
 const RULES = [
-  { title: "La puntualidad es un regalo", text: "La ceremonia iniciará exactamente a las 6:00 PM. Llegar a tiempo es la primera forma de honrar este momento tan especial para nosotros.", color: "var(--red)" },
+  { title: "La puntualidad es un regalo", text: "La ceremonia iniciará exactamente a las 4:00 PM. Llegar a tiempo es la primera forma de honrar este momento tan especial para nosotros.", color: "var(--red)" },
   { title: "Solo los invitados confirmados", text: "Por razones de organización y aforo, el acceso es exclusivo para quienes están en nuestra lista. Cada lugar fue reservado con mucho cariño.", color: "var(--terracotta)" },
   { title: "El personal está para servirte", text: "Nuestro equipo de mesoneros se encargará de atenderte con dedicación. Te pedimos esperar su indicación para acercarte a las mesas de comida y dulces.", color: "var(--olive)" },
   { title: "Cuida este espacio tan bello", text: "Brisas del Renacer es tan hermoso porque es cuidado con amor. Te pedimos mantenerlo así: respetar la decoración, las plantas y cada rincón del local.", color: "var(--gold)" },
@@ -18,6 +19,7 @@ export default function Etiquette() {
       {/* Manchas decorativas */}
       <div style={{ position: "absolute", top: "5%", right: "-6%", width: "clamp(140px,32vw,260px)", height: "clamp(140px,32vw,260px)", borderRadius: "50%", background: "radial-gradient(circle, rgba(122,148,56,0.16) 0%, transparent 70%)", pointerEvents: "none" }} />
       <div style={{ position: "absolute", bottom: "0%", left: "-8%", width: "clamp(160px,36vw,280px)", height: "clamp(160px,36vw,280px)", borderRadius: "50%", background: "radial-gradient(circle, rgba(201,79,79,0.14) 0%, transparent 70%)", pointerEvents: "none" }} />
+      <FloralAccent side="right" x="-20px" y="top: 20%" size={70} petalColor="#D4693A" petalColor2="#D4A832" rotate={20}  opacity={0.80} />
       <div style={{ maxWidth: "540px", margin: "0 auto" }}>
 
         <Reveal>
