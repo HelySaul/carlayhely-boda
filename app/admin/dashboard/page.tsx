@@ -67,8 +67,8 @@ const btnChip = (active: boolean): React.CSSProperties => ({
 function StatCard({ value, label, color }: { value: number; label: string; color: string }) {
   return (
     <div style={{ padding: "1rem 0.6rem", background: "var(--cream-mid)", border: "1px solid var(--border-subtle)", borderTop: `3px solid ${color}`, borderRadius: "2px", textAlign: "center" }}>
-      <p style={{ fontSize: "1.6rem", fontFamily: "'Cormorant Garamond', serif", color, lineHeight: 1 }}>{value}</p>
-      <p className="sans" style={{ fontSize: "0.52rem", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--ink-light)", marginTop: "0.3rem" }}>{label}</p>
+      <p style={{ fontSize: "2rem", fontFamily: "'Cormorant Garamond', serif", color, lineHeight: 1 }}>{value}</p>
+      <p className="sans" style={{ fontSize: "0.62rem", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--ink-light)", marginTop: "0.4rem" }}>{label}</p>
     </div>
   );
 }
@@ -91,59 +91,180 @@ function BarraFiltros({
   creadores: string[]; creadoPor: string; setCreadoPor: (v: string) => void;
   extra?: React.ReactNode;
 }) {
+  const [open, setOpen] = useState(false);
+
+  const activosCount = [
+    tipo !== "todos",
+    confFiltro !== "todos",
+    creadoPor !== "",
+    sortKey !== "fecha",
+  ].filter(Boolean).length;
+
+  function limpiar() {
+    setTipo("todos"); setConfFiltro("todos");
+    setCreadoPor(""); setSortKey("fecha"); setSortDir("desc");
+  }
+
+  const seccionLabel: React.CSSProperties = {
+    fontFamily: "'Montserrat', sans-serif",
+    fontSize: "0.62rem", letterSpacing: "0.2em",
+    textTransform: "uppercase", color: "var(--ink-light)",
+    marginBottom: "0.6rem", display: "block",
+  };
+  const chip = (active: boolean): React.CSSProperties => ({
+    padding: "0.5rem 1rem",
+    background: active ? "var(--terracotta)" : "var(--cream)",
+    color: active ? "var(--cream)" : "var(--ink)",
+    border: `1px solid ${active ? "var(--terracotta)" : "var(--border-subtle)"}`,
+    borderRadius: "2px",
+    fontFamily: "'Montserrat', sans-serif",
+    fontSize: "0.75rem",
+    letterSpacing: "0.05em",
+    cursor: "pointer",
+    whiteSpace: "nowrap",
+    transition: "all 0.15s",
+  });
+
   return (
-    <div style={{ marginBottom: "1.2rem", display: "flex", flexDirection: "column", gap: "0.7rem" }}>
-      {/* Fila 1: búsqueda + botón extra */}
-      <div style={{ display: "flex", gap: "0.6rem" }}>
-        <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Buscar por nombre o código..." style={{ ...inputStyle, flex: 1 }} />
+    <>
+      {/* Fila principal: búsqueda + botón filtros + extra */}
+      <div style={{ display: "flex", gap: "0.6rem", marginBottom: "1rem", alignItems: "stretch" }}>
+        <div style={{ position: "relative", flex: 1 }}>
+          <span style={{ position: "absolute", left: "0.9rem", top: "50%", transform: "translateY(-50%)", color: "var(--ink-light)", fontSize: "0.9rem", pointerEvents: "none" }}>
+            &#128269;
+          </span>
+          <input
+            value={search} onChange={e => setSearch(e.target.value)}
+            placeholder="Buscar nombre o código..."
+            style={{ ...inputStyle, paddingLeft: "2.4rem", fontSize: "0.9rem" }}
+          />
+        </div>
+        <button onClick={() => setOpen(o => !o)} style={{
+          position: "relative",
+          padding: "0 1.1rem",
+          background: open ? "var(--terracotta)" : "var(--cream)",
+          color: open ? "var(--cream)" : "var(--ink)",
+          border: `1px solid ${open ? "var(--terracotta)" : "var(--border-subtle)"}`,
+          borderRadius: "2px",
+          fontFamily: "'Montserrat', sans-serif",
+          fontSize: "0.75rem", letterSpacing: "0.1em",
+          textTransform: "uppercase", cursor: "pointer",
+          whiteSpace: "nowrap", transition: "all 0.15s",
+          display: "flex", alignItems: "center", gap: "0.5rem",
+        }}>
+          <span>Filtros</span>
+          {activosCount > 0 && (
+            <span style={{
+              background: open ? "rgba(255,255,255,0.3)" : "var(--terracotta)",
+              color: "var(--cream)", borderRadius: "20px",
+              fontSize: "0.65rem", fontWeight: 700,
+              padding: "0.05rem 0.45rem", lineHeight: 1.4,
+            }}>{activosCount}</span>
+          )}
+        </button>
         {extra}
       </div>
 
-      {/* Fila 2: ordenar */}
-      <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap", alignItems: "center" }}>
-        <span className="sans" style={{ fontSize: "0.58rem", letterSpacing: "0.15em", textTransform: "uppercase", color: "var(--ink-light)" }}>Ordenar:</span>
-        <select value={sortKey} onChange={e => setSortKey(e.target.value as SortKey)} style={selectStyle}>
-          <option value="fecha">Fecha registro</option>
-          <option value="nombre">Nombre A-Z</option>
-          <option value="codigo">Código</option>
-          <option value="creado_por">Quién registró</option>
-          <option value="cantidad">Cantidad personas</option>
-          <option value="confirmados">Confirmados</option>
-        </select>
-        <button onClick={() => setSortDir(sortDir === "asc" ? "desc" : "asc")} style={{ ...selectStyle, padding: "0.6rem 0.7rem" }}>
-          {sortDir === "asc" ? "↑ Asc" : "↓ Desc"}
-        </button>
-      </div>
+      {/* Panel de filtros — overlay en móvil, inline en desktop */}
+      {open && (
+        <>
+          {/* Overlay backdrop en móvil */}
+          <div onClick={() => setOpen(false)} style={{
+            position: "fixed", inset: 0, background: "rgba(0,0,0,0.3)",
+            zIndex: 200,
+          }} />
 
-      {/* Fila 3: chips de tipo */}
-      <div style={{ display: "flex", gap: "0.4rem", flexWrap: "wrap", alignItems: "center" }}>
-        <span className="sans" style={{ fontSize: "0.58rem", letterSpacing: "0.15em", textTransform: "uppercase", color: "var(--ink-light)" }}>Tipo:</span>
-        {(["todos", "grupo", "individual"] as TipoFiltro[]).map(t => (
-          <button key={t} onClick={() => setTipo(t)} style={btnChip(tipo === t)}>
-            {t === "todos" ? "Todos" : t === "grupo" ? "Grupos" : "Individuales"}
-          </button>
-        ))}
-      </div>
+          {/* Panel */}
+          <div style={{
+            position: "fixed", left: 0, right: 0, bottom: 0,
+            background: "var(--cream-mid)",
+            borderTop: "1px solid var(--border-subtle)",
+            borderRadius: "12px 12px 0 0",
+            zIndex: 201,
+            padding: "1.5rem 1.2rem 2rem",
+            maxHeight: "80dvh", overflowY: "auto",
+            boxShadow: "0 -8px 40px rgba(0,0,0,0.12)",
+          }}>
+            {/* Handle bar */}
+            <div style={{ width: "40px", height: "4px", background: "var(--border-subtle)", borderRadius: "2px", margin: "0 auto 1.5rem" }} />
 
-      {/* Fila 4: confirmación */}
-      <div style={{ display: "flex", gap: "0.4rem", flexWrap: "wrap", alignItems: "center" }}>
-        <span className="sans" style={{ fontSize: "0.58rem", letterSpacing: "0.15em", textTransform: "uppercase", color: "var(--ink-light)" }}>Conf:</span>
-        {([["todos","Todas"], ["conf1","1ra"], ["conf2","2da"], ["conf3","3ra"], ["ninguna","Ninguna"]] as [ConfFiltro, string][]).map(([v, l]) => (
-          <button key={v} onClick={() => setConfFiltro(v)} style={btnChip(confFiltro === v)}>{l}</button>
-        ))}
-      </div>
+            {/* Header */}
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.5rem" }}>
+              <h3 className="serif" style={{ fontSize: "1.3rem", color: "var(--ink)", margin: 0 }}>Filtros y orden</h3>
+              <div style={{ display: "flex", gap: "0.6rem", alignItems: "center" }}>
+                {activosCount > 0 && (
+                  <button onClick={limpiar} style={{ background: "none", border: "none", color: "var(--terracotta)", fontFamily: "'Montserrat',sans-serif", fontSize: "0.7rem", letterSpacing: "0.1em", textTransform: "uppercase", cursor: "pointer", textDecoration: "underline" }}>
+                    Limpiar
+                  </button>
+                )}
+                <button onClick={() => setOpen(false)} style={{ background: "none", border: "none", color: "var(--ink-light)", fontSize: "1.4rem", cursor: "pointer", lineHeight: 1, padding: "0 0.2rem" }}>×</button>
+              </div>
+            </div>
 
-      {/* Fila 5: por quién registró */}
-      {creadores.length > 1 && (
-        <div style={{ display: "flex", gap: "0.4rem", flexWrap: "wrap", alignItems: "center" }}>
-          <span className="sans" style={{ fontSize: "0.58rem", letterSpacing: "0.15em", textTransform: "uppercase", color: "var(--ink-light)" }}>Por:</span>
-          <button onClick={() => setCreadoPor("")} style={btnChip(creadoPor === "")}>Todos</button>
-          {creadores.map(c => (
-            <button key={c} onClick={() => setCreadoPor(c)} style={btnChip(creadoPor === c)}>{c}</button>
-          ))}
-        </div>
+            {/* Ordenar */}
+            <div style={{ marginBottom: "1.5rem" }}>
+              <span style={seccionLabel}>Ordenar por</span>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.5rem" }}>
+                {([
+                  ["fecha", "Fecha"],
+                  ["nombre", "Nombre A-Z"],
+                  ["cantidad", "Cantidad"],
+                  ["confirmados", "Confirmados"],
+                  ["creado_por", "Quién registró"],
+                  ["codigo", "Código"],
+                ] as [SortKey, string][]).map(([v, l]) => (
+                  <button key={v} onClick={() => setSortKey(v)} style={chip(sortKey === v)}>{l}</button>
+                ))}
+              </div>
+              <div style={{ display: "flex", gap: "0.5rem", marginTop: "0.6rem" }}>
+                <button onClick={() => setSortDir("asc")} style={{ ...chip(sortDir === "asc"), flex: 1 }}>↑ Ascendente</button>
+                <button onClick={() => setSortDir("desc")} style={{ ...chip(sortDir === "desc"), flex: 1 }}>↓ Descendente</button>
+              </div>
+            </div>
+
+            {/* Tipo */}
+            <div style={{ marginBottom: "1.5rem" }}>
+              <span style={seccionLabel}>Tipo de invitación</span>
+              <div style={{ display: "flex", gap: "0.5rem" }}>
+                {(["todos", "grupo", "individual"] as TipoFiltro[]).map(t => (
+                  <button key={t} onClick={() => setTipo(t)} style={{ ...chip(tipo === t), flex: 1 }}>
+                    {t === "todos" ? "Todos" : t === "grupo" ? "Grupos" : "Individuales"}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Confirmación */}
+            <div style={{ marginBottom: creadores.length > 1 ? "1.5rem" : 0 }}>
+              <span style={seccionLabel}>Confirmación</span>
+              <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
+                {([["todos","Todas"], ["conf1","1ra conf"], ["conf2","2da conf"], ["conf3","3ra conf"], ["ninguna","Sin confirmar"]] as [ConfFiltro, string][]).map(([v, l]) => (
+                  <button key={v} onClick={() => setConfFiltro(v)} style={chip(confFiltro === v)}>{l}</button>
+                ))}
+              </div>
+            </div>
+
+            {/* Por quién registró */}
+            {creadores.length > 1 && (
+              <div>
+                <span style={seccionLabel}>Registrado por</span>
+                <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
+                  <button onClick={() => setCreadoPor("")} style={chip(creadoPor === "")}>Todos</button>
+                  {creadores.map(c => (
+                    <button key={c} onClick={() => setCreadoPor(c)} style={chip(creadoPor === c)}>{c}</button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Botón aplicar */}
+            <button onClick={() => setOpen(false)} style={{ ...btnPrimary, width: "100%", marginTop: "2rem", padding: "0.9rem", fontSize: "0.75rem" }}>
+              Ver resultados
+            </button>
+          </div>
+        </>
       )}
-    </div>
+    </>
   );
 }
 
@@ -607,8 +728,8 @@ export default function AdminDashboard() {
               padding: "0.6rem 1rem", background: "none", border: "none",
               borderBottom: tab === t ? "2px solid var(--terracotta)" : "2px solid transparent",
               color: tab === t ? "var(--terracotta)" : "var(--ink-light)",
-              fontFamily: "'Montserrat', sans-serif", fontSize: "0.6rem",
-              letterSpacing: "0.15em", textTransform: "uppercase", cursor: "pointer",
+              fontFamily: "'Montserrat', sans-serif", fontSize: "0.7rem",
+              letterSpacing: "0.12em", textTransform: "uppercase", cursor: "pointer",
               marginBottom: "-1px", whiteSpace: "nowrap",
             }}>
               {t === "invitaciones" ? "Invitaciones" : t === "lista" ? "Todos" : t === "confirmados" ? "Confirmados" : "Usuarios"}
@@ -641,8 +762,8 @@ export default function AdminDashboard() {
               <div key={inv.id} style={{ padding: "0.7rem 0.8rem", background: "var(--cream-mid)", border: "1px solid var(--border-subtle)", borderRadius: "2px", marginBottom: "0.3rem" }}>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "0.4rem" }}>
                   <div style={{ display: "flex", alignItems: "center", gap: "0.6rem" }}>
-                    <span className="sans" style={{ fontSize: "0.65rem", color: "var(--ink-light)", minWidth: "1.5rem", textAlign: "right" }}>{idx + 1}.</span>
-                    <span className="serif" style={{ fontSize: "0.95rem", color: "var(--ink)" }}>{inv.nombre}</span>
+                    <span className="sans" style={{ fontSize: "0.75rem", color: "var(--ink-light)", minWidth: "1.8rem", textAlign: "right" }}>{idx + 1}.</span>
+                    <span className="serif" style={{ fontSize: "1.05rem", color: "var(--ink)" }}>{inv.nombre}</span>
                   </div>
                   <div style={{ display: "flex", gap: "0.5rem", alignItems: "center", flexWrap: "wrap" }}>
                     <span className="sans" style={{ fontSize: "0.62rem", color: "var(--terracotta)" }}>{inv.codigo}</span>
@@ -650,10 +771,10 @@ export default function AdminDashboard() {
                   </div>
                 </div>
                 <div style={{ display: "flex", gap: "0.8rem", marginTop: "0.4rem", flexWrap: "wrap", paddingLeft: "2.1rem" }}>
-                  <span className="sans" style={{ fontSize: "0.65rem", color: inv.confirmacion_1 ? "var(--olive)" : "var(--ink-light)" }}>1ra: {inv.confirmacion_1 ? `Sí ${fechaCorta(inv.confirmacion_1_fecha)}` : "No"}</span>
-                  <span className="sans" style={{ fontSize: "0.65rem", color: inv.confirmacion_2 ? "var(--periwinkle)" : "var(--ink-light)" }}>2da: {inv.confirmacion_2 ? `Sí ${fechaCorta(inv.confirmacion_2_fecha)}` : "No"}</span>
-                  <span className="sans" style={{ fontSize: "0.65rem", color: inv.confirmacion_3 ? "var(--gold)" : "var(--ink-light)" }}>3ra: {inv.confirmacion_3 ? `Sí ${fechaCorta(inv.confirmacion_3_fecha)}` : "No"}</span>
-                  <span className="sans" style={{ fontSize: "0.65rem", color: inv.asistio ? "var(--terracotta)" : "var(--ink-light)" }}>Asistió: {inv.asistio ? "Sí" : "No"}</span>
+                  <span className="sans" style={{ fontSize: "0.75rem", color: inv.confirmacion_1 ? "var(--olive)" : "var(--ink-light)" }}>1ra: {inv.confirmacion_1 ? `Sí ${fechaCorta(inv.confirmacion_1_fecha)}` : "No"}</span>
+                  <span className="sans" style={{ fontSize: "0.75rem", color: inv.confirmacion_2 ? "var(--periwinkle)" : "var(--ink-light)" }}>2da: {inv.confirmacion_2 ? `Sí ${fechaCorta(inv.confirmacion_2_fecha)}` : "No"}</span>
+                  <span className="sans" style={{ fontSize: "0.75rem", color: inv.confirmacion_3 ? "var(--gold)" : "var(--ink-light)" }}>3ra: {inv.confirmacion_3 ? `Sí ${fechaCorta(inv.confirmacion_3_fecha)}` : "No"}</span>
+                  <span className="sans" style={{ fontSize: "0.75rem", color: inv.asistio ? "var(--terracotta)" : "var(--ink-light)" }}>Asistió: {inv.asistio ? "Sí" : "No"}</span>
                 </div>
               </div>
             ))}
@@ -667,15 +788,15 @@ export default function AdminDashboard() {
               <div key={inv.id} style={{ padding: "0.7rem 0.8rem", background: "var(--cream-mid)", border: "1px solid var(--border-subtle)", borderRadius: "2px", marginBottom: "0.3rem" }}>
                 <div style={{ display: "flex", justifyContent: "space-between", flexWrap: "wrap", gap: "0.4rem" }}>
                   <div style={{ display: "flex", alignItems: "center", gap: "0.6rem" }}>
-                    <span className="sans" style={{ fontSize: "0.65rem", color: "var(--ink-light)", minWidth: "1.5rem", textAlign: "right" }}>{idx + 1}.</span>
-                    <span className="serif" style={{ fontSize: "0.95rem", color: "var(--ink)" }}>{inv.nombre}</span>
+                    <span className="sans" style={{ fontSize: "0.75rem", color: "var(--ink-light)", minWidth: "1.8rem", textAlign: "right" }}>{idx + 1}.</span>
+                    <span className="serif" style={{ fontSize: "1.05rem", color: "var(--ink)" }}>{inv.nombre}</span>
                   </div>
                   <span className="sans" style={{ fontSize: "0.62rem", color: "var(--terracotta)" }}>{inv.codigo}</span>
                 </div>
                 <div style={{ display: "flex", gap: "0.8rem", marginTop: "0.4rem", flexWrap: "wrap", paddingLeft: "2.1rem" }}>
-                  <span className="sans" style={{ fontSize: "0.65rem", color: inv.confirmacion_1 ? "var(--olive)" : "var(--ink-light)" }}>1ra: {inv.confirmacion_1 ? `Sí ${fechaCorta(inv.confirmacion_1_fecha)}` : "—"}</span>
-                  <span className="sans" style={{ fontSize: "0.65rem", color: inv.confirmacion_2 ? "var(--periwinkle)" : "var(--ink-light)" }}>2da: {inv.confirmacion_2 ? `Sí ${fechaCorta(inv.confirmacion_2_fecha)}` : "—"}</span>
-                  <span className="sans" style={{ fontSize: "0.65rem", color: inv.confirmacion_3 ? "var(--gold)" : "var(--ink-light)" }}>3ra: {inv.confirmacion_3 ? `Sí ${fechaCorta(inv.confirmacion_3_fecha)}` : "—"}</span>
+                  <span className="sans" style={{ fontSize: "0.75rem", color: inv.confirmacion_1 ? "var(--olive)" : "var(--ink-light)" }}>1ra: {inv.confirmacion_1 ? `Sí ${fechaCorta(inv.confirmacion_1_fecha)}` : "—"}</span>
+                  <span className="sans" style={{ fontSize: "0.75rem", color: inv.confirmacion_2 ? "var(--periwinkle)" : "var(--ink-light)" }}>2da: {inv.confirmacion_2 ? `Sí ${fechaCorta(inv.confirmacion_2_fecha)}` : "—"}</span>
+                  <span className="sans" style={{ fontSize: "0.75rem", color: inv.confirmacion_3 ? "var(--gold)" : "var(--ink-light)" }}>3ra: {inv.confirmacion_3 ? `Sí ${fechaCorta(inv.confirmacion_3_fecha)}` : "—"}</span>
                 </div>
               </div>
             ))}
