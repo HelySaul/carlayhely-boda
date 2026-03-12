@@ -1,6 +1,5 @@
 "use client";
 import Reveal from "./Reveal";
-import FloralAccent from "./FloralAccent";
 
 export default function DriveSection() {
   const DRIVE_URL = "#"; // reemplazar con el link real
@@ -19,7 +18,6 @@ export default function DriveSection() {
       {/* Manchas decorativas */}
       <div style={{ position: "absolute", top: "-8%", right: "-8%", width: "clamp(160px,36vw,280px)", height: "clamp(160px,36vw,280px)", borderRadius: "50%", background: "radial-gradient(circle, rgba(122,148,56,0.18) 0%, transparent 70%)", pointerEvents: "none" }} />
       <div style={{ position: "absolute", bottom: "-5%", left: "-6%", width: "clamp(140px,30vw,240px)", height: "clamp(140px,30vw,240px)", borderRadius: "50%", background: "radial-gradient(circle, rgba(155,139,180,0.18) 0%, transparent 70%)", pointerEvents: "none" }} />
-      <FloralAccent side="left" x="-18px" y="bottom: 0%" size={65} petalColor="#9B8BB4" petalColor2="#7A8FBC" rotate={-8}  opacity={0.78} />
       <div style={{ maxWidth: "540px", margin: "0 auto" }}>
 
         <Reveal>

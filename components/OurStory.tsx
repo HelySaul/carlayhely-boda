@@ -1,6 +1,5 @@
 "use client";
 import Reveal from "./Reveal";
-import FloralAccent from "./FloralAccent";
 
 const MOMENTS = [
   { label: "El comienzo", text: "Dos caminos que parecían distintos, unidos por algo más grande que nosotros. Así comenzó todo — sin prisa, sin presión, solo con la certeza de que algo especial estaba naciendo." },
@@ -13,7 +12,6 @@ export default function OurStory() {
     <section id="nosotros" style={{ padding: "6rem 1.5rem", background: "var(--bg-story)", textAlign: "center", position: "relative", overflow: "hidden" }}>
       {/* Manchas decorativas */}
       <div style={{ position: "absolute", top: "-5%", left: "-8%", width: "clamp(150px,35vw,280px)", height: "clamp(150px,35vw,280px)", borderRadius: "50%", background: "radial-gradient(circle, rgba(212,105,58,0.14) 0%, transparent 70%)", pointerEvents: "none" }} />
-      <FloralAccent side="right" x="-15px" y="top: 5%" size={72} petalColor="#9B8BB4" petalColor2="#C94F4F" rotate={-25} opacity={0.80} />
       <div style={{ position: "absolute", bottom: "-5%", right: "-8%", width: "clamp(120px,30vw,240px)", height: "clamp(120px,30vw,240px)", borderRadius: "50%", background: "radial-gradient(circle, rgba(122,148,56,0.14) 0%, transparent 70%)", pointerEvents: "none" }} />
       <div style={{ maxWidth: "540px", margin: "0 auto" }}>
 

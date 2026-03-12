@@ -8,8 +8,7 @@ export default function Footer() {
       {/* Manchas decorativas */}
       <div style={{ position: "absolute", top: "-8%", left: "-8%", width: "clamp(180px,40vw,320px)", height: "clamp(180px,40vw,320px)", borderRadius: "50%", background: "radial-gradient(circle, rgba(212,105,58,0.16) 0%, transparent 70%)", pointerEvents: "none" }} />
       <div style={{ position: "absolute", bottom: "-8%", right: "-6%", width: "clamp(160px,35vw,280px)", height: "clamp(160px,35vw,280px)", borderRadius: "50%", background: "radial-gradient(circle, rgba(122,148,56,0.16) 0%, transparent 70%)", pointerEvents: "none" }} />
-      <FloralAccent side="left"  x="-16px" y="top: 10%"    size={70} petalColor="#C94F4F" petalColor2="#D4693A" rotate={12}  opacity={0.80} />
-      <FloralAccent side="right" x="-16px" y="bottom: 5%"  size={60} petalColor="#7A9438" petalColor2="#D4A832" rotate={-18} opacity={0.75} />
+      <FloralAccent side="left" x="-8px" y="top: -35px" size={85} petalColor="#C94F4F" petalColor2="#D4693A" rotate={8} opacity={0.48} />
       <Reveal>
         <svg viewBox="0 0 320 30" fill="none" style={{ width: "100%", maxWidth: "300px", height: "30px", margin: "0 auto 2.5rem", display: "block" }}>
           <path d="M0 15 Q80 5 160 15 Q240 25 320 15" stroke="var(--red)" strokeWidth="0.7" strokeLinecap="round" opacity="0.6"/>
