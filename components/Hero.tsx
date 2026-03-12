@@ -44,8 +44,8 @@ export default function Hero() {
       <div style={{ position: "absolute", bottom: "0%", left: "-10%", width: "clamp(180px,45vw,340px)", height: "clamp(180px,45vw,340px)", borderRadius: "50%", background: "radial-gradient(circle, rgba(122,148,56,0.22) 0%, rgba(122,148,56,0.08) 55%, transparent 75%)", pointerEvents: "none" }} />
       <div style={{ position: "absolute", top: "40%", left: "5%", width: "clamp(80px,18vw,140px)", height: "clamp(80px,18vw,140px)", borderRadius: "50%", background: "radial-gradient(circle, rgba(212,168,50,0.18) 0%, transparent 70%)", pointerEvents: "none" }} />
       {/* Flores */}
-      <FloralAccent side="left"  x="-18px" y="bottom: 0"   size={80} petalColor="#C94F4F" petalColor2="#D4693A" rotate={15}  opacity={0.82} />
-      <FloralAccent side="right" x="-22px" y="top: 8%"     size={65} petalColor="#D4A832" petalColor2="#D4693A" rotate={-20} opacity={0.75} />
+      <FloralAccent side="left"  x="-30px" y="bottom: -60px" size={80} petalColor="#C94F4F" petalColor2="#D4693A" rotate={15}  opacity={0.82} />
+      <FloralAccent side="right" x="-30px" y="top: -30px"    size={65} petalColor="#D4A832" petalColor2="#D4693A" rotate={-20} opacity={0.75} />
 
       <div style={{ position: "relative", zIndex: 1, maxWidth: "520px", width: "100%" }}>
         <p className="serif" style={{ fontStyle: "italic", fontSize: "clamp(0.85rem,2.5vw,1rem)", color: "var(--ink-light)", letterSpacing: "0.15em", marginBottom: "1.6rem", opacity: visible ? 1 : 0, transform: visible ? "translateY(0)" : "translateY(10px)", transition: "opacity 1s ease 0.1s, transform 1s cubic-bezier(0.22,1,0.36,1) 0.1s" }}>

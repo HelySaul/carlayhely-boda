@@ -19,7 +19,7 @@ export default function Etiquette() {
       {/* Manchas decorativas */}
       <div style={{ position: "absolute", top: "5%", right: "-6%", width: "clamp(140px,32vw,260px)", height: "clamp(140px,32vw,260px)", borderRadius: "50%", background: "radial-gradient(circle, rgba(122,148,56,0.16) 0%, transparent 70%)", pointerEvents: "none" }} />
       <div style={{ position: "absolute", bottom: "0%", left: "-8%", width: "clamp(160px,36vw,280px)", height: "clamp(160px,36vw,280px)", borderRadius: "50%", background: "radial-gradient(circle, rgba(201,79,79,0.14) 0%, transparent 70%)", pointerEvents: "none" }} />
-      <FloralAccent side="right" x="-20px" y="top: 20%" size={70} petalColor="#D4693A" petalColor2="#D4A832" rotate={20}  opacity={0.80} />
+      <FloralAccent side="right" x="-30px" y="top: -30px" size={70} petalColor="#D4693A" petalColor2="#D4A832" rotate={20}  opacity={0.80} />
       <div style={{ maxWidth: "540px", margin: "0 auto" }}>
 
         <Reveal>
