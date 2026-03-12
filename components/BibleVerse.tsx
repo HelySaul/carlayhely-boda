@@ -5,7 +5,7 @@ interface BibleVerseProps { verse: string; reference: string; }
 
 export default function BibleVerse({ verse, reference }: BibleVerseProps) {
   return (
-    <div style={{ padding: "3rem 1.5rem", background: "linear-gradient(135deg, rgba(212,105,58,0.06) 0%, rgba(212,168,50,0.08) 50%, rgba(122,148,56,0.06) 100%)", textAlign: "center", position: "relative" }}>
+    <div style={{ padding: "3rem 1.5rem", background: "var(--cream-mid)", textAlign: "center", position: "relative" }}>
       <Reveal>
         <div style={{ maxWidth: "480px", margin: "0 auto" }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "1rem", marginBottom: "1.6rem" }}>

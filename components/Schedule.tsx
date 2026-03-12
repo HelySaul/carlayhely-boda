@@ -81,14 +81,14 @@ export default function Schedule() {
 
             <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
               {[
-                { icon: "♪", label: "Música en vivo", color: "var(--terracotta)" },
-                { icon: "◇", label: "Palabras de los padres", color: "var(--red)" },
-                { icon: "◇", label: "Brindis y momentos especiales", color: "var(--gold)" },
-                { icon: "◇", label: "Baile y celebración", color: "var(--olive)" },
-              ].map((item, i) => (
+                "Música en vivo",
+                "Palabras de los padres",
+                "Brindis y momentos especiales",
+                "Baile y celebración",
+              ].map((label, i) => (
                 <div key={i} style={{ display: "flex", alignItems: "center", gap: "0.9rem" }}>
-                  <span className="serif" style={{ color: item.color, fontSize: "0.85rem", flexShrink: 0, width: "1rem", textAlign: "center" }}>{item.icon}</span>
-                  <p className="sans" style={{ fontSize: "0.82rem", color: "var(--ink-mid)", fontWeight: 300, letterSpacing: "0.03em" }}>{item.label}</p>
+                  <div style={{ width: "4px", height: "4px", borderRadius: "50%", background: "var(--terracotta)", opacity: 0.5, flexShrink: 0 }} />
+                  <p className="sans" style={{ fontSize: "0.82rem", color: "var(--ink-mid)", fontWeight: 300, letterSpacing: "0.03em" }}>{label}</p>
                 </div>
               ))}
             </div>
