@@ -8,18 +8,18 @@ async function auth(req: NextRequest) {
   return null;
 }
 
-// POST — agregar invitado a reserva existente
+// POST — agregar invitado a invitacion existente
 export async function POST(req: NextRequest) {
   const deny = await auth(req); if (deny) return deny;
 
-  const { reserva_id, nombre, whatsapp } = await req.json();
-  if (!reserva_id || !nombre) {
-    return NextResponse.json({ error: 'reserva_id y nombre requeridos' }, { status: 400 });
+  const { invitacion_id, nombre, whatsapp } = await req.json();
+  if (!invitacion_id || !nombre) {
+    return NextResponse.json({ error: 'invitacion_id y nombre requeridos' }, { status: 400 });
   }
 
   const { data, error } = await getSupabaseAdmin()
     .from('invitados')
-    .insert({ reserva_id, nombre: nombre.trim(), whatsapp: whatsapp?.trim() || null })
+    .insert({ invitacion_id, nombre: nombre.trim(), whatsapp: whatsapp?.trim() || null })
     .select()
     .single();
 

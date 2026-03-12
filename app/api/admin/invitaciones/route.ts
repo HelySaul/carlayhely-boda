@@ -12,12 +12,12 @@ function generarCodigo(): string {
   return String(Math.floor(100000 + Math.random() * 900000));
 }
 
-// GET — lista todas las reservas con sus invitados
+// GET — lista todas las invitacions con sus invitados
 export async function GET(req: NextRequest) {
   const deny = await auth(req); if (deny) return deny;
 
   const { data, error } = await getSupabaseAdmin()
-    .from('reservas')
+    .from('invitacions')
     .select(`*, invitados(*)`)
     .order('created_at', { ascending: false });
 
@@ -25,7 +25,7 @@ export async function GET(req: NextRequest) {
   return NextResponse.json(data);
 }
 
-// POST — crear reserva con invitados
+// POST — crear invitacion con invitados
 export async function POST(req: NextRequest) {
   const deny = await auth(req); if (deny) return deny;
 
@@ -39,15 +39,15 @@ export async function POST(req: NextRequest) {
   let codigo = generarCodigo();
   let intentos = 0;
   while (intentos < 10) {
-    const { data } = await getSupabaseAdmin().from('reservas').select('id').eq('codigo', codigo).single();
+    const { data } = await getSupabaseAdmin().from('invitacions').select('id').eq('codigo', codigo).single();
     if (!data) break;
     codigo = generarCodigo();
     intentos++;
   }
 
-  // Crear reserva
-  const { data: reserva, error: rError } = await getSupabaseAdmin()
-    .from('reservas')
+  // Crear invitacion
+  const { data: invitacion, error: rError } = await getSupabaseAdmin()
+    .from('invitacions')
     .insert({ codigo })
     .select()
     .single();
@@ -56,7 +56,7 @@ export async function POST(req: NextRequest) {
 
   // Crear invitados
   const rows = invitados.map((inv: { nombre: string; whatsapp?: string }) => ({
-    reserva_id: reserva.id,
+    invitacion_id: invitacion.id,
     nombre: inv.nombre.trim(),
     whatsapp: inv.whatsapp?.trim() || null,
   }));
@@ -64,24 +64,24 @@ export async function POST(req: NextRequest) {
   const { error: iError } = await getSupabaseAdmin().from('invitados').insert(rows);
   if (iError) return NextResponse.json({ error: iError.message }, { status: 500 });
 
-  // Retornar reserva completa
+  // Retornar invitacion completa
   const { data: full } = await getSupabaseAdmin()
-    .from('reservas')
+    .from('invitacions')
     .select(`*, invitados(*)`)
-    .eq('id', reserva.id)
+    .eq('id', invitacion.id)
     .single();
 
   return NextResponse.json(full, { status: 201 });
 }
 
-// DELETE — eliminar reserva
+// DELETE — eliminar invitacion
 export async function DELETE(req: NextRequest) {
   const deny = await auth(req); if (deny) return deny;
 
   const id = req.nextUrl.searchParams.get('id');
   if (!id) return NextResponse.json({ error: 'ID requerido' }, { status: 400 });
 
-  const { error } = await getSupabaseAdmin().from('reservas').delete().eq('id', id);
+  const { error } = await getSupabaseAdmin().from('invitacions').delete().eq('id', id);
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
   return NextResponse.json({ ok: true });
 }

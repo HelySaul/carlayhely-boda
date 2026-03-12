@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 // ── Types ──────────────────────────────────────────────
 interface Invitado {
   id: string;
-  reserva_id: string;
+  invitación_id: string;
   nombre: string;
   whatsapp: string | null;
   confirmacion_1: boolean;
@@ -16,7 +16,7 @@ interface Invitado {
   confirmacion_3_fecha: string | null;
   asistio: boolean;
 }
-interface Reserva {
+interface Invitación {
   id: string;
   codigo: string;
   created_at: string;
@@ -67,8 +67,8 @@ function StatCard({ value, label, color }: { value: number; label: string; color
   );
 }
 
-// ── Modal nueva reserva ────────────────────────────────
-function ModalNuevaReserva({ onClose, onCreated }: { onClose: () => void; onCreated: (r: Reserva) => void }) {
+// ── Modal nueva invitación ────────────────────────────────
+function ModalNuevaInvitación({ onClose, onCreated }: { onClose: () => void; onCreated: (r: Invitación) => void }) {
   const [personas, setPersonas] = useState([{ nombre: "", whatsapp: "" }]);
   const [error, setError]       = useState("");
   const [loading, setLoading]   = useState(false);
@@ -84,7 +84,7 @@ function ModalNuevaReserva({ onClose, onCreated }: { onClose: () => void; onCrea
     if (validos.length === 0) { setError("Agrega al menos un nombre"); return; }
     setLoading(true); setError("");
 
-    const res = await fetch("/api/admin/reservas", {
+    const res = await fetch("/api/admin/invitacións", {
       method: "POST", headers: authHeaders(),
       body: JSON.stringify({ invitados: validos }),
     });
@@ -98,7 +98,7 @@ function ModalNuevaReserva({ onClose, onCreated }: { onClose: () => void; onCrea
   return (
     <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.45)", zIndex: 1000, display: "flex", alignItems: "center", justifyContent: "center", padding: "1rem" }}>
       <div style={{ background: "var(--cream)", border: "1px solid var(--border-subtle)", borderRadius: "2px", padding: "2rem", width: "100%", maxWidth: "500px", maxHeight: "90vh", overflowY: "auto" }}>
-        <h3 className="serif" style={{ fontSize: "1.5rem", color: "var(--ink)", marginBottom: "0.3rem" }}>Nueva reserva</h3>
+        <h3 className="serif" style={{ fontSize: "1.5rem", color: "var(--ink)", marginBottom: "0.3rem" }}>Nueva invitación</h3>
         <p className="sans" style={{ fontSize: "0.68rem", color: "var(--ink-light)", marginBottom: "1.5rem" }}>El código de 6 dígitos se genera automáticamente.</p>
 
         {personas.map((p, idx) => (
@@ -125,22 +125,22 @@ function ModalNuevaReserva({ onClose, onCreated }: { onClose: () => void; onCrea
         ))}
 
         <button onClick={agregar} style={{ ...btnOutline, width: "100%", marginBottom: "1.2rem" }}>
-          + Agregar otra persona a esta reserva
+          + Agregar otra persona a esta invitación
         </button>
 
         {error && <p style={{ color: "var(--red)", fontSize: "0.75rem", marginBottom: "0.8rem" }}>{error}</p>}
 
         <div style={{ display: "flex", gap: "0.8rem", justifyContent: "flex-end" }}>
           <button onClick={onClose} style={btnOutline}>Cancelar</button>
-          <button onClick={crear} disabled={loading} style={btnPrimary}>{loading ? "Creando..." : "Crear reserva"}</button>
+          <button onClick={crear} disabled={loading} style={btnPrimary}>{loading ? "Creando..." : "Crear invitación"}</button>
         </div>
       </div>
     </div>
   );
 }
 
-// ── Modal agregar persona a reserva existente ──────────
-function ModalAgregarPersona({ reserva, onClose, onAdded }: { reserva: Reserva; onClose: () => void; onAdded: (inv: Invitado) => void }) {
+// ── Modal agregar persona a invitación existente ──────────
+function ModalAgregarPersona({ invitación, onClose, onAdded }: { invitación: Invitación; onClose: () => void; onAdded: (inv: Invitado) => void }) {
   const [nombre, setNombre]     = useState("");
   const [whatsapp, setWhatsapp] = useState("");
   const [error, setError]       = useState("");
@@ -151,7 +151,7 @@ function ModalAgregarPersona({ reserva, onClose, onAdded }: { reserva: Reserva; 
     setLoading(true); setError("");
     const res = await fetch("/api/admin/invitados", {
       method: "POST", headers: authHeaders(),
-      body: JSON.stringify({ reserva_id: reserva.id, nombre, whatsapp }),
+      body: JSON.stringify({ invitación_id: invitación.id, nombre, whatsapp }),
     });
     const data = await res.json();
     setLoading(false);
@@ -163,7 +163,7 @@ function ModalAgregarPersona({ reserva, onClose, onAdded }: { reserva: Reserva; 
     <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.45)", zIndex: 1000, display: "flex", alignItems: "center", justifyContent: "center", padding: "1rem" }}>
       <div style={{ background: "var(--cream)", border: "1px solid var(--border-subtle)", borderRadius: "2px", padding: "2rem", width: "100%", maxWidth: "380px" }}>
         <h3 className="serif" style={{ fontSize: "1.3rem", color: "var(--ink)", marginBottom: "0.3rem" }}>Agregar persona</h3>
-        <p className="sans" style={{ fontSize: "0.68rem", color: "var(--ink-light)", marginBottom: "1.5rem" }}>Reserva <strong>{reserva.codigo}</strong></p>
+        <p className="sans" style={{ fontSize: "0.68rem", color: "var(--ink-light)", marginBottom: "1.5rem" }}>Invitación <strong>{invitación.codigo}</strong></p>
         <div style={{ display: "flex", flexDirection: "column", gap: "0.8rem" }}>
           <div>
             <label style={labelStyle}>Nombre</label>
@@ -217,25 +217,25 @@ function FilaInvitado({ inv, codigo, onUpdate, onDelete }: {
   );
 }
 
-// ── Tarjeta de reserva ─────────────────────────────────
-function TarjetaReserva({ reserva, onUpdateInv, onDeleteInv, onDeleteReserva, onAddPersona }: {
-  reserva: Reserva;
-  onUpdateInv: (reservaId: string, invId: string, field: string, val: boolean) => void;
-  onDeleteInv: (reservaId: string, invId: string) => void;
-  onDeleteReserva: (id: string) => void;
-  onAddPersona: (r: Reserva) => void;
+// ── Tarjeta de invitación ─────────────────────────────────
+function TarjetaInvitación({ invitación, onUpdateInv, onDeleteInv, onDeleteInvitación, onAddPersona }: {
+  invitación: Invitación;
+  onUpdateInv: (invitaciónId: string, invId: string, field: string, val: boolean) => void;
+  onDeleteInv: (invitaciónId: string, invId: string) => void;
+  onDeleteInvitación: (id: string) => void;
+  onAddPersona: (r: Invitación) => void;
 }) {
   const [open, setOpen] = useState(false);
-  const total = reserva.invitados.length;
-  const conf1 = reserva.invitados.filter(i => i.confirmacion_1).length;
-  const conf3 = reserva.invitados.filter(i => i.confirmacion_3).length;
+  const total = invitación.invitados.length;
+  const conf1 = invitación.invitados.filter(i => i.confirmacion_1).length;
+  const conf3 = invitación.invitados.filter(i => i.confirmacion_3).length;
 
   return (
     <div style={{ border: "1px solid var(--border-subtle)", borderRadius: "2px", marginBottom: "0.6rem", background: "var(--cream-mid)" }}>
       <div onClick={() => setOpen(o => !o)} style={{ display: "flex", alignItems: "center", gap: "0.8rem", padding: "0.9rem 1.2rem", cursor: "pointer" }}>
-        <span className="sans" style={{ fontSize: "1rem", letterSpacing: "0.1em", color: "var(--terracotta)", fontWeight: 600 }}>{reserva.codigo}</span>
+        <span className="sans" style={{ fontSize: "1rem", letterSpacing: "0.1em", color: "var(--terracotta)", fontWeight: 600 }}>{invitación.codigo}</span>
         <span className="serif" style={{ flex: 1, fontSize: "0.9rem", color: "var(--ink-light)" }}>
-          {reserva.invitados.map(i => i.nombre).join(", ")}
+          {invitación.invitados.map(i => i.nombre).join(", ")}
         </span>
         <span className="sans" style={{ fontSize: "0.62rem", color: "var(--ink-light)" }}>{total} {total === 1 ? "persona" : "personas"} · {conf1} conf · {conf3} 3ra</span>
         <span style={{ color: "var(--ink-light)", fontSize: "0.7rem" }}>{open ? "▲" : "▼"}</span>
@@ -243,16 +243,16 @@ function TarjetaReserva({ reserva, onUpdateInv, onDeleteInv, onDeleteReserva, on
 
       {open && (
         <div style={{ padding: "0 1.2rem 1.2rem" }}>
-          {reserva.invitados.map(inv => (
+          {invitación.invitados.map(inv => (
             <FilaInvitado
-              key={inv.id} inv={inv} codigo={reserva.codigo}
-              onUpdate={(id, field, val) => onUpdateInv(reserva.id, id, field, val)}
-              onDelete={(id) => onDeleteInv(reserva.id, id)}
+              key={inv.id} inv={inv} codigo={invitación.codigo}
+              onUpdate={(id, field, val) => onUpdateInv(invitación.id, id, field, val)}
+              onDelete={(id) => onDeleteInv(invitación.id, id)}
             />
           ))}
           <div style={{ display: "flex", gap: "0.6rem", marginTop: "0.8rem" }}>
-            <button onClick={() => onAddPersona(reserva)} style={btnOutline}>+ Agregar persona</button>
-            <button onClick={() => { if (confirm(`¿Eliminar reserva ${reserva.codigo}?`)) onDeleteReserva(reserva.id); }} style={{ ...btnOutline, color: "var(--red)", borderColor: "var(--red)" }}>Eliminar reserva</button>
+            <button onClick={() => onAddPersona(invitación)} style={btnOutline}>+ Agregar persona</button>
+            <button onClick={() => { if (confirm(`¿Eliminar invitación ${invitación.codigo}?`)) onDeleteInvitación(invitación.id); }} style={{ ...btnOutline, color: "var(--red)", borderColor: "var(--red)" }}>Eliminar invitación</button>
           </div>
         </div>
       )}
@@ -263,20 +263,20 @@ function TarjetaReserva({ reserva, onUpdateInv, onDeleteInv, onDeleteReserva, on
 // ── Dashboard ──────────────────────────────────────────
 export default function AdminDashboard() {
   const router  = useRouter();
-  const [reservas, setReservas]       = useState<Reserva[]>([]);
+  const [invitacións, setInvitacións]       = useState<Invitación[]>([]);
   const [loading, setLoading]         = useState(true);
   const [search, setSearch]           = useState("");
-  const [tab, setTab]                 = useState<"reservas" | "lista" | "confirmados">("reservas");
+  const [tab, setTab]                 = useState<"invitacións" | "lista" | "confirmados">("invitacións");
   const [modalNueva, setModalNueva]   = useState(false);
-  const [modalAdd, setModalAdd]       = useState<Reserva | null>(null);
+  const [modalAdd, setModalAdd]       = useState<Invitación | null>(null);
 
   useEffect(() => {
     if (!localStorage.getItem("admin_token")) { router.push("/admin"); return; }
     const fetchData = async () => {
       setLoading(true);
-      const res = await fetch("/api/admin/reservas", { headers: { Authorization: `Bearer ${token()}` } });
+      const res = await fetch("/api/admin/invitacións", { headers: { Authorization: `Bearer ${token()}` } });
       if (res.status === 401) { router.push("/admin"); return; }
-      setReservas(await res.json());
+      setInvitacións(await res.json());
       setLoading(false);
     };
     fetchData();
@@ -284,12 +284,12 @@ export default function AdminDashboard() {
 
   function logout() { localStorage.removeItem("admin_token"); router.push("/admin"); }
 
-  async function updateInvitado(reservaId: string, invId: string, field: string, val: boolean) {
+  async function updateInvitado(invitaciónId: string, invId: string, field: string, val: boolean) {
     await fetch(`/api/admin/invitados?id=${invId}`, {
       method: "PATCH", headers: authHeaders(),
       body: JSON.stringify({ [field]: val }),
     });
-    setReservas(rs => rs.map(r => r.id !== reservaId ? r : {
+    setInvitacións(rs => rs.map(r => r.id !== invitaciónId ? r : {
       ...r, invitados: r.invitados.map(i => {
         if (i.id !== invId) return i;
         const updated = { ...i, [field]: val };
@@ -301,14 +301,14 @@ export default function AdminDashboard() {
     }));
   }
 
-  async function deleteInvitado(reservaId: string, invId: string) {
+  async function deleteInvitado(invitaciónId: string, invId: string) {
     await fetch(`/api/admin/invitados?id=${invId}`, { method: "DELETE", headers: { Authorization: `Bearer ${token()}` } });
-    setReservas(rs => rs.map(r => r.id !== reservaId ? r : { ...r, invitados: r.invitados.filter(i => i.id !== invId) }));
+    setInvitacións(rs => rs.map(r => r.id !== invitaciónId ? r : { ...r, invitados: r.invitados.filter(i => i.id !== invId) }));
   }
 
-  async function deleteReserva(id: string) {
-    await fetch(`/api/admin/reservas?id=${id}`, { method: "DELETE", headers: { Authorization: `Bearer ${token()}` } });
-    setReservas(rs => rs.filter(r => r.id !== id));
+  async function deleteInvitación(id: string) {
+    await fetch(`/api/admin/invitacións?id=${id}`, { method: "DELETE", headers: { Authorization: `Bearer ${token()}` } });
+    setInvitacións(rs => rs.filter(r => r.id !== id));
   }
 
   function exportCSV() {
@@ -322,16 +322,16 @@ export default function AdminDashboard() {
   }
 
   // Stats
-  const allInv      = reservas.flatMap(r => r.invitados);
+  const allInv      = invitacións.flatMap(r => r.invitados);
   const totalInv    = allInv.length;
-  const totalRes    = reservas.length;
+  const totalRes    = invitacións.length;
   const conf1       = allInv.filter(i => i.confirmacion_1).length;
   const conf2       = allInv.filter(i => i.confirmacion_2).length;
   const conf3       = allInv.filter(i => i.confirmacion_3).length;
   const asistieron  = allInv.filter(i => i.asistio).length;
 
   // Lista plana filtrada
-  const allInvFlat = reservas.flatMap(r => r.invitados.map(i => ({ ...i, codigo: r.codigo })));
+  const allInvFlat = invitacións.flatMap(r => r.invitados.map(i => ({ ...i, codigo: r.codigo })));
   const filtered = allInvFlat.filter(i =>
     i.nombre.toLowerCase().includes(search.toLowerCase()) ||
     i.codigo.includes(search)
@@ -344,8 +344,8 @@ export default function AdminDashboard() {
     i.codigo.includes(search)
   );
 
-  // Reservas filtradas
-  const reservasFiltradas = reservas.filter(r =>
+  // Invitacións filtradas
+  const invitaciónsFiltradas = invitacións.filter(r =>
     r.codigo.includes(search) ||
     r.invitados.some(i => i.nombre.toLowerCase().includes(search.toLowerCase()))
   );
@@ -367,7 +367,7 @@ export default function AdminDashboard() {
       <main style={{ padding: "2rem 1.5rem", maxWidth: "960px", margin: "0 auto" }}>
         {/* Stats */}
         <div style={{ display: "grid", gridTemplateColumns: "repeat(6, 1fr)", gap: "0.6rem", marginBottom: "2rem" }}>
-          <StatCard value={totalRes}   label="Reservas"   color="var(--terracotta)" />
+          <StatCard value={totalRes}   label="Invitacións"   color="var(--terracotta)" />
           <StatCard value={totalInv}   label="Invitados"  color="var(--ink)" />
           <StatCard value={conf1}      label="1ra conf"   color="var(--olive)" />
           <StatCard value={conf2}      label="2da conf"   color="var(--periwinkle)" />
@@ -377,7 +377,7 @@ export default function AdminDashboard() {
 
         {/* Tabs */}
         <div style={{ display: "flex", borderBottom: "1px solid var(--border-subtle)", marginBottom: "1.5rem" }}>
-          {(["reservas", "lista", "confirmados"] as const).map(t => (
+          {(["invitacións", "lista", "confirmados"] as const).map(t => (
             <button key={t} onClick={() => setTab(t)} style={{
               padding: "0.7rem 1.4rem", background: "none", border: "none",
               borderBottom: tab === t ? "2px solid var(--terracotta)" : "2px solid transparent",
@@ -385,7 +385,7 @@ export default function AdminDashboard() {
               fontFamily: "'Montserrat', sans-serif", fontSize: "0.65rem",
               letterSpacing: "0.18em", textTransform: "uppercase", cursor: "pointer", marginBottom: "-1px",
             }}>
-              {t === "reservas" ? "Reservas" : t === "lista" ? "Todos" : "Confirmados"}
+              {t === "invitacións" ? "Invitacións" : t === "lista" ? "Todos" : "Confirmados"}
             </button>
           ))}
         </div>
@@ -393,19 +393,19 @@ export default function AdminDashboard() {
         {/* Búsqueda + nuevo */}
         <div style={{ display: "flex", gap: "0.8rem", marginBottom: "1.5rem" }}>
           <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Buscar por nombre o código..." style={{ ...inputStyle, flex: 1 }} />
-          {tab === "reservas" && <button onClick={() => setModalNueva(true)} style={btnPrimary}>+ Nueva reserva</button>}
+          {tab === "invitacións" && <button onClick={() => setModalNueva(true)} style={btnPrimary}>+ Nueva invitación</button>}
         </div>
 
         {/* Contenido */}
         {loading ? (
           <p className="sans" style={{ textAlign: "center", color: "var(--ink-light)", padding: "3rem 0", fontSize: "0.8rem" }}>Cargando...</p>
-        ) : tab === "reservas" ? (
-          reservasFiltradas.length === 0 ? (
-            <p className="sans" style={{ textAlign: "center", color: "var(--ink-light)", padding: "3rem 0", fontSize: "0.8rem" }}>{search ? "Sin resultados." : "Aún no hay reservas."}</p>
-          ) : reservasFiltradas.map(r => (
-            <TarjetaReserva key={r.id} reserva={r}
+        ) : tab === "invitacións" ? (
+          invitaciónsFiltradas.length === 0 ? (
+            <p className="sans" style={{ textAlign: "center", color: "var(--ink-light)", padding: "3rem 0", fontSize: "0.8rem" }}>{search ? "Sin resultados." : "Aún no hay invitacións."}</p>
+          ) : invitaciónsFiltradas.map(r => (
+            <TarjetaInvitación key={r.id} invitación={r}
               onUpdateInv={updateInvitado} onDeleteInv={deleteInvitado}
-              onDeleteReserva={deleteReserva} onAddPersona={setModalAdd}
+              onDeleteInvitación={deleteInvitación} onAddPersona={setModalAdd}
             />
           ))
         ) : tab === "lista" ? (
@@ -451,8 +451,8 @@ export default function AdminDashboard() {
         )}
       </main>
 
-      {modalNueva && <ModalNuevaReserva onClose={() => setModalNueva(false)} onCreated={r => setReservas(rs => [r, ...rs])} />}
-      {modalAdd   && <ModalAgregarPersona reserva={modalAdd} onClose={() => setModalAdd(null)} onAdded={inv => { setReservas(rs => rs.map(r => r.id !== modalAdd.id ? r : { ...r, invitados: [...r.invitados, inv] })); }} />}
+      {modalNueva && <ModalNuevaInvitación onClose={() => setModalNueva(false)} onCreated={r => setInvitacións(rs => [r, ...rs])} />}
+      {modalAdd   && <ModalAgregarPersona invitación={modalAdd} onClose={() => setModalAdd(null)} onAdded={inv => { setInvitacións(rs => rs.map(r => r.id !== modalAdd.id ? r : { ...r, invitados: [...r.invitados, inv] })); }} />}
     </div>
   );
 }
