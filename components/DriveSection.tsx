@@ -12,7 +12,7 @@ export default function DriveSection() {
         background: "var(--bg-photos)",
         textAlign:  "center",
         position:   "relative",
-        overflow:   "hidden",
+        overflow:   "visible",
       }}
     >
       {/* Manchas decorativas */}

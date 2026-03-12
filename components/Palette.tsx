@@ -18,7 +18,7 @@ export default function Palette() {
         background: "var(--bg-dresscode)",
         textAlign:  "center",
         position:   "relative",
-        overflow:   "hidden",
+        overflow:   "visible",
       }}
     >
       {/* Manchas decorativas */}

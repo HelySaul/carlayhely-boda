@@ -4,7 +4,7 @@ import FloralAccent from "./FloralAccent";
 
 export default function Footer() {
   return (
-    <footer style={{ padding: "5rem 1.5rem 4rem", background: "var(--bg-footer)", textAlign: "center", position: "relative", overflow: "hidden" }}>
+    <footer style={{ padding: "5rem 1.5rem 4rem", background: "var(--bg-footer)", textAlign: "center", position: "relative", overflow: "visible" }}>
       {/* Manchas decorativas */}
       <div style={{ position: "absolute", top: "-8%", left: "-8%", width: "clamp(180px,40vw,320px)", height: "clamp(180px,40vw,320px)", borderRadius: "50%", background: "radial-gradient(circle, rgba(212,105,58,0.16) 0%, transparent 70%)", pointerEvents: "none" }} />
       <div style={{ position: "absolute", bottom: "-8%", right: "-6%", width: "clamp(160px,35vw,280px)", height: "clamp(160px,35vw,280px)", borderRadius: "50%", background: "radial-gradient(circle, rgba(122,148,56,0.16) 0%, transparent 70%)", pointerEvents: "none" }} />
