@@ -27,6 +27,19 @@ function fechaCorta(iso: string | null) {
   return new Date(iso).toLocaleDateString("es-VE", { day: "2-digit", month: "2-digit" });
 }
 
+// ── Hook responsive ───────────────────────────────────
+function useIsDesktop() {
+  const [isDesktop, setIsDesktop] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia("(min-width: 768px)");
+    setIsDesktop(mq.matches);
+    const handler = (e: MediaQueryListEvent) => setIsDesktop(e.matches);
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
+  }, []);
+  return isDesktop;
+}
+
 // ── Estilos ────────────────────────────────────────────
 const labelStyle: React.CSSProperties = {
   display: "block", fontSize: "0.6rem", letterSpacing: "0.18em",
@@ -92,6 +105,7 @@ function BarraFiltros({
   extra?: React.ReactNode;
 }) {
   const [open, setOpen] = useState(false);
+  const isDesktop = useIsDesktop();
 
   const activosCount = [
     tipo !== "todos",
@@ -165,28 +179,38 @@ function BarraFiltros({
         {extra}
       </div>
 
-      {/* Panel de filtros — overlay en móvil, inline en desktop */}
+      {/* Panel de filtros */}
       {open && (
         <>
-          {/* Overlay backdrop en móvil */}
           <div onClick={() => setOpen(false)} style={{
-            position: "fixed", inset: 0, background: "rgba(0,0,0,0.3)",
+            position: "fixed", inset: 0, background: "rgba(0,0,0,0.35)",
             zIndex: 200,
           }} />
 
-          {/* Panel */}
-          <div style={{
-            position: "fixed", left: 0, right: 0, bottom: 0,
+          <div style={isDesktop ? {
+            // Desktop: modal centrada
+            position: "fixed", zIndex: 201,
+            top: "50%", left: "50%", transform: "translate(-50%, -50%)",
+            width: "100%", maxWidth: "520px",
+            background: "var(--cream-mid)",
+            border: "1px solid var(--border-subtle)",
+            borderRadius: "4px",
+            padding: "2rem",
+            maxHeight: "85vh", overflowY: "auto",
+            boxShadow: "0 16px 64px rgba(0,0,0,0.2)",
+          } : {
+            // Mobile: sheet desde abajo
+            position: "fixed", zIndex: 201,
+            left: 0, right: 0, bottom: 0,
             background: "var(--cream-mid)",
             borderTop: "1px solid var(--border-subtle)",
             borderRadius: "12px 12px 0 0",
-            zIndex: 201,
             padding: "1.5rem 1.2rem 2rem",
             maxHeight: "80dvh", overflowY: "auto",
             boxShadow: "0 -8px 40px rgba(0,0,0,0.12)",
           }}>
-            {/* Handle bar */}
-            <div style={{ width: "40px", height: "4px", background: "var(--border-subtle)", borderRadius: "2px", margin: "0 auto 1.5rem" }} />
+            {/* Handle bar — solo mobile */}
+            {!isDesktop && <div style={{ width: "40px", height: "4px", background: "var(--border-subtle)", borderRadius: "2px", margin: "0 auto 1.5rem" }} />}
 
             {/* Header */}
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.5rem" }}>
@@ -434,7 +458,7 @@ function FilaInvitado({ inv, codigo, onUpdate, onUpdateTexto, onDelete }: {
             </div>
           ) : (
             <div style={{ display: "flex", alignItems: "center", gap: "0.6rem", flexWrap: "wrap" }}>
-              <span className="serif" style={{ fontSize: "0.9rem", color: "var(--ink)" }}>{inv.nombre}</span>
+              <span className="sans" style={{ fontSize: "0.9rem", fontWeight: 500, color: "var(--ink)" }}>{inv.nombre}</span>
               {inv.whatsapp && <span className="sans" style={{ fontSize: "0.6rem", color: "var(--ink-light)" }}>{inv.whatsapp}</span>}
               <button onClick={() => setEditando(true)} style={{ background: "none", border: "none", color: "var(--terracotta)", cursor: "pointer", fontSize: "0.62rem", fontFamily: "'Montserrat',sans-serif", letterSpacing: "0.1em", textTransform: "uppercase", textDecoration: "underline", padding: 0 }}>editar</button>
             </div>
@@ -484,7 +508,7 @@ function TarjetaInvitacion({ invitacion, onUpdateInv, onUpdateTexto, onUpdateNom
   return (
     <div style={{ border: "1px solid var(--border-subtle)", borderRadius: "2px", marginBottom: "0.6rem", background: "var(--cream-mid)" }}>
       <div onClick={() => !editNombre && setOpen(o => !o)} style={{ display: "flex", alignItems: "center", gap: "0.8rem", padding: "0.9rem 1.2rem", cursor: editNombre ? "default" : "pointer", flexWrap: "wrap" }}>
-        <span className="sans" style={{ fontSize: "1rem", letterSpacing: "0.1em", color: "var(--terracotta)", fontWeight: 600, flexShrink: 0 }}>{invitacion.codigo}</span>
+        <span className="sans" style={{ fontSize: "1.05rem", letterSpacing: "0.08em", color: "var(--terracotta)", fontWeight: 700, flexShrink: 0 }}>{invitacion.codigo}</span>
         <div style={{ flex: 1, minWidth: "0" }}>
           {editNombre ? (
             <div style={{ display: "flex", gap: "0.5rem", alignItems: "center" }} onClick={e => e.stopPropagation()}>
@@ -494,8 +518,8 @@ function TarjetaInvitacion({ invitacion, onUpdateInv, onUpdateTexto, onUpdateNom
             </div>
           ) : (
             <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", flexWrap: "wrap" }}>
-              {invitacion.nombre && <strong className="serif" style={{ fontSize: "0.95rem", color: "var(--ink)" }}>{invitacion.nombre}</strong>}
-              <span className="serif" style={{ fontSize: "0.82rem", color: "var(--ink-light)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: "200px" }}>
+              {invitacion.nombre && <strong className="sans" style={{ fontSize: "0.95rem", fontWeight: 600, color: "var(--ink)", letterSpacing: "0.01em" }}>{invitacion.nombre}</strong>}
+              <span className="sans" style={{ fontSize: "0.82rem", color: "var(--ink-light)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: "200px" }}>
                 {invitacion.invitados.map(i => i.nombre).join(", ")}
               </span>
               <button onClick={e => { e.stopPropagation(); setEditNombre(true); }} style={{ background: "none", border: "none", color: "var(--terracotta)", cursor: "pointer", fontSize: "0.58rem", fontFamily: "'Montserrat',sans-serif", letterSpacing: "0.1em", textTransform: "uppercase", textDecoration: "underline", padding: 0, flexShrink: 0 }}>
@@ -505,9 +529,9 @@ function TarjetaInvitacion({ invitacion, onUpdateInv, onUpdateTexto, onUpdateNom
           )}
         </div>
         <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "0.2rem", flexShrink: 0 }}>
-          <span className="sans" style={{ fontSize: "0.58rem", color: "var(--ink-light)" }}>{total} {total === 1 ? "persona" : "personas"} · {conf1} conf · {conf3} 3ra</span>
+          <span className="sans" style={{ fontSize: "0.72rem", color: "var(--ink-light)" }}>{total} {total === 1 ? "persona" : "personas"} · {conf1} conf · {conf3} 3ra</span>
           {invitacion.creado_por && (
-            <span className="sans" style={{ fontSize: "0.62rem", fontWeight: 600, color: "var(--terracotta)", background: "rgba(212,105,58,0.1)", padding: "0.15rem 0.5rem", borderRadius: "2px" }}>por {invitacion.creado_por}</span>
+            <span className="sans" style={{ fontSize: "0.72rem", fontWeight: 600, color: "var(--terracotta)", background: "rgba(212,105,58,0.1)", padding: "0.2rem 0.7rem", borderRadius: "2px" }}>por {invitacion.creado_por}</span>
           )}
         </div>
         {!editNombre && <span style={{ color: "var(--ink-light)", fontSize: "0.7rem", flexShrink: 0 }}>{open ? "▲" : "▼"}</span>}
@@ -707,8 +731,8 @@ export default function AdminDashboard() {
           <p className="sans" style={{ fontSize: "0.55rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--terracotta)" }}>Admin</p>
         </div>
         <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap", justifyContent: "flex-end" }}>
-          <button onClick={exportCSV} style={{ ...btnOutline, fontSize: "0.58rem", padding: "0.5rem 0.8rem" }}>CSV</button>
-          <button onClick={logout} style={{ ...btnOutline, borderColor: "var(--ink-light)", color: "var(--ink-light)", fontSize: "0.58rem", padding: "0.5rem 0.8rem" }}>Salir</button>
+          <button onClick={exportCSV} style={{ ...btnOutline, fontSize: "0.7rem", padding: "0.55rem 1rem" }}>CSV</button>
+          <button onClick={logout} style={{ ...btnOutline, borderColor: "var(--ink-light)", color: "var(--ink-light)", fontSize: "0.7rem", padding: "0.55rem 1rem" }}>Salir</button>
         </div>
       </header>
 
@@ -722,10 +746,10 @@ export default function AdminDashboard() {
           <StatCard value={asistieron} label="Asistieron"  color="var(--red)" />
         </div>
 
-        <div style={{ display: "flex", borderBottom: "1px solid var(--border-subtle)", marginBottom: "1.2rem", overflowX: "auto" }}>
+        <div style={{ display: "flex", borderBottom: "1px solid var(--border-subtle)", marginBottom: "1.2rem" }}>
           {(["invitaciones", "lista", "confirmados", "usuarios"] as const).map(t => (
             <button key={t} onClick={() => setTab(t)} style={{
-              padding: "0.6rem 1rem", background: "none", border: "none",
+              padding: "0.75rem 1.2rem", background: "none", border: "none",
               borderBottom: tab === t ? "2px solid var(--terracotta)" : "2px solid transparent",
               color: tab === t ? "var(--terracotta)" : "var(--ink-light)",
               fontFamily: "'Montserrat', sans-serif", fontSize: "0.7rem",
@@ -742,7 +766,7 @@ export default function AdminDashboard() {
         ) : tab === "invitaciones" ? (
           <>
             <BarraFiltros {...barraProps} extra={<button onClick={() => setModalNueva(true)} style={btnPrimary}>+ Nueva</button>} />
-            <p className="sans" style={{ fontSize: "0.62rem", color: "var(--ink-light)", marginBottom: "0.8rem" }}>{invitacionesFiltradas.length} invitaciones</p>
+            <p className="sans" style={{ fontSize: "0.8rem", color: "var(--ink-light)", marginBottom: "0.8rem" }}>{invitacionesFiltradas.length} invitaciones</p>
             {invitacionesFiltradas.length === 0
               ? <p className="sans" style={{ textAlign: "center", color: "var(--ink-light)", padding: "3rem 0", fontSize: "0.8rem" }}>Sin resultados.</p>
               : invitacionesFiltradas.map(r => (
@@ -757,13 +781,13 @@ export default function AdminDashboard() {
         ) : tab === "lista" ? (
           <>
             <BarraFiltros {...barraProps} />
-            <p className="sans" style={{ fontSize: "0.62rem", color: "var(--ink-light)", marginBottom: "0.8rem" }}>{allInvFlat.length} personas</p>
+            <p className="sans" style={{ fontSize: "0.8rem", color: "var(--ink-light)", marginBottom: "0.8rem" }}>{allInvFlat.length} personas</p>
             {allInvFlat.map((inv, idx) => (
               <div key={inv.id} style={{ padding: "0.7rem 0.8rem", background: "var(--cream-mid)", border: "1px solid var(--border-subtle)", borderRadius: "2px", marginBottom: "0.3rem" }}>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "0.4rem" }}>
                   <div style={{ display: "flex", alignItems: "center", gap: "0.6rem" }}>
                     <span className="sans" style={{ fontSize: "0.75rem", color: "var(--ink-light)", minWidth: "1.8rem", textAlign: "right" }}>{idx + 1}.</span>
-                    <span className="serif" style={{ fontSize: "1.05rem", color: "var(--ink)" }}>{inv.nombre}</span>
+                    <span className="sans" style={{ fontSize: "0.95rem", fontWeight: 500, color: "var(--ink)" }}>{inv.nombre}</span>
                   </div>
                   <div style={{ display: "flex", gap: "0.5rem", alignItems: "center", flexWrap: "wrap" }}>
                     <span className="sans" style={{ fontSize: "0.62rem", color: "var(--terracotta)" }}>{inv.codigo}</span>
@@ -783,13 +807,13 @@ export default function AdminDashboard() {
         ) : tab === "confirmados" ? (
           <>
             <BarraFiltros {...barraProps} />
-            <p className="sans" style={{ fontSize: "0.62rem", color: "var(--ink-light)", marginBottom: "0.8rem" }}>{confirmadosFiltrados.length} personas con al menos una confirmación</p>
+            <p className="sans" style={{ fontSize: "0.8rem", color: "var(--ink-light)", marginBottom: "0.8rem" }}>{confirmadosFiltrados.length} personas con al menos una confirmación</p>
             {confirmadosFiltrados.map((inv, idx) => (
               <div key={inv.id} style={{ padding: "0.7rem 0.8rem", background: "var(--cream-mid)", border: "1px solid var(--border-subtle)", borderRadius: "2px", marginBottom: "0.3rem" }}>
                 <div style={{ display: "flex", justifyContent: "space-between", flexWrap: "wrap", gap: "0.4rem" }}>
                   <div style={{ display: "flex", alignItems: "center", gap: "0.6rem" }}>
                     <span className="sans" style={{ fontSize: "0.75rem", color: "var(--ink-light)", minWidth: "1.8rem", textAlign: "right" }}>{idx + 1}.</span>
-                    <span className="serif" style={{ fontSize: "1.05rem", color: "var(--ink)" }}>{inv.nombre}</span>
+                    <span className="sans" style={{ fontSize: "0.95rem", fontWeight: 500, color: "var(--ink)" }}>{inv.nombre}</span>
                   </div>
                   <span className="sans" style={{ fontSize: "0.62rem", color: "var(--terracotta)" }}>{inv.codigo}</span>
                 </div>
@@ -810,7 +834,7 @@ export default function AdminDashboard() {
             {usuarios.map(u => (
               <div key={u.id} style={{ padding: "0.9rem 1rem", background: "var(--cream-mid)", border: "1px solid var(--border-subtle)", borderRadius: "2px", marginBottom: "0.4rem", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "0.4rem" }}>
                 <div>
-                  <p className="serif" style={{ fontSize: "1rem", color: "var(--ink)", margin: 0 }}>{u.nombre}</p>
+                  <p className="sans" style={{ fontSize: "1rem", fontWeight: 600, color: "var(--ink)", margin: 0 }}>{u.nombre}</p>
                   <p className="sans" style={{ fontSize: "0.65rem", color: "var(--ink-light)", margin: 0 }}>@{u.username}</p>
                 </div>
                 <span className="sans" style={{ fontSize: "0.58rem", color: "var(--ink-light)" }}>{new Date(u.created_at).toLocaleDateString("es-VE")}</span>
