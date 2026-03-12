@@ -261,26 +261,51 @@ function FilaInvitado({ inv, codigo, onUpdate, onUpdateTexto, onDelete }: {
   onUpdateTexto: (id: string, nombre: string, whatsapp: string) => void;
   onDelete: (id: string) => void;
 }) {
+  const [editando, setEditando] = useState(false);
+  const [nombre, setNombre]     = useState(inv.nombre);
+  const [whatsapp, setWhatsapp] = useState(inv.whatsapp ?? "");
+
+  function guardar() {
+    onUpdateTexto(inv.id, nombre.trim() || inv.nombre, whatsapp.trim());
+    setEditando(false);
+  }
+
   return (
     <div style={{ background: "var(--cream)", border: "1px solid var(--border-subtle)", borderRadius: "2px", marginBottom: "0.35rem", padding: "0.65rem 0.8rem" }}>
-      {/* Nombre + código */}
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.5rem" }}>
-        <div>
-          <span className="serif" style={{ fontSize: "0.9rem", color: "var(--ink)" }}>{inv.nombre}</span>
-          {inv.whatsapp && <span className="sans" style={{ fontSize: "0.6rem", color: "var(--ink-light)", marginLeft: "0.5rem" }}>{inv.whatsapp}</span>}
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "0.5rem", gap: "0.5rem" }}>
+        <div style={{ flex: 1 }}>
+          {editando ? (
+            <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem" }}>
+              <input value={nombre} onChange={e => setNombre(e.target.value)} placeholder="Nombre" style={{ width: "100%", padding: "0.4rem 0.6rem", boxSizing: "border-box", border: "1px solid var(--border-subtle)", borderRadius: "2px", fontFamily: "'Montserrat',sans-serif", fontSize: "16px", background: "var(--cream-mid)", outline: "none" }} />
+              <input value={whatsapp} onChange={e => setWhatsapp(e.target.value)} placeholder="WhatsApp (opcional)" style={{ width: "100%", padding: "0.4rem 0.6rem", boxSizing: "border-box", border: "1px solid var(--border-subtle)", borderRadius: "2px", fontFamily: "'Montserrat',sans-serif", fontSize: "16px", background: "var(--cream-mid)", outline: "none" }} />
+              <div style={{ display: "flex", gap: "0.5rem" }}>
+                <button onClick={guardar} style={{ padding: "0.35rem 0.8rem", background: "var(--terracotta)", color: "var(--cream)", border: "none", borderRadius: "2px", fontFamily: "'Montserrat',sans-serif", fontSize: "0.6rem", letterSpacing: "0.15em", textTransform: "uppercase", cursor: "pointer" }}>Guardar</button>
+                <button onClick={() => { setEditando(false); setNombre(inv.nombre); setWhatsapp(inv.whatsapp ?? ""); }} style={{ padding: "0.35rem 0.8rem", background: "none", color: "var(--ink-light)", border: "1px solid var(--border-subtle)", borderRadius: "2px", fontFamily: "'Montserrat',sans-serif", fontSize: "0.6rem", letterSpacing: "0.15em", textTransform: "uppercase", cursor: "pointer" }}>Cancelar</button>
+              </div>
+            </div>
+          ) : (
+            <div style={{ display: "flex", alignItems: "center", gap: "0.6rem", flexWrap: "wrap" }}>
+              <span className="serif" style={{ fontSize: "0.9rem", color: "var(--ink)" }}>{inv.nombre}</span>
+              {inv.whatsapp && <span className="sans" style={{ fontSize: "0.6rem", color: "var(--ink-light)" }}>{inv.whatsapp}</span>}
+              <button onClick={() => setEditando(true)} style={{ background: "none", border: "none", color: "var(--terracotta)", cursor: "pointer", fontSize: "0.62rem", fontFamily: "'Montserrat',sans-serif", letterSpacing: "0.1em", textTransform: "uppercase", textDecoration: "underline", padding: 0 }}>editar</button>
+            </div>
+          )}
         </div>
-        <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-          <span className="sans" style={{ fontSize: "0.62rem", color: "var(--terracotta)", background: "rgba(212,105,58,0.1)", padding: "0.15rem 0.5rem", borderRadius: "2px" }}>{codigo}</span>
-          <button onClick={() => { if (confirm(`¿Eliminar a ${inv.nombre}?`)) onDelete(inv.id); }} style={{ background: "none", border: "none", color: "var(--ink-light)", cursor: "pointer", fontSize: "1rem", padding: "0", lineHeight: 1 }}>×</button>
+        {!editando && (
+          <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", flexShrink: 0 }}>
+            <span className="sans" style={{ fontSize: "0.62rem", color: "var(--terracotta)", background: "rgba(212,105,58,0.1)", padding: "0.15rem 0.5rem", borderRadius: "2px" }}>{codigo}</span>
+            <button onClick={() => { if (confirm(`¿Eliminar a ${inv.nombre}?`)) onDelete(inv.id); }} style={{ background: "none", border: "none", color: "var(--ink-light)", cursor: "pointer", fontSize: "1rem", padding: "0", lineHeight: 1 }}>×</button>
+          </div>
+        )}
+      </div>
+      {!editando && (
+        <div style={{ display: "flex", gap: "1.2rem", alignItems: "center" }}>
+          <CheckConfirm checked={inv.confirmacion_1} fecha={inv.confirmacion_1_fecha} label="1ra"     color="var(--olive)"       onChange={v => onUpdate(inv.id, "confirmacion_1", v)} />
+          <CheckConfirm checked={inv.confirmacion_2} fecha={inv.confirmacion_2_fecha} label="2da"     color="var(--periwinkle)"  onChange={v => onUpdate(inv.id, "confirmacion_2", v)} />
+          <CheckConfirm checked={inv.confirmacion_3} fecha={inv.confirmacion_3_fecha} label="3ra"     color="var(--gold)"        onChange={v => onUpdate(inv.id, "confirmacion_3", v)} />
+          <CheckConfirm checked={inv.asistio}        fecha={null}                     label="Asistió" color="var(--terracotta)"  onChange={v => onUpdate(inv.id, "asistio", v)} />
         </div>
-      </div>
-      {/* Checks en una sola fila */}
-      <div style={{ display: "flex", gap: "1.2rem", alignItems: "center" }}>
-        <CheckConfirm checked={inv.confirmacion_1} fecha={inv.confirmacion_1_fecha} label="1ra"     color="var(--olive)"       onChange={v => onUpdate(inv.id, "confirmacion_1", v)} />
-        <CheckConfirm checked={inv.confirmacion_2} fecha={inv.confirmacion_2_fecha} label="2da"     color="var(--periwinkle)"  onChange={v => onUpdate(inv.id, "confirmacion_2", v)} />
-        <CheckConfirm checked={inv.confirmacion_3} fecha={inv.confirmacion_3_fecha} label="3ra"     color="var(--gold)"        onChange={v => onUpdate(inv.id, "confirmacion_3", v)} />
-        <CheckConfirm checked={inv.asistio}        fecha={null}                     label="Asistió" color="var(--terracotta)"  onChange={v => onUpdate(inv.id, "asistio", v)} />
-      </div>
+      )}
     </div>
   );
 }
