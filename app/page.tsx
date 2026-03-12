@@ -40,8 +40,8 @@ export default function Home() {
           />
           <Schedule />
           <BibleVerse
-            verse="Iré donde tú vayas y viviré donde tú vivas"
-            reference="Rut 1:16"
+            verse="Jehová guardará tu salida y tu entrada desde ahora y para siempre"
+            reference="Salmo 121:8"
           />
           <Venue />
           <BibleVerse

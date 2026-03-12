@@ -26,7 +26,7 @@ export default function Venue() {
         <Reveal delay={0.12}>
           <div style={{ margin: "2rem 0 0.5rem" }}>
             <h3 className="serif" style={{ fontSize: "clamp(1.4rem,5vw,1.9rem)", color: "var(--ink)", fontWeight: 400, letterSpacing: "0.03em" }}>Brisas del Renacer</h3>
-            <p className="serif" style={{ fontStyle: "italic", color: "var(--ink-light)", fontSize: "0.9rem", marginTop: "0.4rem", letterSpacing: "0.06em" }}>A 600 metros de la entrada, vía Coro–Churuguara</p>
+            <p className="serif" style={{ fontStyle: "italic", color: "var(--ink-light)", fontSize: "0.9rem", marginTop: "0.4rem", letterSpacing: "0.06em" }}>A 600 metros de la entrada de Zambrano, vía Coro–Churuguara</p>
           </div>
         </Reveal>
 
