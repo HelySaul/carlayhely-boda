@@ -261,17 +261,25 @@ function FilaInvitado({ inv, codigo, onUpdate, onDelete }: {
   onDelete: (id: string) => void;
 }) {
   return (
-    <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: "0.6rem", padding: "0.65rem 0.8rem", background: "var(--cream)", border: "1px solid var(--border-subtle)", borderRadius: "2px", marginBottom: "0.35rem" }}>
-      <div style={{ flex: "1 1 140px" }}>
-        <span className="serif" style={{ fontSize: "0.9rem", color: "var(--ink)" }}>{inv.nombre}</span>
-        {inv.whatsapp && <span className="sans" style={{ fontSize: "0.6rem", color: "var(--ink-light)", marginLeft: "0.5rem" }}>{inv.whatsapp}</span>}
+    <div style={{ background: "var(--cream)", border: "1px solid var(--border-subtle)", borderRadius: "2px", marginBottom: "0.35rem", padding: "0.65rem 0.8rem" }}>
+      {/* Nombre + código */}
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.5rem" }}>
+        <div>
+          <span className="serif" style={{ fontSize: "0.9rem", color: "var(--ink)" }}>{inv.nombre}</span>
+          {inv.whatsapp && <span className="sans" style={{ fontSize: "0.6rem", color: "var(--ink-light)", marginLeft: "0.5rem" }}>{inv.whatsapp}</span>}
+        </div>
+        <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+          <span className="sans" style={{ fontSize: "0.62rem", color: "var(--terracotta)", background: "rgba(212,105,58,0.1)", padding: "0.15rem 0.5rem", borderRadius: "2px" }}>{codigo}</span>
+          <button onClick={() => { if (confirm(`¿Eliminar a ${inv.nombre}?`)) onDelete(inv.id); }} style={{ background: "none", border: "none", color: "var(--ink-light)", cursor: "pointer", fontSize: "1rem", padding: "0", lineHeight: 1 }}>×</button>
+        </div>
       </div>
-      <span className="sans" style={{ fontSize: "0.62rem", color: "var(--terracotta)", background: "rgba(212,105,58,0.1)", padding: "0.15rem 0.5rem", borderRadius: "2px" }}>{codigo}</span>
-      <CheckConfirm checked={inv.confirmacion_1} fecha={inv.confirmacion_1_fecha} label="1ra" color="var(--olive)"       onChange={v => onUpdate(inv.id, "confirmacion_1", v)} />
-      <CheckConfirm checked={inv.confirmacion_2} fecha={inv.confirmacion_2_fecha} label="2da" color="var(--periwinkle)"  onChange={v => onUpdate(inv.id, "confirmacion_2", v)} />
-      <CheckConfirm checked={inv.confirmacion_3} fecha={inv.confirmacion_3_fecha} label="3ra" color="var(--gold)"        onChange={v => onUpdate(inv.id, "confirmacion_3", v)} />
-      <CheckConfirm checked={inv.asistio}        fecha={null}                     label="Asistió" color="var(--terracotta)" onChange={v => onUpdate(inv.id, "asistio", v)} />
-      <button onClick={() => { if (confirm(`¿Eliminar a ${inv.nombre}?`)) onDelete(inv.id); }} style={{ background: "none", border: "none", color: "var(--ink-light)", cursor: "pointer", fontSize: "1rem", padding: "0", marginLeft: "auto" }}>×</button>
+      {/* Checks en una sola fila */}
+      <div style={{ display: "flex", gap: "1.2rem", alignItems: "center" }}>
+        <CheckConfirm checked={inv.confirmacion_1} fecha={inv.confirmacion_1_fecha} label="1ra"     color="var(--olive)"       onChange={v => onUpdate(inv.id, "confirmacion_1", v)} />
+        <CheckConfirm checked={inv.confirmacion_2} fecha={inv.confirmacion_2_fecha} label="2da"     color="var(--periwinkle)"  onChange={v => onUpdate(inv.id, "confirmacion_2", v)} />
+        <CheckConfirm checked={inv.confirmacion_3} fecha={inv.confirmacion_3_fecha} label="3ra"     color="var(--gold)"        onChange={v => onUpdate(inv.id, "confirmacion_3", v)} />
+        <CheckConfirm checked={inv.asistio}        fecha={null}                     label="Asistió" color="var(--terracotta)"  onChange={v => onUpdate(inv.id, "asistio", v)} />
+      </div>
     </div>
   );
 }
@@ -293,16 +301,18 @@ function TarjetaInvitacion({ invitacion, onUpdateInv, onDeleteInv, onDeleteInvit
     <div style={{ border: "1px solid var(--border-subtle)", borderRadius: "2px", marginBottom: "0.6rem", background: "var(--cream-mid)" }}>
       <div onClick={() => setOpen(o => !o)} style={{ display: "flex", alignItems: "center", gap: "0.8rem", padding: "0.9rem 1.2rem", cursor: "pointer", flexWrap: "wrap" }}>
         <span className="sans" style={{ fontSize: "1rem", letterSpacing: "0.1em", color: "var(--terracotta)", fontWeight: 600 }}>{invitacion.codigo}</span>
-        <div style={{ flex: 1, minWidth: "120px" }}>
-          {invitacion.nombre && <strong className="serif" style={{ fontSize: "0.9rem", color: "var(--ink)", marginRight: "0.4rem" }}>{invitacion.nombre} ·</strong>}
-          <span className="serif" style={{ fontSize: "0.85rem", color: "var(--ink-light)" }}>
+        <div style={{ flex: 1, minWidth: "0" }}>
+          {invitacion.nombre && (
+            <p className="serif" style={{ fontSize: "0.95rem", color: "var(--ink)", margin: "0 0 0.1rem 0", fontWeight: 600 }}>{invitacion.nombre}</p>
+          )}
+          <p className="serif" style={{ fontSize: "0.82rem", color: "var(--ink-light)", margin: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
             {invitacion.invitados.map(i => i.nombre).join(", ")}
-          </span>
+          </p>
         </div>
         <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "0.2rem" }}>
           <span className="sans" style={{ fontSize: "0.58rem", color: "var(--ink-light)" }}>{total} {total === 1 ? "persona" : "personas"} · {conf1} conf · {conf3} 3ra</span>
           {invitacion.creado_por && (
-            <span className="sans" style={{ fontSize: "0.52rem", color: "var(--ink-light)", fontStyle: "italic" }}>por {invitacion.creado_por}</span>
+            <span className="sans" style={{ fontSize: "0.62rem", color: "var(--ink)", background: "rgba(0,0,0,0.06)", padding: "0.15rem 0.6rem", borderRadius: "2px", letterSpacing: "0.05em" }}>por {invitacion.creado_por}</span>
           )}
         </div>
         <span style={{ color: "var(--ink-light)", fontSize: "0.7rem" }}>{open ? "▲" : "▼"}</span>
@@ -338,6 +348,7 @@ export default function AdminDashboard() {
   const [modalAdd, setModalAdd]           = useState<Invitacion | null>(null);
   const [modalUsuario, setModalUsuario]   = useState(false);
   const [username, setUsername]           = useState("");
+  const [nombreAdmin, setNombreAdmin]       = useState("");
   const [usuarios, setUsuarios]           = useState<{ id: string; username: string; nombre: string; created_at: string }[]>([]);
 
   useEffect(() => {
@@ -346,6 +357,7 @@ export default function AdminDashboard() {
     try {
       const payload = JSON.parse(atob(token().split(".")[1]));
       setUsername(payload.username ?? "");
+      setNombreAdmin(payload.nombre ?? payload.username ?? "");
     } catch { /* */ }
 
     const fetchData = async () => {
@@ -446,7 +458,7 @@ export default function AdminDashboard() {
       <main style={{ padding: "1.2rem 1rem", maxWidth: "960px", margin: "0 auto" }}>
         {/* Stats — 2 filas en mobile */}
         <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "0.5rem", marginBottom: "1.5rem" }}>
-          <StatCard value={totalRes}   label="Invitaciones" color="var(--terracotta)" />
+          <StatCard value={totalRes}   label="Invit." color="var(--terracotta)" />
           <StatCard value={totalInv}   label="Invitados"    color="var(--ink)" />
           <StatCard value={conf1}      label="1ra conf"     color="var(--olive)" />
           <StatCard value={conf2}      label="2da conf"     color="var(--periwinkle)" />
@@ -498,7 +510,7 @@ export default function AdminDashboard() {
                   <span className="serif" style={{ fontSize: "0.95rem", color: "var(--ink)" }}>{inv.nombre}</span>
                   <div style={{ display: "flex", gap: "0.5rem", alignItems: "center", flexWrap: "wrap" }}>
                     <span className="sans" style={{ fontSize: "0.62rem", color: "var(--terracotta)" }}>{inv.codigo}</span>
-                    {inv.creado_por && <span className="sans" style={{ fontSize: "0.55rem", color: "var(--ink-light)", fontStyle: "italic" }}>por {inv.creado_por}</span>}
+                    {inv.creado_por && <span className="sans" style={{ fontSize: "0.62rem", color: "var(--ink)", background: "rgba(0,0,0,0.06)", padding: "0.15rem 0.6rem", borderRadius: "2px" }}>por {inv.creado_por}</span>}
                   </div>
                 </div>
                 <div style={{ display: "flex", gap: "0.8rem", marginTop: "0.4rem", flexWrap: "wrap" }}>
@@ -551,7 +563,7 @@ export default function AdminDashboard() {
         )}
       </main>
 
-      {modalNueva   && <ModalNuevaInvitacion onClose={() => setModalNueva(false)} onCreated={r => setInvitaciones(rs => [r, ...rs])} username={username} />}
+      {modalNueva   && <ModalNuevaInvitacion onClose={() => setModalNueva(false)} onCreated={r => setInvitaciones(rs => [r, ...rs])} username={nombreAdmin} />}
       {modalAdd     && <ModalAgregarPersona invitacion={modalAdd} onClose={() => setModalAdd(null)} onAdded={inv => { setInvitaciones(rs => rs.map(r => r.id !== modalAdd.id ? r : { ...r, invitados: [...r.invitados, inv] })); }} />}
       {modalUsuario && <ModalNuevoUsuario onClose={() => setModalUsuario(false)} onCreated={cargarUsuarios} />}
     </div>

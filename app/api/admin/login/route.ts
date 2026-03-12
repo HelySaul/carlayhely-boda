@@ -26,7 +26,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Password incorrecto' }, { status: 401 });
     }
 
-    const token = signToken({ username: admin.username, id: admin.id });
+    const token = signToken({ username: admin.username, nombre: admin.nombre || admin.username, id: admin.id });
     return NextResponse.json({ token });
 
   } catch {
