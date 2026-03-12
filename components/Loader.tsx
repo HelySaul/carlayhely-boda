@@ -11,7 +11,7 @@ export default function Loader({ onComplete }: { onComplete: () => void }) {
   useEffect(() => {
     let t1: ReturnType<typeof setTimeout>;
     let t2: ReturnType<typeof setTimeout>;
-    const minTime = new Promise<void>(res => { t1 = setTimeout(res, 2200); });
+    const minTime = new Promise<void>(res => { t1 = setTimeout(res, 4200); });
     Promise.all([minTime, document.fonts.ready]).then(() => {
       setPhase("out");
       t2 = setTimeout(() => {
@@ -31,7 +31,7 @@ export default function Loader({ onComplete }: { onComplete: () => void }) {
       pointerEvents: phase === "out" ? "none" : "all",
     }}>
       <p style={{
-        fontFamily: "'Pinyon Script', cursive",
+        fontFamily: "'Monsieur La Doulaise', cursive",
         fontSize: "clamp(3.2rem, 14vw, 5.5rem)",
         color: "var(--ink)", lineHeight: 1,
         opacity: phase === "in" ? 0 : 1,
