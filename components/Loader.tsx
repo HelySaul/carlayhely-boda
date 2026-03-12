@@ -2,23 +2,29 @@
 import { useEffect, useRef, useState } from "react";
 
 export default function Loader({ onComplete }: { onComplete: () => void }) {
-  const [phase, setPhase] = useState<"in" | "hold" | "out">("in");
+  const [phase, setPhase] = useState<"in" | "visible" | "out">("in");
   const called = useRef(false);
   const onCompleteRef = useRef(onComplete);
 
   useEffect(() => { onCompleteRef.current = onComplete; }, [onComplete]);
 
   useEffect(() => {
-    let t1: ReturnType<typeof setTimeout>;
     let t2: ReturnType<typeof setTimeout>;
-    const minTime = new Promise<void>(res => { t1 = setTimeout(res, 4200); });
+    let t3: ReturnType<typeof setTimeout>;
+
+    // Fase "visible" arranca a los 80ms — dispara la animación de entrada
+    const t1 = setTimeout(() => setPhase("visible"), 80);
+
+    // Tiempo mínimo de 4.2s + fuentes listas antes de salir
+    const minTime = new Promise<void>(res => { t2 = setTimeout(res, 4200); });
     Promise.all([minTime, document.fonts.ready]).then(() => {
       setPhase("out");
-      t2 = setTimeout(() => {
+      t3 = setTimeout(() => {
         if (!called.current) { called.current = true; onCompleteRef.current(); }
-      }, 800);
+      }, 900);
     });
-    return () => { clearTimeout(t1!); clearTimeout(t2!); };
+
+    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); };
   }, []);
 
   return (
@@ -26,12 +32,12 @@ export default function Loader({ onComplete }: { onComplete: () => void }) {
       position: "fixed", inset: 0, zIndex: 9999,
       backgroundColor: "var(--cream)",
       display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
-      transition: "opacity 0.8s cubic-bezier(0.22,1,0.36,1)",
+      transition: "opacity 0.9s cubic-bezier(0.22,1,0.36,1)",
       opacity: phase === "out" ? 0 : 1,
       pointerEvents: phase === "out" ? "none" : "all",
     }}>
       <p style={{
-        fontFamily: "'Monsieur La Doulaise', cursive",
+        fontFamily: "'Pinyon Script', cursive",
         fontSize: "clamp(3.2rem, 14vw, 5.5rem)",
         color: "var(--ink)", lineHeight: 1,
         opacity: phase === "in" ? 0 : 1,
