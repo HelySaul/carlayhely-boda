@@ -746,7 +746,7 @@ export default function AdminDashboard() {
           <StatCard value={asistieron} label="Asistieron"  color="var(--red)" />
         </div>
 
-        <div style={{ display: "flex", borderBottom: "1px solid var(--border-subtle)", marginBottom: "1.2rem" }}>
+        <div className="tabs-scroll" style={{ display: "flex", borderBottom: "1px solid var(--border-subtle)", marginBottom: "1.2rem", overflowX: "auto", scrollbarWidth: "none", msOverflowStyle: "none" } as React.CSSProperties}>
           {(["invitaciones", "lista", "confirmados", "usuarios"] as const).map(t => (
             <button key={t} onClick={() => setTab(t)} style={{
               padding: "0.75rem 1.2rem", background: "none", border: "none",
