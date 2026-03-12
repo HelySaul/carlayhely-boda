@@ -39,10 +39,10 @@ export default function Schedule() {
             <p className="sans" style={{ fontSize: "0.62rem", letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--ink-light)", marginBottom: "0.7rem" }}>6:00 PM</p>
             <h3 className="serif" style={{ fontSize: "clamp(1.3rem,4vw,1.7rem)", color: "var(--ink)", fontWeight: 400, marginBottom: "1rem" }}>Ceremonia de Unión Matrimonial</h3>
             <p className="sans" style={{ color: "var(--ink-mid)", fontSize: "0.86rem", lineHeight: 1.8, fontWeight: 300, marginBottom: "1.1rem" }}>
-              El momento más sagrado de nuestra celebración. Ante Dios y ante quienes más queremos, Carla y Hely se unirán en matrimonio, pronunciando sus votos y sellando con fe el pacto de amor que han construido juntos.
+              El momento más sagrado de nuestra celebración. Ante Dios y ante quienes más queremos, nos uniremos en matrimonio, pronunciando nuestros votos y sellando con fe el pacto de amor que hemos construido juntos.
             </p>
             <p className="sans" style={{ color: "var(--ink-mid)", fontSize: "0.86rem", lineHeight: 1.8, fontWeight: 300, marginBottom: "1.6rem" }}>
-              La ceremonia será un tiempo de adoración, reflexión y gozo. Habrá lectura de la Palabra, oración, y un mensaje especial para los novios — porque creemos que cuando Dios está en el centro, el amor crece sin límite.
+              La ceremonia será un tiempo de adoración, reflexión y gozo. Habrá lectura de la Palabra, oración, y un mensaje especial para nosotros — porque creemos que cuando Dios está en el centro, el amor crece sin límite.
             </p>
 
             {/* Divisor */}
@@ -76,7 +76,7 @@ export default function Schedule() {
             <p className="sans" style={{ fontSize: "0.62rem", letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--ink-light)", marginBottom: "0.7rem" }}>7:30 PM</p>
             <h3 className="serif" style={{ fontSize: "clamp(1.3rem,4vw,1.7rem)", color: "var(--ink)", fontWeight: 400, marginBottom: "1rem" }}>Recepción & Celebración</h3>
             <p className="sans" style={{ color: "var(--ink-mid)", fontSize: "0.86rem", lineHeight: 1.8, fontWeight: 300, marginBottom: "1.1rem" }}>
-              Terminada la ceremonia, la noche se abre para celebrar. Música en vivo, buena mesa y la gente que más queremos reunida en un solo lugar — así es como Carla y Hely quieren comenzar esta nueva etapa.
+              Terminada la ceremonia, la noche se abre para celebrar. Música en vivo, buena mesa y la gente que más queremos reunida en un solo lugar — así queremos comenzar esta nueva etapa.
             </p>
             <p className="sans" style={{ color: "var(--ink-mid)", fontSize: "0.86rem", lineHeight: 1.8, fontWeight: 300, marginBottom: "1.6rem" }}>
               Habrá momentos especiales a lo largo de la noche: palabras de los padres, brindis, sorpresas y todo lo que hace única una celebración como esta. Déjate llevar — cada momento fue pensado con cariño para ti.

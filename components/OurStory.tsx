@@ -3,9 +3,9 @@ import Reveal from "./Reveal";
 import FloralAccent from "./FloralAccent";
 
 const MOMENTS = [
-  { label: "El comienzo", text: "En abril de 2025, Dios cruzó los caminos de Carla y Hely. No fue casualidad — fue un propósito que Él ya había escrito antes de que cualquiera de los dos naciera. Sin prisa, sin presiones, con la certeza de que algo hermoso estaba comenzando a crecer en cada uno de ellos: el amor." },
-  { label: "Crecer juntos", text: "Con el tiempo aprendieron a conocerse de verdad, a amarse incluso en los desacuerdos, y a sostenerse en los momentos difíciles. Entendieron que con Dios como base y centro de su relación, sus pasos son firmes y su camino es seguro." },
-  { label: "Para siempre", text: "Han decidido elegirse el uno al otro — para siempre. Juntos con Dios, forman un cordón de tres dobleces que no se rompe fácilmente. Listos para escribir el capítulo más bonito, no porque sea perfecto, sino porque es nuestro, y porque es exactamente lo que Dios preparó para ellos." },
+  { label: "El comienzo", text: "En abril de 2025, Dios cruzó nuestros caminos. No fue casualidad — fue un propósito que Él ya había escrito antes de que cualquiera de los dos naciéramos. Sin prisa, sin presiones, con la certeza de que algo hermoso estaba comenzando a crecer en cada uno de nosotros: el amor." },
+  { label: "Crecer juntos", text: "Con el tiempo aprendimos a conocernos de verdad, a amarnos incluso en los desacuerdos, y a sostenernos en los momentos difíciles. Entendimos que con Dios como base y centro de nuestra relación, nuestros pasos son firmes y nuestro camino es seguro." },
+  { label: "Para siempre", text: "Decidimos elegirnos el uno al otro — para siempre. Juntos con Dios, formamos un cordón de tres dobleces que no se rompe fácilmente. Listos para escribir el capítulo más bonito, no porque sea perfecto, sino porque es nuestro, y porque es exactamente lo que Dios preparó para nosotros." },
 ];
 
 export default function OurStory() {
