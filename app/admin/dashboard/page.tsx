@@ -29,10 +29,11 @@ function fechaCorta(iso: string | null) {
 
 // ── Hook responsive ───────────────────────────────────
 function useIsDesktop() {
-  const [isDesktop, setIsDesktop] = useState(false);
+  const [isDesktop, setIsDesktop] = useState(() =>
+    typeof window !== "undefined" ? window.matchMedia("(min-width: 768px)").matches : false
+  );
   useEffect(() => {
     const mq = window.matchMedia("(min-width: 768px)");
-    setIsDesktop(mq.matches);
     const handler = (e: MediaQueryListEvent) => setIsDesktop(e.matches);
     mq.addEventListener("change", handler);
     return () => mq.removeEventListener("change", handler);
@@ -565,9 +566,17 @@ export default function AdminDashboard() {
   const [modalNueva, setModalNueva]       = useState(false);
   const [modalAdd, setModalAdd]           = useState<Invitacion | null>(null);
   const [modalUsuario, setModalUsuario]   = useState(false);
-  const [username, setUsername]           = useState("");
-  const [nombreAdmin, setNombreAdmin]     = useState("");
+  const [username, setUsername]           = useState(() => {
+    if (typeof window === "undefined") return "";
+    try { return JSON.parse(atob((localStorage.getItem("admin_token") ?? "..").split(".")[1]))?.username ?? ""; } catch { return ""; }
+  });
+  const [nombreAdmin, setNombreAdmin]     = useState(() => {
+    if (typeof window === "undefined") return "";
+    try { const p = JSON.parse(atob((localStorage.getItem("admin_token") ?? "..").split(".")[1])); return p?.nombre ?? p?.username ?? ""; } catch { return ""; }
+  });
   const [usuarios, setUsuarios]           = useState<{ id: string; username: string; nombre: string; created_at: string }[]>([]);
+  const [rondaActual, setRondaActual]     = useState<1|2|3>(1);
+  const [cambiandoRonda, setCambiandoRonda] = useState(false);
 
   // Filtros compartidos
   const [search, setSearch]           = useState("");
@@ -579,11 +588,6 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     if (!localStorage.getItem("admin_token")) { router.push("/admin"); return; }
-    try {
-      const payload = JSON.parse(atob(token().split(".")[1]));
-      setUsername(payload.username ?? "");
-      setNombreAdmin(payload.nombre ?? payload.username ?? "");
-    } catch { /* */ }
     const fetchData = async () => {
       setLoading(true);
       const res = await fetch("/api/admin/invitaciones", { headers: { Authorization: `Bearer ${token()}` } });
@@ -592,15 +596,36 @@ export default function AdminDashboard() {
       setLoading(false);
     };
     fetchData();
+    // Cargar ronda actual
+    fetch("/api/admin/config", { headers: { Authorization: `Bearer ${token()}` } })
+      .then(r => r.json()).then(d => { if (d.ronda) setRondaActual(d.ronda); });
   }, [router]);
 
-  async function cargarUsuarios() {
-    const res = await fetch("/api/admin/usuarios", { headers: { Authorization: `Bearer ${token()}` } });
-    if (res.ok) setUsuarios(await res.json());
+  function cargarUsuarios() {
+    fetch("/api/admin/usuarios", { headers: { Authorization: `Bearer ${token()}` } })
+      .then(r => r.ok ? r.json() : null)
+      .then(d => { if (d) setUsuarios(d); });
   }
-  useEffect(() => { if (tab === "usuarios") cargarUsuarios(); }, [tab]);
+  useEffect(() => {
+    if (tab !== "usuarios") return;
+    let activo = true;
+    fetch("/api/admin/usuarios", { headers: { Authorization: `Bearer ${token()}` } })
+      .then(r => r.ok ? r.json() : null)
+      .then(d => { if (activo && d) setUsuarios(d); });
+    return () => { activo = false; };
+  }, [tab]);
 
   function logout() { localStorage.removeItem("admin_token"); router.push("/admin"); }
+
+  async function cambiarRonda(r: 1|2|3) {
+    setCambiandoRonda(true);
+    await fetch("/api/admin/config", {
+      method: "PATCH", headers: authHeaders(),
+      body: JSON.stringify({ ronda: r }),
+    });
+    setRondaActual(r);
+    setCambiandoRonda(false);
+  }
 
   async function updateInvitado(invitacionId: string, invId: string, field: string, val: boolean) {
     await fetch(`/api/admin/invitados?id=${invId}`, { method: "PATCH", headers: authHeaders(), body: JSON.stringify({ [field]: val }) });
@@ -692,7 +717,33 @@ export default function AdminDashboard() {
     return r;
   }
 
-  const invitacionesFiltradas = useMemo(() => aplicarFiltros(invitaciones), [invitaciones, search, sortKey, sortDir, tipo, confFiltro, creadoPor]);
+  const invitacionesFiltradas = useMemo(() => {
+    let r = invitaciones;
+    if (search) r = r.filter(inv =>
+      inv.codigo.includes(search) ||
+      (inv.nombre ?? "").toLowerCase().includes(search.toLowerCase()) ||
+      inv.invitados.some(i => i.nombre.toLowerCase().includes(search.toLowerCase()))
+    );
+    if (tipo === "grupo")       r = r.filter(inv => inv.invitados.length > 1);
+    if (tipo === "individual")  r = r.filter(inv => inv.invitados.length === 1);
+    if (creadoPor)              r = r.filter(inv => inv.creado_por === creadoPor);
+    if (confFiltro === "conf1") r = r.filter(inv => inv.invitados.some(i => i.confirmacion_1));
+    if (confFiltro === "conf2") r = r.filter(inv => inv.invitados.some(i => i.confirmacion_2));
+    if (confFiltro === "conf3") r = r.filter(inv => inv.invitados.some(i => i.confirmacion_3));
+    if (confFiltro === "ninguna") r = r.filter(inv => inv.invitados.every(i => !i.confirmacion_1 && !i.confirmacion_2 && !i.confirmacion_3));
+    return [...r].sort((a, b) => {
+      let va: string | number = 0, vb: string | number = 0;
+      if (sortKey === "nombre")     { va = (a.nombre ?? a.invitados[0]?.nombre ?? "").toLowerCase(); vb = (b.nombre ?? b.invitados[0]?.nombre ?? "").toLowerCase(); }
+      if (sortKey === "codigo")     { va = a.codigo; vb = b.codigo; }
+      if (sortKey === "creado_por") { va = (a.creado_por ?? "").toLowerCase(); vb = (b.creado_por ?? "").toLowerCase(); }
+      if (sortKey === "cantidad")   { va = a.invitados.length; vb = b.invitados.length; }
+      if (sortKey === "fecha")      { va = a.created_at; vb = b.created_at; }
+      if (sortKey === "confirmados"){ va = a.invitados.filter(i => i.confirmacion_1 || i.confirmacion_2 || i.confirmacion_3).length; vb = b.invitados.filter(i => i.confirmacion_1 || i.confirmacion_2 || i.confirmacion_3).length; }
+      if (va < vb) return sortDir === "asc" ? -1 : 1;
+      if (va > vb) return sortDir === "asc" ? 1 : -1;
+      return 0;
+    });
+  }, [invitaciones, search, sortKey, sortDir, tipo, confFiltro, creadoPor]);
 
   // Lista plana para tabs "lista" y "confirmados"
   const allInvFlat = useMemo(() => {
@@ -730,7 +781,22 @@ export default function AdminDashboard() {
           <h1 className="script" style={{ fontSize: "2rem", color: "var(--ink)", lineHeight: 1 }}>C &amp; H</h1>
           <p className="sans" style={{ fontSize: "0.55rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--terracotta)" }}>Admin</p>
         </div>
-        <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap", justifyContent: "flex-end" }}>
+        <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap", justifyContent: "flex-end", alignItems: "center" }}>
+          {/* Selector de ronda */}
+          <div style={{ display: "flex", alignItems: "center", gap: "0.4rem", background: "var(--cream)", border: "1px solid var(--border-subtle)", borderRadius: "2px", padding: "0.3rem 0.5rem" }}>
+            <span className="sans" style={{ fontSize: "0.55rem", letterSpacing: "0.15em", textTransform: "uppercase", color: "var(--ink-light)", whiteSpace: "nowrap" }}>Ronda</span>
+            {([1,2,3] as (1|2|3)[]).map(r => (
+              <button key={r} onClick={() => !cambiandoRonda && cambiarRonda(r)} style={{
+                width: "28px", height: "28px",
+                background: rondaActual === r ? "var(--terracotta)" : "transparent",
+                color: rondaActual === r ? "var(--cream)" : "var(--ink-light)",
+                border: `1px solid ${rondaActual === r ? "var(--terracotta)" : "var(--border-subtle)"}`,
+                borderRadius: "2px", fontFamily: "'Montserrat',sans-serif",
+                fontSize: "0.75rem", fontWeight: 600, cursor: "pointer",
+                transition: "all 0.15s", opacity: cambiandoRonda ? 0.6 : 1,
+              }}>{r}</button>
+            ))}
+          </div>
           <button onClick={exportCSV} style={{ ...btnOutline, fontSize: "0.7rem", padding: "0.55rem 1rem" }}>CSV</button>
           <button onClick={logout} style={{ ...btnOutline, borderColor: "var(--ink-light)", color: "var(--ink-light)", fontSize: "0.7rem", padding: "0.55rem 1rem" }}>Salir</button>
         </div>
