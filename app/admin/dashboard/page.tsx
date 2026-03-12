@@ -99,8 +99,8 @@ function ModalNuevaInvitacion({ onClose, onCreated, nombreAdmin }: { onClose: ()
   }
 
   return (
-    <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.45)", zIndex: 1000, display: "flex", alignItems: "flex-end", justifyContent: "center" }}>
-      <div style={{ background: "var(--cream)", border: "1px solid var(--border-subtle)", borderRadius: "2px 2px 0 0", padding: "1.5rem 1.2rem", width: "100%", maxWidth: "560px", height: "92dvh", overflowY: "auto", WebkitOverflowScrolling: "touch" } as React.CSSProperties}>
+    <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.45)", zIndex: 1000, display: "flex", alignItems: "center", justifyContent: "center", padding: "1rem" }}>
+      <div style={{ background: "var(--cream)", border: "1px solid var(--border-subtle)", borderRadius: "2px", padding: "2rem", width: "100%", maxWidth: "520px", maxHeight: "90dvh", overflowY: "auto" }}>
         <h3 className="serif" style={{ fontSize: "1.5rem", color: "var(--ink)", marginBottom: "0.3rem" }}>Nueva invitación</h3>
         <p className="sans" style={{ fontSize: "0.68rem", color: "var(--ink-light)", marginBottom: "1.5rem" }}>El código de 6 dígitos se genera automáticamente.</p>
 
@@ -170,8 +170,8 @@ function ModalAgregarPersona({ invitacion, onClose, onAdded }: { invitacion: Inv
   }
 
   return (
-    <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.45)", zIndex: 1000, display: "flex", alignItems: "flex-end", justifyContent: "center" }}>
-      <div style={{ background: "var(--cream)", border: "1px solid var(--border-subtle)", borderRadius: "2px 2px 0 0", padding: "1.5rem 1.2rem", width: "100%", maxWidth: "560px", maxHeight: "92dvh", overflowY: "auto", WebkitOverflowScrolling: "touch" } as React.CSSProperties}>
+    <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.45)", zIndex: 1000, display: "flex", alignItems: "center", justifyContent: "center", padding: "1rem" }}>
+      <div style={{ background: "var(--cream)", border: "1px solid var(--border-subtle)", borderRadius: "2px", padding: "2rem", width: "100%", maxWidth: "400px", maxHeight: "90dvh", overflowY: "auto" }}>
         <h3 className="serif" style={{ fontSize: "1.3rem", color: "var(--ink)", marginBottom: "0.3rem" }}>Agregar persona</h3>
         <p className="sans" style={{ fontSize: "0.68rem", color: "var(--ink-light)", marginBottom: "1.5rem" }}>Invitación <strong>{invitacion.codigo}</strong></p>
         <div style={{ display: "flex", flexDirection: "column", gap: "0.8rem" }}>
@@ -216,8 +216,8 @@ function ModalNuevoUsuario({ onClose, onCreated }: { onClose: () => void; onCrea
   }
 
   return (
-    <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.45)", zIndex: 1000, display: "flex", alignItems: "flex-end", justifyContent: "center" }}>
-      <div style={{ background: "var(--cream)", border: "1px solid var(--border-subtle)", borderRadius: "2px 2px 0 0", padding: "1.5rem 1.2rem", width: "100%", maxWidth: "560px", maxHeight: "92dvh", overflowY: "auto", WebkitOverflowScrolling: "touch" } as React.CSSProperties}>
+    <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.45)", zIndex: 1000, display: "flex", alignItems: "center", justifyContent: "center", padding: "1rem" }}>
+      <div style={{ background: "var(--cream)", border: "1px solid var(--border-subtle)", borderRadius: "2px", padding: "2rem", width: "100%", maxWidth: "400px", maxHeight: "90dvh", overflowY: "auto" }}>
         <h3 className="serif" style={{ fontSize: "1.3rem", color: "var(--ink)", marginBottom: "1.5rem" }}>Nuevo usuario</h3>
         <div style={{ display: "flex", flexDirection: "column", gap: "0.8rem" }}>
           <div>
