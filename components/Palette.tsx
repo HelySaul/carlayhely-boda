@@ -22,7 +22,14 @@ export default function Palette() {
       }}
     >
       {/* Manchas decorativas */}
+
+      {/* Manchas — clip propio */}
+
+      <div style={{ position: "absolute", inset: 0, overflow: "hidden", pointerEvents: "none", zIndex: 0 }}>
+
       <div style={{ position: "absolute", top: "-5%", left: "-8%", width: "clamp(160px,36vw,280px)", height: "clamp(160px,36vw,280px)", borderRadius: "50%", background: "radial-gradient(circle, rgba(155,139,180,0.20) 0%, transparent 70%)", pointerEvents: "none" }} />
+
+      </div>
       <div style={{ position: "absolute", bottom: "5%", right: "-6%", width: "clamp(120px,28vw,220px)", height: "clamp(120px,28vw,220px)", borderRadius: "50%", background: "radial-gradient(circle, rgba(212,105,58,0.16) 0%, transparent 70%)", pointerEvents: "none" }} />
       <FloralAccent side="left" x="-8px" y="bottom: -30px" size={92} petalColor="#D4A832" petalColor2="#D4693A" rotate={5} opacity={0.70} />
       <div style={{ maxWidth: "540px", margin: "0 auto" }}>

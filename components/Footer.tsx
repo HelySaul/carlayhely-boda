@@ -6,7 +6,14 @@ export default function Footer() {
   return (
     <footer style={{ padding: "5rem 1.5rem 4rem", background: "var(--bg-footer)", textAlign: "center", position: "relative", overflow: "visible" }}>
       {/* Manchas decorativas */}
+
+      {/* Manchas — clip propio */}
+
+      <div style={{ position: "absolute", inset: 0, overflow: "hidden", pointerEvents: "none", zIndex: 0 }}>
+
       <div style={{ position: "absolute", top: "-8%", left: "-8%", width: "clamp(180px,40vw,320px)", height: "clamp(180px,40vw,320px)", borderRadius: "50%", background: "radial-gradient(circle, rgba(212,105,58,0.16) 0%, transparent 70%)", pointerEvents: "none" }} />
+
+      </div>
       <div style={{ position: "absolute", bottom: "-8%", right: "-6%", width: "clamp(160px,35vw,280px)", height: "clamp(160px,35vw,280px)", borderRadius: "50%", background: "radial-gradient(circle, rgba(122,148,56,0.16) 0%, transparent 70%)", pointerEvents: "none" }} />
       <FloralAccent side="left" x="-8px" y="top: -35px" size={85} petalColor="#C94F4F" petalColor2="#D4693A" rotate={8} opacity={0.48} />
       <Reveal>
