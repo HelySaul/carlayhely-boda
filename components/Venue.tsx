@@ -36,16 +36,20 @@ export default function Venue() {
 
         {/* Mapa embed */}
         <Reveal delay={0.22}>
-          <div style={{ width: "100%", height: "230px", border: "1px solid var(--border-subtle)", borderRadius: "2px", overflow: "hidden", marginBottom: "1rem" }}>
-            <iframe
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3921.!2d-69.5855451!3d11.3661906!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8e842bfeee5f598d%3A0xf403a1c864647f4f!2sCentro%20Recreacional%20Brisas%20del%20Renacer!5e0!3m2!1ses!2sve!4v1"
-              width="100%"
-              height="230"
-              style={{ border: 0, display: "block", filter: "saturate(0.85) brightness(1.02)" }}
-              allowFullScreen
-              loading="lazy"
-              referrerPolicy="no-referrer-when-downgrade"
-            />
+          <div style={{ padding: "8px", background: "var(--cream-mid)", border: "1px solid var(--border-subtle)", borderRadius: "2px", marginBottom: "1rem", boxShadow: "0 2px 12px rgba(0,0,0,0.07)" }}>
+            <div style={{ padding: "6px", border: "1px solid var(--gold-line)", borderRadius: "1px" }}>
+              <div style={{ overflow: "hidden", borderRadius: "1px" }}>
+                <iframe
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3921.!2d-69.5855451!3d11.3661906!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8e842bfeee5f598d%3A0xf403a1c864647f4f!2sCentro%20Recreacional%20Brisas%20del%20Renacer!5e0!3m2!1ses!2sve!4v1"
+                  width="100%"
+                  height="230"
+                  style={{ border: 0, display: "block", filter: "saturate(0.85) brightness(1.02)" }}
+                  allowFullScreen
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                />
+              </div>
+            </div>
           </div>
         </Reveal>
 
