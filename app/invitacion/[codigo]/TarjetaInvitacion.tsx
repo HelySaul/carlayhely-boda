@@ -93,7 +93,7 @@ export default function TarjetaInvitacion({ inv, rondaActual, codigo }: Props) {
           {esIndividual ? (
             <p className="script" style={{
               fontSize: 'clamp(2.4rem, 11vw, 3.4rem)',
-              color: '#C94F4F',
+              color: '#D4693A',
               lineHeight: 1.05,
               letterSpacing: '0.01em',
             }}>
@@ -104,7 +104,7 @@ export default function TarjetaInvitacion({ inv, rondaActual, codigo }: Props) {
               {inv.invitados.map((i, idx) => (
                 <p key={i.id} className="script" style={{
                   fontSize: 'clamp(2rem, 9vw, 2.8rem)',
-                  color: '#C94F4F',
+                  color: '#D4693A',
                   lineHeight: 1.05,
                   opacity: idx === 0 ? 1 : 0.75,
                 }}>
@@ -117,7 +117,7 @@ export default function TarjetaInvitacion({ inv, rondaActual, codigo }: Props) {
           {/* Línea decorativa */}
           <div style={{
             width: '80px', height: '1px',
-            background: 'linear-gradient(90deg, transparent, rgba(201,79,79,0.45), transparent)',
+            background: 'linear-gradient(90deg, transparent, rgba(212,105,58,0.45), transparent)',
             margin: '0.8rem auto',
           }} />
 
