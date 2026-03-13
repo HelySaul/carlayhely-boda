@@ -202,7 +202,7 @@ export default function AdminDashboard() {
 
   // ── Render ────────────────────────────────────────────────────────────────────
   return (
-    <div style={{ minHeight: "100svh", background: "var(--bg-hero)" }}>
+    <div style={{ minHeight: "100svh", background: "var(--cream)" }}>
 
       {/* Header */}
       <header style={{ background: "var(--cream-mid)", borderBottom: "1px solid var(--border-subtle)", padding: "0.8rem 1rem", display: "flex", alignItems: "center", justifyContent: "space-between", position: "sticky", top: 0, zIndex: 100, gap: "0.8rem" }}>
