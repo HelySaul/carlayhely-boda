@@ -456,25 +456,91 @@ function Tarjeta({ inv, esIndividual, todosConfirmaron, algunoConfirmo, rondaAct
 }) {
   const invitado = inv.invitados[0];
   const esF = esIndividual && invitado?.sexo === "F";
-  const nombre1 = invitado?.nombre.split(" ")[0] ?? "";
 
   return (
     <div style={{
-      background: "linear-gradient(160deg, #FDFAF6 0%, #FAF2EA 60%, #F6F8F2 100%)",
+      background: "#FFFFFF",
       borderRadius: "3px",
-      padding: "2.6rem 2rem 2rem",
-      boxShadow: "0 12px 50px rgba(80,40,30,0.14), 0 2px 10px rgba(80,40,30,0.08)",
+      boxShadow: "0 16px 60px rgba(60,30,20,0.13), 0 2px 12px rgba(60,30,20,0.07)",
       position: "relative",
       overflow: "hidden",
     }}>
 
-      {/* Manchas de fondo — sutiles */}
-      <div style={{ position: "absolute", inset: 0, pointerEvents: "none" }}>
-        <div style={{ position: "absolute", top: "-20%", right: "-10%", width: "45%", height: "45%", borderRadius: "50%", background: "radial-gradient(circle, rgba(201,79,79,0.07) 0%, transparent 70%)" }} />
-        <div style={{ position: "absolute", bottom: "-15%", left: "-5%", width: "35%", height: "35%", borderRadius: "50%", background: "radial-gradient(circle, rgba(122,148,56,0.07) 0%, transparent 70%)" }} />
+      {/* Cinta vertical sutil */}
+      <div style={{
+        position: "absolute", top: 0, bottom: 0,
+        left: "50%", transform: "translateX(-50%)",
+        width: "28px", zIndex: 0,
+        background: "linear-gradient(180deg, rgba(225,205,195,0.15) 0%, rgba(215,192,182,0.25) 50%, rgba(225,205,195,0.15) 100%)",
+        borderLeft: "0.5px solid rgba(205,180,170,0.2)",
+        borderRight: "0.5px solid rgba(205,180,170,0.2)",
+        pointerEvents: "none",
+      }} />
+
+      {/* Ramo de rosas esquina superior izquierda */}
+      <div style={{ position: "absolute", top: "-6px", left: "-6px", zIndex: 2, pointerEvents: "none" }}>
+        <svg width="145" height="135" viewBox="0 0 145 135" fill="none" xmlns="http://www.w3.org/2000/svg">
+          {/* Tallos */}
+          <path d="M56 132 Q53 105 49 84 Q45 64 39 48" stroke="#9AAA72" strokeWidth="1.4" strokeLinecap="round" opacity="0.65"/>
+          <path d="M60 132 Q62 108 67 90 Q72 74 74 58" stroke="#8A9A62" strokeWidth="1.2" strokeLinecap="round" opacity="0.60"/>
+          <path d="M52 132 Q43 111 36 92 Q29 74 21 58" stroke="#9AAA72" strokeWidth="1.1" strokeLinecap="round" opacity="0.55"/>
+          {/* Hojas */}
+          <path d="M46 78 Q33 68 31 55 Q41 61 46 73Z" fill="#8A9A62" opacity="0.50"/>
+          <path d="M63 85 Q76 75 79 62 Q67 68 63 81Z" fill="#9AAA72" opacity="0.45"/>
+          <path d="M39 98 Q25 93 21 80 Q33 85 39 95Z" fill="#8A9A62" opacity="0.42"/>
+          <path d="M57 63 Q64 51 72 49 Q70 61 60 65Z" fill="#9AAA72" opacity="0.45"/>
+          {/* Rosa grande central — blanca */}
+          <g transform="translate(51, 44)">
+            <circle cx="0" cy="0" r="18" fill="#F5F0EE" opacity="0.5"/>
+            <path d="M0,-14 Q8,-10 12,-2 Q10,8 2,13 Q-6,14 -12,8 Q-15,-2 -10,-10 Q-6,-14 0,-14Z" fill="#FAFAFA" stroke="#E4D8D2" strokeWidth="0.5"/>
+            <path d="M0,-9 Q6,-6 8,0 Q6,6 0,9 Q-6,6 -8,0 Q-6,-6 0,-9Z" fill="#F5F0EE" stroke="#DDD0CA" strokeWidth="0.4"/>
+            <path d="M0,-5 Q3,-3 4,0 Q3,3 0,5 Q-3,3 -4,0 Q-3,-3 0,-5Z" fill="#ECE4DF"/>
+            <circle cx="0" cy="0" r="2" fill="#D8CCC6"/>
+            <path d="M-14,2 Q-17,-7 -10,-13 Q-6,-8 -8,0Z" fill="#FAFAFA" stroke="#E4D8D2" strokeWidth="0.3" opacity="0.8"/>
+            <path d="M14,2 Q17,-7 10,-13 Q6,-8 8,0Z" fill="#FAFAFA" stroke="#E4D8D2" strokeWidth="0.3" opacity="0.8"/>
+            <path d="M2,15 Q9,13 13,7 Q8,5 3,10Z" fill="#F8F4F2" stroke="#E4D8D2" strokeWidth="0.3" opacity="0.75"/>
+            <path d="M-2,15 Q-9,13 -13,7 Q-8,5 -3,10Z" fill="#F8F4F2" stroke="#E4D8D2" strokeWidth="0.3" opacity="0.75"/>
+          </g>
+          {/* Rosa mediana derecha — blanca */}
+          <g transform="translate(79, 60)">
+            <path d="M0,-12 Q8,-8 11,-1 Q9,8 2,11 Q-5,12 -10,5 Q-13,-4 -8,-10 Q-4,-13 0,-12Z" fill="#FAFAFA" stroke="#E4D8D2" strokeWidth="0.5"/>
+            <path d="M0,-7 Q5,-4 7,1 Q5,6 0,8 Q-5,6 -7,1 Q-5,-4 0,-7Z" fill="#F5F0EE" stroke="#DDD0CA" strokeWidth="0.35"/>
+            <path d="M0,-3.5 Q2.5,-2 3,0 Q2.5,2.5 0,3.5 Q-2.5,2.5 -3,0 Q-2.5,-2 0,-3.5Z" fill="#ECE4DF"/>
+            <circle cx="0" cy="0" r="1.5" fill="#D8CCC6"/>
+          </g>
+          {/* Rosa pequeña izquierda */}
+          <g transform="translate(23, 50)">
+            <path d="M0,-10 Q7,-6 9,1 Q7,7 1,9 Q-5,8 -8,2 Q-9,-5 -4,-8 Q-2,-10 0,-10Z" fill="#FDF9F8" stroke="#EAD8D4" strokeWidth="0.5"/>
+            <path d="M0,-6 Q4,-3 5.5,1 Q4,5 0,6 Q-4,5 -5.5,1 Q-4,-3 0,-6Z" fill="#F8F2EF" stroke="#E4CCC6" strokeWidth="0.35"/>
+            <path d="M0,-3 Q2,-1.5 2.5,0.5 Q2,2.5 0,3 Q-2,2.5 -2.5,0.5 Q-2,-1.5 0,-3Z" fill="#EEE4E0"/>
+            <circle cx="0" cy="0" r="1.2" fill="#D8CCC6"/>
+          </g>
+          {/* Perlas / detalles plateados */}
+          <circle cx="69" cy="31" r="2.8" fill="#EEEAE6" opacity="0.7"/>
+          <circle cx="63" cy="25" r="2" fill="#E4E0DC" opacity="0.6"/>
+          <circle cx="76" cy="38" r="1.6" fill="#EEEAE6" opacity="0.55"/>
+          <circle cx="59" cy="37" r="1.3" fill="#E4E0DC" opacity="0.5"/>
+          <circle cx="82" cy="28" r="1.4" fill="#EEEAE6" opacity="0.5"/>
+          {/* Florecitas relleno */}
+          <g transform="translate(41, 29)">
+            <circle cx="0" cy="0" r="5.5" fill="#FDF9F8" stroke="#EAD8D4" strokeWidth="0.5"/>
+            <circle cx="0" cy="0" r="2.8" fill="#EEE6E2"/>
+            <circle cx="0" cy="0" r="1.2" fill="#D8CCC6"/>
+          </g>
+          <g transform="translate(71, 23)">
+            <circle cx="0" cy="0" r="4.5" fill="#FDF9F8" stroke="#E4D8D2" strokeWidth="0.4"/>
+            <circle cx="0" cy="0" r="2.2" fill="#EDE5E0"/>
+            <circle cx="0" cy="0" r="0.9" fill="#D8CCC6"/>
+          </g>
+          <g transform="translate(88, 44)">
+            <circle cx="0" cy="0" r="3.5" fill="#FDF9F8" stroke="#E4D8D2" strokeWidth="0.4"/>
+            <circle cx="0" cy="0" r="1.7" fill="#EDE5E0"/>
+          </g>
+        </svg>
       </div>
 
-      <div style={{ position: "relative", zIndex: 1 }}>
+      {/* Contenido — padding top grande para dejar espacio al ramo */}
+      <div style={{ position: "relative", zIndex: 1, padding: "8rem 2rem 2.2rem" }}>
 
         {/* C & H — logo arriba */}
         <div style={{ textAlign: "center", marginBottom: "1.4rem" }}>
@@ -490,7 +556,7 @@ function Tarjeta({ inv, esIndividual, todosConfirmaron, algunoConfirmo, rondaAct
           </div>
         </div>
 
-        {/* Saludo personalizado */}
+        {/* Saludo */}
         <div style={{ textAlign: "center", marginBottom: "1.2rem" }}>
           <p className="serif" style={{ fontSize: "1.15rem", color: "#2C2320", fontStyle: "italic" }}>
             {saludo(inv.invitados)}
@@ -498,8 +564,8 @@ function Tarjeta({ inv, esIndividual, todosConfirmaron, algunoConfirmo, rondaAct
           <p className="serif" style={{ fontSize: "0.92rem", color: "#5C4A42", marginTop: "0.55rem", lineHeight: 1.75 }}>
             {esIndividual
               ? esF
-                ? `Queremos que seas nuestra invitada especial en este día tan significativo para nosotros.`
-                : `Queremos que seas nuestro invitado especial en este día tan significativo para nosotros.`
+                ? "Queremos que seas nuestra invitada especial en este día tan significativo para nosotros."
+                : "Queremos que seas nuestro invitado especial en este día tan significativo para nosotros."
               : "Queremos que sean parte de este día tan especial para nosotros."}
           </p>
         </div>
@@ -537,7 +603,7 @@ function Tarjeta({ inv, esIndividual, todosConfirmaron, algunoConfirmo, rondaAct
 
         {/* Versículo */}
         <div style={{ textAlign: "center", marginBottom: "1.6rem" }}>
-          <div style={{ width: "180px", height: "1px", background: "linear-gradient(90deg, transparent, #D4A832 40%, #D4693A 60%, transparent)", margin: "0 auto 0.9rem", opacity: 0.4 }} />
+          <div style={{ width: "180px", height: "1px", background: "linear-gradient(90deg, transparent, #D4A832 40%, #D4693A 60%, transparent)", margin: "0 auto 0.9rem", opacity: 0.35 }} />
           <p className="serif" style={{ fontStyle: "italic", fontSize: "0.92rem", color: "#5C4A42", lineHeight: 1.65 }}>
             &ldquo;Todo lo hizo hermoso en su tiempo&rdquo;
           </p>
@@ -556,7 +622,7 @@ function Tarjeta({ inv, esIndividual, todosConfirmaron, algunoConfirmo, rondaAct
         ) : (
           <div style={{ textAlign: "center" }}>
             <a href={`/confirmar/${codigo}?r=${rondaActual}`} style={{
-              display: "block", background: "#C94F4F", color: "#FDFAF6",
+              display: "block", background: "#C94F4F", color: "#FFFFFF",
               borderRadius: "2px", padding: "0.88rem 2rem",
               fontFamily: "'Montserrat',sans-serif", fontSize: "0.62rem",
               letterSpacing: "0.22em", textTransform: "uppercase",
@@ -573,22 +639,5 @@ function Tarjeta({ inv, esIndividual, todosConfirmaron, algunoConfirmo, rondaAct
         )}
       </div>
     </div>
-  );
-}
-
-// Tulipán pequeño para la franja lateral
-function TulipMini({ color1, color2, stem, offsetX = 0, rotate = 0 }: {
-  color1: string; color2: string; stem: string; offsetX?: number; rotate?: number;
-}) {
-  return (
-    <svg width="28" height="46" viewBox="0 0 44 80" fill="none"
-      style={{ transform: `rotate(${rotate}deg) translateX(${offsetX}px)`, display: "block" }}>
-      <path d="M22 78 Q21 62 22 50" stroke={stem} strokeWidth="1.6" strokeLinecap="round"/>
-      <path d="M21 68 Q13 60 14 52 Q19 62 21 66Z" fill={stem} opacity="0.45"/>
-      <path d="M23 62 Q31 54 30 46 Q25 56 23 60Z" fill={stem} opacity="0.38"/>
-      <path d="M22 50 Q12 46 10 34 Q12 22 17 18 Q19 28 22 36Z" fill={color1} opacity="0.82"/>
-      <path d="M22 50 Q32 46 34 34 Q32 22 27 18 Q25 28 22 36Z" fill={color2} opacity="0.76"/>
-      <path d="M22 50 Q17 40 17 27 Q19 16 22 14 Q25 16 27 27 Q27 40 22 50Z" fill={color1} opacity="0.72"/>
-    </svg>
   );
 }
