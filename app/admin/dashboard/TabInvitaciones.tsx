@@ -256,48 +256,52 @@ function TarjetaInvitacion({ invitacion, rondaActual, onUpdateInv, onUpdateTexto
     <div style={{ border: "1px solid var(--border-subtle)", borderRadius: "2px", marginBottom: "0.6rem", background: "var(--cream-mid)" }}>
 
       {/* Header */}
-      <div onClick={() => !editNombre && setOpen(o => !o)} style={{ display: "flex", alignItems: "center", gap: "0.8rem", padding: "0.9rem 1.2rem", cursor: editNombre ? "default" : "pointer", flexWrap: "wrap" }}>
-        <span className="sans" style={{ fontSize: "1.05rem", letterSpacing: "0.08em", color: "var(--terracotta)", fontWeight: 700, flexShrink: 0 }}>{invitacion.codigo}</span>
+      <div onClick={() => !editNombre && setOpen(o => !o)} style={{ padding: "0.9rem 1rem", cursor: editNombre ? "default" : "pointer" }}>
 
-        <div style={{ flex: 1, minWidth: 0 }}>
-          {editNombre ? (
-            <div style={{ display: "flex", gap: "0.5rem", alignItems: "center" }} onClick={e => e.stopPropagation()}>
-              <input value={nuevoNombre} onChange={e => setNuevoNombre(e.target.value)} placeholder="Nombre del grupo (opcional)" style={{ ...inputStyle, flex: 1, fontSize: "14px", padding: "0.4rem 0.6rem" }} autoFocus />
-              <button onClick={guardarNombre} style={{ ...btnPrimary, padding: "0.4rem 0.8rem", fontSize: "0.6rem" }}>OK</button>
-              <button onClick={() => { setEditNombre(false); setNuevoNombre(invitacion.nombre ?? ""); }} style={{ ...btnOutline, padding: "0.4rem 0.6rem", fontSize: "0.6rem" }}>×</button>
+        {/* Fila 1: código · indicadores · flecha */}
+        <div style={{ display: "flex", alignItems: "center", gap: "0.6rem", marginBottom: "0.45rem" }}>
+          <span className="sans" style={{ fontSize: "1rem", letterSpacing: "0.08em", color: "var(--terracotta)", fontWeight: 700, flexShrink: 0 }}>{invitacion.codigo}</span>
+          {!editNombre && (
+            <div onClick={e => e.stopPropagation()} style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
+              <IndicadorRonda invitados={invitacion.invitados} ronda={1} color="var(--olive)" />
+              <IndicadorRonda invitados={invitacion.invitados} ronda={2} color="var(--periwinkle)" />
+              <IndicadorRonda invitados={invitacion.invitados} ronda={3} color="var(--gold)" />
             </div>
-          ) : (
-            <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", flexWrap: "wrap" }}>
-              {invitacion.nombre && <strong className="sans" style={{ fontSize: "0.95rem", fontWeight: 600, color: "var(--ink)" }}>{invitacion.nombre}</strong>}
-              <span className="sans" style={{ fontSize: "0.82rem", color: "var(--ink-light)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: "200px" }}>
-                {invitacion.invitados.map(i => i.nombre).join(", ")}
-              </span>
-              <button onClick={e => { e.stopPropagation(); setEditNombre(true); }} style={{ background: "none", border: "none", color: "var(--terracotta)", cursor: "pointer", fontSize: "0.58rem", fontFamily: "'Montserrat',sans-serif", letterSpacing: "0.1em", textTransform: "uppercase", textDecoration: "underline", padding: 0, flexShrink: 0 }}>
-                {invitacion.nombre ? "editar nombre" : "+ nombre grupo"}
-              </button>
-            </div>
+          )}
+          <div style={{ flex: 1 }} />
+          {!editNombre && (
+            <span style={{ color: "var(--ink-light)", fontSize: "0.65rem", flexShrink: 0 }}>{open ? "▲" : "▼"}</span>
           )}
         </div>
 
-        {/* Indicadores R1 R2 R3 */}
-        {!editNombre && (
-          <div onClick={e => e.stopPropagation()} style={{ display: "flex", gap: "0.6rem", alignItems: "center", flexShrink: 0 }}>
-            <IndicadorRonda invitados={invitacion.invitados} ronda={1} color="var(--olive)" />
-            <IndicadorRonda invitados={invitacion.invitados} ronda={2} color="var(--periwinkle)" />
-            <IndicadorRonda invitados={invitacion.invitados} ronda={3} color="var(--gold)" />
+        {/* Fila 2: nombre/invitados · meta */}
+        {editNombre ? (
+          <div style={{ display: "flex", gap: "0.5rem", alignItems: "center" }} onClick={e => e.stopPropagation()}>
+            <input value={nuevoNombre} onChange={e => setNuevoNombre(e.target.value)} placeholder="Nombre del grupo (opcional)" style={{ ...inputStyle, flex: 1, fontSize: "14px", padding: "0.4rem 0.6rem" }} autoFocus />
+            <button onClick={guardarNombre} style={{ ...btnPrimary, padding: "0.4rem 0.8rem", fontSize: "0.6rem" }}>OK</button>
+            <button onClick={() => { setEditNombre(false); setNuevoNombre(invitacion.nombre ?? ""); }} style={{ ...btnOutline, padding: "0.4rem 0.6rem", fontSize: "0.6rem" }}>×</button>
+          </div>
+        ) : (
+          <div style={{ display: "flex", alignItems: "flex-start", gap: "0.5rem", justifyContent: "space-between" }}>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              {invitacion.nombre && (
+                <strong className="sans" style={{ display: "block", fontSize: "0.9rem", fontWeight: 600, color: "var(--ink)", marginBottom: "0.15rem" }}>{invitacion.nombre}</strong>
+              )}
+              <span className="sans" style={{ fontSize: "0.78rem", color: "var(--ink-light)", display: "block", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                {invitacion.invitados.map(i => i.nombre).join(", ")}
+              </span>
+              <button onClick={e => { e.stopPropagation(); setEditNombre(true); }} style={{ background: "none", border: "none", color: "var(--terracotta)", cursor: "pointer", fontSize: "0.58rem", fontFamily: "'Montserrat',sans-serif", letterSpacing: "0.1em", textTransform: "uppercase", textDecoration: "underline", padding: 0, marginTop: "0.25rem" }}>
+                {invitacion.nombre ? "editar nombre" : "+ nombre grupo"}
+              </button>
+            </div>
+            <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "0.2rem", flexShrink: 0 }}>
+              <span className="sans" style={{ fontSize: "0.65rem", color: "var(--ink-light)" }}>{total} {total === 1 ? "persona" : "personas"}</span>
+              {invitacion.creado_por && (
+                <span className="sans" style={{ fontSize: "0.62rem", fontWeight: 600, color: "var(--terracotta)", background: "rgba(212,105,58,0.1)", padding: "0.15rem 0.5rem", borderRadius: "2px" }}>por {invitacion.creado_por}</span>
+              )}
+            </div>
           </div>
         )}
-
-        {!editNombre && (
-          <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "0.2rem", flexShrink: 0 }}>
-            <span className="sans" style={{ fontSize: "0.68rem", color: "var(--ink-light)" }}>{total} {total === 1 ? "persona" : "personas"}</span>
-            {invitacion.creado_por && (
-              <span className="sans" style={{ fontSize: "0.68rem", fontWeight: 600, color: "var(--terracotta)", background: "rgba(212,105,58,0.1)", padding: "0.2rem 0.6rem", borderRadius: "2px" }}>por {invitacion.creado_por}</span>
-            )}
-          </div>
-        )}
-
-        {!editNombre && <span style={{ color: "var(--ink-light)", fontSize: "0.7rem", flexShrink: 0 }}>{open ? "▲" : "▼"}</span>}
       </div>
 
       {/* Contenido expandido */}
