@@ -176,10 +176,9 @@ export default function PaginaInvitacion() {
       {/* ── FASE: ABIERTO ───────────────────────────────────────────────────── */}
       {fase === 'abierto' && (
         <div className="tarjeta-entra tarjeta-wrap" style={{
-          // Desktop: tarjeta centrada con ancho limitado
           width: 'min(420px, 95vw)',
           position: 'relative',
-          zIndex: 60,
+          zIndex: 55,
           paddingBottom: '2rem',
         }}>
           <TarjetaInvitacion

@@ -314,7 +314,7 @@ export default function ExplosionFlores({ triggerRef, onExitStart, onComplete }:
       style={{
         position: 'fixed', inset: 0,
         width: '100%', height: '100%',
-        zIndex: 50, pointerEvents: 'none',
+        zIndex: 60, pointerEvents: 'none',
       }}
     />
   )
