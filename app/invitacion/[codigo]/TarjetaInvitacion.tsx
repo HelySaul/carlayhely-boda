@@ -256,7 +256,7 @@ function Horario({ label, hora }: { label: string; hora: string }) {
       <p className="sans" style={{ fontSize: '0.48rem', letterSpacing: '0.2em', textTransform: 'uppercase', color: '#9A8880', marginBottom: '0.25rem' }}>
         {label}
       </p>
-      <p className="serif" style={{ fontSize: '1.2rem', color: '#2C2320' }}>{hora}</p>
+      <p className="serif" style={{ fontSize: '1.2rem', color: '#2C2320'  }}>{hora}</p>
     </div>
   )
 }
