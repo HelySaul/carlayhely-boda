@@ -22,8 +22,8 @@ interface Props {
 
 export default function TarjetaInvitacion({ inv, rondaActual, codigo }: Props) {
   const esIndividual   = inv.invitados.length === 1
-  const todosConfirm   = inv.invitados.every(i => i.confirmacion_1)
-  const algunoConfirm  = inv.invitados.some(i => i.confirmacion_1)
+  const todosConfirm   = inv.invitados.every(i => i.confirmacion_1 === true)
+  const algunoConfirm  = inv.invitados.some(i => i.confirmacion_1 === true)
   const invitado       = inv.invitados[0]
   const esF            = esIndividual && invitado?.sexo === 'F'
 

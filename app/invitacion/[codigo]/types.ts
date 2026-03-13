@@ -3,9 +3,9 @@ export interface Invitado {
   nombre: string
   whatsapp: string | null
   sexo: "M" | "F" | null
-  confirmacion_1: boolean
-  confirmacion_2: boolean
-  confirmacion_3: boolean
+  confirmacion_1: boolean | null
+  confirmacion_2: boolean | null
+  confirmacion_3: boolean | null
 }
 
 export interface Invitacion {
