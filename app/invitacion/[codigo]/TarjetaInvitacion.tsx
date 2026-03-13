@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import { type Invitacion } from './types'
 
 // ── TarjetaInvitacion.tsx ─────────────────────────────────────────────────────
@@ -171,13 +172,22 @@ export default function TarjetaInvitacion({ inv, rondaActual, codigo }: Props) {
         {/* Confirmación */}
         {todosConfirm ? (
           <div style={{ textAlign: 'center' }}>
-            <p className="serif" style={{ fontSize: '1rem', color: '#7A9438', fontStyle: 'italic' }}>
+            <p className="serif" style={{ fontSize: '1rem', color: '#7A9438', fontStyle: 'italic', marginBottom: '1rem' }}>
               {esIndividual ? '¡Ya confirmaste tu asistencia!' : '¡Ya confirmaron su asistencia!'}
             </p>
+            <Link href="/" style={{
+              fontFamily: "'Cormorant Garamond', serif",
+              fontSize: '0.9rem', fontStyle: 'italic',
+              color: '#D4693A', textDecoration: 'none',
+              borderBottom: '1px solid rgba(212,105,58,0.3)',
+              paddingBottom: '0.15rem',
+            }}>
+              Conoce más sobre nuestra boda →
+            </Link>
           </div>
         ) : (
-          <div style={{ textAlign: 'center' }}>
-            <a
+          <div style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
+            <Link
               href={`/confirmar/${codigo}?r=${rondaActual}`}
               style={{
                 display: 'block', background: '#C94F4F', color: '#FDFAF6',
@@ -188,12 +198,21 @@ export default function TarjetaInvitacion({ inv, rondaActual, codigo }: Props) {
               }}
             >
               Confirmar asistencia
-            </a>
+            </Link>
             {algunoConfirm && (
-              <p className="sans" style={{ fontSize: '0.6rem', color: '#9A8880', marginTop: '0.5rem' }}>
+              <p className="sans" style={{ fontSize: '0.6rem', color: '#9A8880' }}>
                 Algunas personas ya confirmaron.
               </p>
             )}
+            <Link href="/" style={{
+              fontFamily: "'Cormorant Garamond', serif",
+              fontSize: '0.9rem', fontStyle: 'italic',
+              color: '#D4693A', textDecoration: 'none',
+              borderBottom: '1px solid rgba(212,105,58,0.3)',
+              paddingBottom: '0.15rem',
+            }}>
+              Conoce más sobre nuestra boda →
+            </Link>
           </div>
         )}
       </div>
