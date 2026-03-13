@@ -76,20 +76,19 @@ export default function TarjetaInvitacion({ inv, rondaActual, codigo }: Props) {
 
         {/* Dedicatoria al invitado */}
         <div style={{ textAlign: 'center', marginBottom: '1.4rem' }}>
+
+          {/* Querido/a */}
           <p className="sans" style={{
             fontSize: '0.48rem', letterSpacing: '0.3em',
             textTransform: 'uppercase', color: '#9A8880', marginBottom: '0.7rem',
           }}>
             {esIndividual
-              ? esF
-                ? 'Querida, eres nuestra invitada de honor en nuestro matrimonio'
-                : 'Querido, eres nuestro invitado de honor en nuestro matrimonio'
-              : inv.invitados.every(i => i.sexo === 'F')
-                ? 'Queridas, son nuestras invitadas de honor en nuestro matrimonio'
-                : 'Queridos, son nuestros invitados de honor en nuestro matrimonio'
+              ? esF ? 'Querida,' : 'Querido,'
+              : inv.invitados.every(i => i.sexo === 'F') ? 'Queridas,' : 'Queridos,'
             }
           </p>
 
+          {/* Nombre(s) en grande */}
           {esIndividual ? (
             <p className="script" style={{
               fontSize: 'clamp(2.4rem, 11vw, 3.4rem)',
@@ -114,11 +113,23 @@ export default function TarjetaInvitacion({ inv, rondaActual, codigo }: Props) {
             </div>
           )}
 
+          {/* Línea decorativa */}
           <div style={{
             width: '80px', height: '1px',
             background: 'linear-gradient(90deg, transparent, rgba(201,79,79,0.45), transparent)',
-            margin: '0.8rem auto 0',
+            margin: '0.8rem auto',
           }} />
+
+          {/* Texto de invitación */}
+          <p className="serif" style={{
+            fontStyle: 'italic', fontSize: '0.92rem',
+            color: '#5C4A42', lineHeight: 1.75,
+          }}>
+            {esIndividual
+              ? 'Nos llena el corazón de alegría poder compartir contigo el día de nuestro matrimonio.'
+              : 'Nos llena el corazón de alegría poder compartir con ustedes el día de nuestro matrimonio.'
+            }
+          </p>
         </div>
 
         <Separador />
