@@ -175,15 +175,6 @@ export default function TarjetaInvitacion({ inv, rondaActual, codigo }: Props) {
             <p className="serif" style={{ fontSize: '1rem', color: '#7A9438', fontStyle: 'italic', marginBottom: '1rem' }}>
               {esIndividual ? '¡Ya confirmaste tu asistencia!' : '¡Ya confirmaron su asistencia!'}
             </p>
-            <Link href="/" style={{
-              fontFamily: "'Cormorant Garamond', serif",
-              fontSize: '0.9rem', fontStyle: 'italic',
-              color: '#D4693A', textDecoration: 'none',
-              borderBottom: '1px solid rgba(212,105,58,0.3)',
-              paddingBottom: '0.15rem',
-            }}>
-              Conoce más sobre nuestra boda →
-            </Link>
           </div>
         ) : (
           <div style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
@@ -204,17 +195,11 @@ export default function TarjetaInvitacion({ inv, rondaActual, codigo }: Props) {
                 Algunas personas ya confirmaron.
               </p>
             )}
-            <Link href="/" style={{
-              fontFamily: "'Cormorant Garamond', serif",
-              fontSize: '0.9rem', fontStyle: 'italic',
-              color: '#D4693A', textDecoration: 'none',
-              borderBottom: '1px solid rgba(212,105,58,0.3)',
-              paddingBottom: '0.15rem',
-            }}>
-              Conoce más sobre nuestra boda →
-            </Link>
           </div>
         )}
+
+        {/* Bloque destacado — link al landing */}
+        <BloqueVerBoda />
       </div>
       </div>
     </>
@@ -230,6 +215,38 @@ function Separador() {
       background: 'linear-gradient(90deg, transparent, #D4A832, transparent)',
       margin: '0 auto 1.2rem',
     }} />
+  )
+}
+
+function BloqueVerBoda() {
+  return (
+    <Link href="/" style={{ textDecoration: 'none', display: 'block' }}>
+      <div style={{
+        marginTop: '1.4rem',
+        background: 'linear-gradient(135deg, rgba(212,168,50,0.10) 0%, rgba(212,105,58,0.08) 100%)',
+        border: '1px solid rgba(212,168,50,0.30)',
+        borderRadius: '3px',
+        padding: '1.2rem 1.4rem',
+        textAlign: 'center',
+        cursor: 'pointer',
+      }}>
+        <p className="serif" style={{
+          fontStyle: 'italic', fontSize: '0.88rem',
+          color: '#5C4A42', lineHeight: 1.75, marginBottom: '0.8rem',
+        }}>
+          Preparamos una página especial para ustedes, llena de todo lo que necesitan saber sobre nosotros y sobre este día tan importante. La hicimos con mucho amor para que puedan vivirlo con nosotros desde ya.
+        </p>
+        <span style={{
+          fontFamily: "'Montserrat', sans-serif",
+          fontSize: '0.55rem', letterSpacing: '0.22em',
+          textTransform: 'uppercase', color: '#D4693A',
+          borderBottom: '1px solid rgba(212,105,58,0.4)',
+          paddingBottom: '0.2rem',
+        }}>
+          Conoce nuestra historia y todos los detalles de la boda →
+        </span>
+      </div>
+    </Link>
   )
 }
 
