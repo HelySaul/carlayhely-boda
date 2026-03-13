@@ -310,13 +310,45 @@ export default function PaginaInvitacion() {
 
               {/* Sello superior centrado — como un lacre */}
               <g transform="translate(170, 38)">
-                {/* Fondo blanco del sello */}
                 <circle cx="0" cy="0" r="28" fill="white" stroke="#E8C8C0" strokeWidth="0.8"/>
-                {/* Círculo punteado interior */}
                 <circle cx="0" cy="0" r="23" fill="none" stroke="#D4A8A0" strokeWidth="0.5" strokeDasharray="2.5,2.5"/>
-                {/* Iniciales */}
                 <text x="0" y="-2" textAnchor="middle" fontFamily="'PinyonScript', serif" fontSize="20" fill="#C94F4F" opacity="0.9">C &amp; H</text>
                 <text x="0" y="12" textAnchor="middle" fontFamily="'Montserrat', sans-serif" fontSize="4.5" fill="#9A8880" letterSpacing="2.5">2026</text>
+              </g>
+
+              {/* Flores decorativas lado izquierdo del sello */}
+              <g transform="translate(96, 38)" opacity="0.75">
+                {/* Tallo */}
+                <path d="M0 36 Q-1 22 0 12" stroke="#7A9438" strokeWidth="1.2" strokeLinecap="round"/>
+                <path d="M-1 28 Q-8 22 -7 16 Q-3 23 -1 26Z" fill="#7A9438" opacity="0.5"/>
+                <path d="M1 24 Q8 18 7 12 Q3 19 1 22Z" fill="#7A9438" opacity="0.4"/>
+                {/* Copa */}
+                <path d="M0 12 Q-7 9 -8 2 Q-7 -5 -4 -7 Q-2 0 0 5Z" fill="#C94F4F" opacity="0.82"/>
+                <path d="M0 12 Q7 9 8 2 Q7 -5 4 -7 Q2 0 0 5Z" fill="#D4693A" opacity="0.76"/>
+                <path d="M0 12 Q-3 6 -3 -1 Q-2 -8 0 -9 Q2 -8 3 -1 Q3 6 0 12Z" fill="#C94F4F" opacity="0.70"/>
+                {/* Segundo tulipán más pequeño */}
+                <g transform="translate(-18, 8) scale(0.7)">
+                  <path d="M0 36 Q-1 22 0 12" stroke="#7A9438" strokeWidth="1.2" strokeLinecap="round"/>
+                  <path d="M0 12 Q-7 9 -8 2 Q-7 -5 -4 -7 Q-2 0 0 5Z" fill="#D4A832" opacity="0.78"/>
+                  <path d="M0 12 Q7 9 8 2 Q7 -5 4 -7 Q2 0 0 5Z" fill="#9B8BB4" opacity="0.72"/>
+                  <path d="M0 12 Q-3 6 -3 -1 Q-2 -8 0 -9 Q2 -8 3 -1 Q3 6 0 12Z" fill="#D4A832" opacity="0.65"/>
+                </g>
+              </g>
+
+              {/* Flores decorativas lado derecho del sello (espejadas) */}
+              <g transform="translate(244, 38) scale(-1,1)" opacity="0.70">
+                <path d="M0 36 Q-1 22 0 12" stroke="#7A9438" strokeWidth="1.2" strokeLinecap="round"/>
+                <path d="M-1 28 Q-8 22 -7 16 Q-3 23 -1 26Z" fill="#7A9438" opacity="0.5"/>
+                <path d="M1 24 Q8 18 7 12 Q3 19 1 22Z" fill="#7A9438" opacity="0.4"/>
+                <path d="M0 12 Q-7 9 -8 2 Q-7 -5 -4 -7 Q-2 0 0 5Z" fill="#D4A832" opacity="0.82"/>
+                <path d="M0 12 Q7 9 8 2 Q7 -5 4 -7 Q2 0 0 5Z" fill="#9B8BB4" opacity="0.76"/>
+                <path d="M0 12 Q-3 6 -3 -1 Q-2 -8 0 -9 Q2 -8 3 -1 Q3 6 0 12Z" fill="#D4A832" opacity="0.70"/>
+                <g transform="translate(-18, 8) scale(0.7)">
+                  <path d="M0 36 Q-1 22 0 12" stroke="#7A9438" strokeWidth="1.2" strokeLinecap="round"/>
+                  <path d="M0 12 Q-7 9 -8 2 Q-7 -5 -4 -7 Q-2 0 0 5Z" fill="#C94F4F" opacity="0.78"/>
+                  <path d="M0 12 Q7 9 8 2 Q7 -5 4 -7 Q2 0 0 5Z" fill="#D4693A" opacity="0.72"/>
+                  <path d="M0 12 Q-3 6 -3 -1 Q-2 -8 0 -9 Q2 -8 3 -1 Q3 6 0 12Z" fill="#C94F4F" opacity="0.65"/>
+                </g>
               </g>
 
               {/* Línea de corte al deslizar */}
@@ -422,161 +454,123 @@ function Tarjeta({ inv, esIndividual, todosConfirmaron, algunoConfirmo, rondaAct
   todosConfirmaron: boolean; algunoConfirmo: boolean;
   rondaActual: number; codigo: string;
 }) {
+  const invitado = inv.invitados[0];
+  const esF = esIndividual && invitado?.sexo === "F";
+  const nombre1 = invitado?.nombre.split(" ")[0] ?? "";
+
   return (
     <div style={{
       background: "linear-gradient(160deg, #FDFAF6 0%, #FAF2EA 60%, #F6F8F2 100%)",
       borderRadius: "3px",
+      padding: "2.6rem 2rem 2rem",
       boxShadow: "0 12px 50px rgba(80,40,30,0.14), 0 2px 10px rgba(80,40,30,0.08)",
       position: "relative",
       overflow: "hidden",
-      display: "flex",
-      flexDirection: "row",
     }}>
 
-      {/* ── Franja lateral izquierda con tulipanes ── */}
-      <div style={{
-        width: "56px", flexShrink: 0,
-        background: "linear-gradient(180deg, #FDFAF6 0%, #F9F0E8 50%, #F5EDE0 100%)",
-        borderRight: "1px solid rgba(212,168,50,0.25)",
-        position: "relative",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        paddingTop: "1.2rem",
-        gap: "0",
-      }}>
-        {/* Línea dorada vertical */}
-        <div style={{ position: "absolute", top: "12px", bottom: "12px", left: "50%", width: "1px", background: "linear-gradient(180deg, transparent, rgba(212,168,50,0.4) 20%, rgba(212,168,50,0.4) 80%, transparent)", transform: "translateX(-50%)" }} />
-
-        {/* Tulipanes verticales */}
-        <div style={{ position: "relative", zIndex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: "4px", paddingTop: "8px" }}>
-          {/* Tulipán 1 — rojo */}
-          <TulipMini color1="#C94F4F" color2="#D4693A" stem="#7A9438" offsetX={2} rotate={4} />
-          {/* Línea entre */}
-          <div style={{ width: "1px", height: "18px", background: "linear-gradient(180deg, rgba(212,168,50,0.3), rgba(212,168,50,0.5))" }} />
-          {/* Tulipán 2 — dorado */}
-          <TulipMini color1="#D4A832" color2="#C94F4F" stem="#7A9438" offsetX={-2} rotate={-3} />
-          <div style={{ width: "1px", height: "18px", background: "linear-gradient(180deg, rgba(212,168,50,0.5), rgba(212,168,50,0.3))" }} />
-          {/* Tulipán 3 — lavanda */}
-          <TulipMini color1="#9B8BB4" color2="#D4A832" stem="#7A9438" offsetX={2} rotate={5} />
-          <div style={{ width: "1px", height: "18px", background: "linear-gradient(180deg, rgba(212,168,50,0.3), rgba(212,168,50,0.5))" }} />
-          {/* Tulipán 4 — terracotta */}
-          <TulipMini color1="#D4693A" color2="#9B8BB4" stem="#7A9438" offsetX={-2} rotate={-4} />
-          <div style={{ width: "1px", height: "18px", background: "linear-gradient(180deg, rgba(212,168,50,0.5), rgba(212,168,50,0.3))" }} />
-          {/* Tulipán 5 — rojo */}
-          <TulipMini color1="#C94F4F" color2="#D4693A" stem="#7A9438" offsetX={1} rotate={3} />
-        </div>
+      {/* Manchas de fondo — sutiles */}
+      <div style={{ position: "absolute", inset: 0, pointerEvents: "none" }}>
+        <div style={{ position: "absolute", top: "-20%", right: "-10%", width: "45%", height: "45%", borderRadius: "50%", background: "radial-gradient(circle, rgba(201,79,79,0.07) 0%, transparent 70%)" }} />
+        <div style={{ position: "absolute", bottom: "-15%", left: "-5%", width: "35%", height: "35%", borderRadius: "50%", background: "radial-gradient(circle, rgba(122,148,56,0.07) 0%, transparent 70%)" }} />
       </div>
 
-      {/* ── Contenido principal ── */}
-      <div style={{ flex: 1, padding: "2.4rem 1.6rem 2rem 1.4rem", position: "relative" }}>
+      <div style={{ position: "relative", zIndex: 1 }}>
 
-        {/* Manchas de fondo */}
-        <div style={{ position: "absolute", inset: 0, pointerEvents: "none" }}>
-          <div style={{ position: "absolute", top: "-20%", right: "-5%", width: "55%", height: "55%", borderRadius: "50%", background: "radial-gradient(circle, rgba(201,79,79,0.10) 0%, transparent 70%)" }} />
-          <div style={{ position: "absolute", bottom: "-15%", right: "5%", width: "40%", height: "40%", borderRadius: "50%", background: "radial-gradient(circle, rgba(122,148,56,0.09) 0%, transparent 70%)" }} />
+        {/* C & H — logo arriba */}
+        <div style={{ textAlign: "center", marginBottom: "1.4rem" }}>
+          <h1 className="script" style={{ fontSize: "clamp(3.5rem,16vw,5rem)", color: "#2C2320", lineHeight: 0.95 }}>Carla</h1>
+          <p className="serif" style={{ fontSize: "1rem", color: "#C94F4F", letterSpacing: "0.5em", fontStyle: "italic", margin: "0.15rem 0" }}>&amp;</p>
+          <h1 className="script" style={{ fontSize: "clamp(3.5rem,16vw,5rem)", color: "#2C2320", lineHeight: 0.95 }}>Hely</h1>
+          <div style={{ margin: "0.9rem auto 0", maxWidth: "220px" }}>
+            <svg viewBox="0 0 280 20" fill="none" style={{ width: "100%", height: "20px", display: "block" }}>
+              <path d="M10 10 Q70 3 140 10 Q210 17 270 10" stroke="#C94F4F" strokeWidth="0.8" strokeLinecap="round"/>
+              <circle cx="140" cy="10" r="2" fill="none" stroke="#D4693A" strokeWidth="0.8"/>
+              <path d="M130 10 Q135 6 140 10 Q145 14 150 10" stroke="#D4693A" strokeWidth="0.8" strokeLinecap="round"/>
+            </svg>
+          </div>
         </div>
 
-        <div style={{ position: "relative", zIndex: 1 }}>
+        {/* Saludo personalizado */}
+        <div style={{ textAlign: "center", marginBottom: "1.2rem" }}>
+          <p className="serif" style={{ fontSize: "1.15rem", color: "#2C2320", fontStyle: "italic" }}>
+            {saludo(inv.invitados)}
+          </p>
+          <p className="serif" style={{ fontSize: "0.92rem", color: "#5C4A42", marginTop: "0.55rem", lineHeight: 1.75 }}>
+            {esIndividual
+              ? esF
+                ? `Queremos que seas nuestra invitada especial en este día tan significativo para nosotros.`
+                : `Queremos que seas nuestro invitado especial en este día tan significativo para nosotros.`
+              : "Queremos que sean parte de este día tan especial para nosotros."}
+          </p>
+        </div>
 
-          {/* C & H — logo grande arriba */}
-          <div style={{ textAlign: "center", marginBottom: "1.2rem" }}>
-            <h1 className="script" style={{ fontSize: "clamp(3.2rem,15vw,4.8rem)", color: "#2C2320", lineHeight: 0.95 }}>Carla</h1>
-            <p className="serif" style={{ fontSize: "1rem", color: "#C94F4F", letterSpacing: "0.5em", fontStyle: "italic", margin: "0.15rem 0" }}>&amp;</p>
-            <h1 className="script" style={{ fontSize: "clamp(3.2rem,15vw,4.8rem)", color: "#2C2320", lineHeight: 0.95 }}>Hely</h1>
+        <div style={{ width: "50px", height: "1px", background: "linear-gradient(90deg, transparent, #D4A832, transparent)", margin: "0 auto 1.2rem" }} />
 
-            {/* Separador ondulado */}
-            <div style={{ margin: "0.9rem auto 0", maxWidth: "220px" }}>
-              <svg viewBox="0 0 280 20" fill="none" style={{ width: "100%", height: "20px", display: "block" }}>
-                <path d="M10 10 Q70 3 140 10 Q210 17 270 10" stroke="#C94F4F" strokeWidth="0.8" strokeLinecap="round"/>
-                <circle cx="140" cy="10" r="2" fill="none" stroke="#D4693A" strokeWidth="0.8"/>
-                <path d="M130 10 Q135 6 140 10 Q145 14 150 10" stroke="#D4693A" strokeWidth="0.8" strokeLinecap="round"/>
-              </svg>
+        {/* Fecha y horas */}
+        <div style={{ textAlign: "center", marginBottom: "1.2rem" }}>
+          <p className="sans" style={{ fontSize: "0.5rem", letterSpacing: "0.25em", textTransform: "uppercase", color: "#9A8880", marginBottom: "0.5rem" }}>
+            Sábado · 13 de Junio · 2026
+          </p>
+          <div style={{ display: "flex", justifyContent: "center", alignItems: "stretch" }}>
+            <div style={{ textAlign: "center", padding: "0 1.3rem" }}>
+              <p className="sans" style={{ fontSize: "0.48rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "#9A8880", marginBottom: "0.25rem" }}>Ceremonia</p>
+              <p className="serif" style={{ fontSize: "1.2rem", color: "#2C2320" }}>6:00 PM</p>
+            </div>
+            <div style={{ width: "1px", background: "linear-gradient(180deg, transparent, rgba(212,168,50,0.45), transparent)" }} />
+            <div style={{ textAlign: "center", padding: "0 1.3rem" }}>
+              <p className="sans" style={{ fontSize: "0.48rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "#9A8880", marginBottom: "0.25rem" }}>Recepción</p>
+              <p className="serif" style={{ fontSize: "1.2rem", color: "#2C2320" }}>7:30 PM</p>
             </div>
           </div>
+        </div>
 
-          {/* Saludo */}
-          <div style={{ textAlign: "center", marginBottom: "1.2rem" }}>
-            <p className="serif" style={{ fontSize: "1.1rem", color: "#2C2320", fontStyle: "italic" }}>
-              {saludo(inv.invitados)}
-            </p>
-            <p className="serif" style={{ fontSize: "0.88rem", color: "#5C4A42", marginTop: "0.5rem", lineHeight: 1.7 }}>
-              {esIndividual
-                ? "Con mucha alegría te invitamos a celebrar con nosotros este día tan especial."
-                : "Con mucha alegría los invitamos a celebrar con nosotros este día tan especial."}
-            </p>
-          </div>
+        <div style={{ width: "50px", height: "1px", background: "linear-gradient(90deg, transparent, #D4A832, transparent)", margin: "0 auto 1.2rem" }} />
 
-          {/* Línea dorada */}
-          <div style={{ width: "50px", height: "1px", background: "linear-gradient(90deg, transparent, #D4A832, transparent)", margin: "0 auto 1.2rem" }} />
+        {/* Lugar */}
+        <div style={{ textAlign: "center", marginBottom: "1.3rem" }}>
+          <p className="serif" style={{ fontSize: "1.05rem", color: "#2C2320" }}>Brisas del Renacer</p>
+          <p className="serif" style={{ fontStyle: "italic", fontSize: "0.84rem", color: "#5C4A42", lineHeight: 1.65, marginTop: "0.2rem" }}>
+            A 600 metros de la entrada de Zambrano<br />
+            Vía Coro–Churuguara, Falcón
+          </p>
+        </div>
 
-          {/* Fecha */}
-          <div style={{ textAlign: "center", marginBottom: "1.1rem" }}>
-            <p className="sans" style={{ fontSize: "0.5rem", letterSpacing: "0.25em", textTransform: "uppercase", color: "#9A8880", marginBottom: "0.4rem" }}>
-              Sábado · 13 de Junio · 2026
-            </p>
-            <div style={{ display: "flex", justifyContent: "center", alignItems: "stretch" }}>
-              <div style={{ textAlign: "center", padding: "0 1.2rem" }}>
-                <p className="sans" style={{ fontSize: "0.48rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "#9A8880", marginBottom: "0.2rem" }}>Ceremonia</p>
-                <p className="serif" style={{ fontSize: "1.15rem", color: "#2C2320" }}>6:00 PM</p>
-              </div>
-              <div style={{ width: "1px", background: "linear-gradient(180deg, transparent, rgba(212,168,50,0.45), transparent)" }} />
-              <div style={{ textAlign: "center", padding: "0 1.2rem" }}>
-                <p className="sans" style={{ fontSize: "0.48rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "#9A8880", marginBottom: "0.2rem" }}>Recepción</p>
-                <p className="serif" style={{ fontSize: "1.15rem", color: "#2C2320" }}>7:30 PM</p>
-              </div>
-            </div>
-          </div>
+        {/* Versículo */}
+        <div style={{ textAlign: "center", marginBottom: "1.6rem" }}>
+          <div style={{ width: "180px", height: "1px", background: "linear-gradient(90deg, transparent, #D4A832 40%, #D4693A 60%, transparent)", margin: "0 auto 0.9rem", opacity: 0.4 }} />
+          <p className="serif" style={{ fontStyle: "italic", fontSize: "0.92rem", color: "#5C4A42", lineHeight: 1.65 }}>
+            &ldquo;Todo lo hizo hermoso en su tiempo&rdquo;
+          </p>
+          <p className="sans" style={{ fontSize: "0.55rem", color: "#D4693A", letterSpacing: "0.18em", textTransform: "uppercase", marginTop: "0.3rem" }}>
+            Eclesiastés 3 · 11
+          </p>
+        </div>
 
-          {/* Línea dorada */}
-          <div style={{ width: "50px", height: "1px", background: "linear-gradient(90deg, transparent, #D4A832, transparent)", margin: "0 auto 1.1rem" }} />
-
-          {/* Lugar */}
-          <div style={{ textAlign: "center", marginBottom: "1.3rem" }}>
-            <p className="serif" style={{ fontSize: "1.05rem", color: "#2C2320" }}>Brisas del Renacer</p>
-            <p className="serif" style={{ fontStyle: "italic", fontSize: "0.82rem", color: "#5C4A42", lineHeight: 1.6, marginTop: "0.2rem" }}>
-              A 600 metros de la entrada de Zambrano<br />
-              Vía Coro–Churuguara, Falcón
+        {/* Botón */}
+        {todosConfirmaron ? (
+          <div style={{ textAlign: "center" }}>
+            <p className="serif" style={{ fontSize: "1rem", color: "#7A9438", fontStyle: "italic" }}>
+              {esIndividual ? "¡Ya confirmaste tu asistencia!" : "¡Ya confirmaron su asistencia!"}
             </p>
           </div>
-
-          {/* Versículo */}
-          <div style={{ textAlign: "center", marginBottom: "1.5rem" }}>
-            <div style={{ width: "100%", maxWidth: "200px", height: "1px", background: "linear-gradient(90deg, transparent, #D4A832 40%, #D4693A 60%, transparent)", margin: "0 auto 0.9rem", opacity: 0.4 }} />
-            <p className="serif" style={{ fontStyle: "italic", fontSize: "0.92rem", color: "#5C4A42", lineHeight: 1.65 }}>
-              &ldquo;Todo lo hizo hermoso en su tiempo&rdquo;
-            </p>
-            <p className="sans" style={{ fontSize: "0.55rem", color: "#D4693A", letterSpacing: "0.18em", textTransform: "uppercase", marginTop: "0.3rem" }}>
-              Eclesiastés 3 · 11
-            </p>
-          </div>
-
-          {/* Botón */}
-          {todosConfirmaron ? (
-            <div style={{ textAlign: "center" }}>
-              <p className="serif" style={{ fontSize: "1rem", color: "#7A9438", fontStyle: "italic" }}>
-                ¡Ya confirmaste tu asistencia!
+        ) : (
+          <div style={{ textAlign: "center" }}>
+            <a href={`/confirmar/${codigo}?r=${rondaActual}`} style={{
+              display: "block", background: "#C94F4F", color: "#FDFAF6",
+              borderRadius: "2px", padding: "0.88rem 2rem",
+              fontFamily: "'Montserrat',sans-serif", fontSize: "0.62rem",
+              letterSpacing: "0.22em", textTransform: "uppercase",
+              textDecoration: "none", textAlign: "center",
+            }}>
+              Confirmar asistencia
+            </a>
+            {algunoConfirmo && (
+              <p className="sans" style={{ fontSize: "0.6rem", color: "#9A8880", marginTop: "0.5rem" }}>
+                Algunas personas ya confirmaron.
               </p>
-            </div>
-          ) : (
-            <div style={{ textAlign: "center" }}>
-              <a href={`/confirmar/${codigo}?r=${rondaActual}`} style={{
-                display: "block", background: "#C94F4F", color: "#FDFAF6",
-                borderRadius: "2px", padding: "0.85rem 1.5rem",
-                fontFamily: "'Montserrat',sans-serif", fontSize: "0.6rem",
-                letterSpacing: "0.22em", textTransform: "uppercase",
-                textDecoration: "none", textAlign: "center",
-              }}>
-                Confirmar asistencia
-              </a>
-              {algunoConfirmo && (
-                <p className="sans" style={{ fontSize: "0.6rem", color: "#9A8880", marginTop: "0.5rem" }}>
-                  Algunas personas ya confirmaron.
-                </p>
-              )}
-            </div>
-          )}
-        </div>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );
