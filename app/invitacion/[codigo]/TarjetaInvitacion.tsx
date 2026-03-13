@@ -81,8 +81,13 @@ export default function TarjetaInvitacion({ inv, rondaActual, codigo }: Props) {
             textTransform: 'uppercase', color: '#9A8880', marginBottom: '0.7rem',
           }}>
             {esIndividual
-              ? esF ? 'Esta invitación es para' : 'Esta invitación es para'
-              : 'Esta invitación es para'}
+              ? esF
+                ? 'Querida, eres nuestra invitada de honor en nuestro matrimonio'
+                : 'Querido, eres nuestro invitado de honor en nuestro matrimonio'
+              : inv.invitados.every(i => i.sexo === 'F')
+                ? 'Queridas, son nuestras invitadas de honor en nuestro matrimonio'
+                : 'Queridos, son nuestros invitados de honor en nuestro matrimonio'
+            }
           </p>
 
           {esIndividual ? (
