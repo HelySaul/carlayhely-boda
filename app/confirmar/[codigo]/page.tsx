@@ -46,7 +46,6 @@ const RONDAS = {
     disclaimer: `Solo quienes confirmen su asistencia en al menos una de las rondas podrán ingresar al evento.`,
     btnSi: "¡Sí, confirmo!",
     btnNo: "No podré ir",
-    linkBoda: "Conoce más sobre nuestra boda →",
   },
   2: {
     titulo: "¡Ya casi llegamos!",
@@ -56,7 +55,6 @@ const RONDAS = {
     disclaimer: null,
     btnSi: "Confirmo que voy",
     btnNo: "No podré ir",
-    linkBoda: "Ver la página de nuestra boda →",
   },
   3: {
     titulo: "¡El gran día se acerca!",
@@ -66,7 +64,6 @@ const RONDAS = {
     disclaimer: `Las personas que confirmaron que no asistirán no recibirán más solicitudes. Si cambiaste de opinión, contáctanos directamente — haremos todo lo posible, aunque los espacios son limitados y hay muchas personas que también quieren acompañarnos.`,
     btnSi: "¡Confirmo que voy!",
     btnNo: "No podré ir",
-    linkBoda: "Ver la página de nuestra boda →",
   },
 };
 
@@ -190,14 +187,32 @@ export default function PaginaConfirmar() {
             ? "Estaremos en contacto pronto con los últimos detalles."
             : "Recibimos tu respuesta. Estaremos en contacto pronto."}
       </p>
-      <Link href="/" style={{
-        fontFamily: "'Montserrat', sans-serif",
-        fontSize: "0.6rem", letterSpacing: "0.2em",
-        textTransform: "uppercase", color: "#D4693A",
-        textDecoration: "none", borderBottom: "1px solid rgba(212,105,58,0.4)",
-        paddingBottom: "0.2rem",
-      }}>
-        Ver la página de nuestra boda
+      <Link href="/" style={{ textDecoration: "none", display: "block", maxWidth: "340px", margin: "0 auto" }}>
+        <div style={{
+          background: "linear-gradient(135deg, rgba(212,168,50,0.10) 0%, rgba(212,105,58,0.08) 100%)",
+          border: "1px solid rgba(212,168,50,0.30)",
+          borderRadius: "3px",
+          padding: "1.1rem 1.4rem",
+          textAlign: "center",
+          cursor: "pointer",
+        }}>
+          <p style={{
+            fontFamily: "'Cormorant Garamond', serif",
+            fontStyle: "italic", fontSize: "0.9rem",
+            color: "#5C4A42", lineHeight: 1.75, marginBottom: "0.7rem",
+          }}>
+            Preparamos una página especial para ustedes, llena de todo lo que necesitan saber sobre nosotros y sobre este día tan importante. La hicimos con mucho amor para que puedan vivirlo con nosotros desde ya.
+          </p>
+          <span style={{
+            fontFamily: "'Montserrat', sans-serif",
+            fontSize: "0.52rem", letterSpacing: "0.22em",
+            textTransform: "uppercase", color: "#D4693A",
+            borderBottom: "1px solid rgba(212,105,58,0.4)",
+            paddingBottom: "0.2rem",
+          }}>
+            Conoce nuestra historia y todos los detalles de la boda →
+          </span>
+        </div>
       </Link>
       <p style={{ fontSize: "0.6rem", letterSpacing: "0.15em", textTransform: "uppercase", color: "#B5A090", marginTop: "1.5rem" }}>
         Redirigiendo...
@@ -374,21 +389,37 @@ export default function PaginaConfirmar() {
           {enviando ? "Enviando..." : msg.btnSi}
         </button>
 
-        {/* Links al landing */}
-        <div style={{ textAlign: "center", display: "flex", flexDirection: "column", gap: "0.6rem" }}>
-          <Link href="/" style={{
-            fontFamily: "'Cormorant Garamond', serif",
-            fontSize: "0.9rem", fontStyle: "italic",
-            color: "#D4693A", textDecoration: "none",
-            borderBottom: "1px solid rgba(212,105,58,0.3)",
-            paddingBottom: "0.15rem",
+        {/* Bloque destacado — link al landing */}
+        <Link href="/" style={{ textDecoration: "none", display: "block", marginTop: "0.4rem" }}>
+          <div style={{
+            background: "linear-gradient(135deg, rgba(212,168,50,0.10) 0%, rgba(212,105,58,0.08) 100%)",
+            border: "1px solid rgba(212,168,50,0.30)",
+            borderRadius: "2px",
+            padding: "1.1rem 1.2rem",
+            textAlign: "center",
+            cursor: "pointer",
           }}>
-            {msg.linkBoda}
-          </Link>
-          <p style={{ fontSize: "0.45rem", letterSpacing: "0.15em", textTransform: "uppercase", color: "#C0AFA0" }}>
-            carlayhely.com
-          </p>
-        </div>
+            <p style={{
+              fontFamily: "'Cormorant Garamond', serif",
+              fontStyle: "italic", fontSize: "0.9rem",
+              color: "#5C4A42", lineHeight: 1.75, marginBottom: "0.7rem",
+            }}>
+              Preparamos una página especial para ustedes, llena de todo lo que necesitan saber sobre nosotros y sobre este día tan importante. La hicimos con mucho amor para que puedan vivirlo con nosotros desde ya.
+            </p>
+            <span style={{
+              fontFamily: "'Montserrat', sans-serif",
+              fontSize: "0.52rem", letterSpacing: "0.22em",
+              textTransform: "uppercase", color: "#D4693A",
+              borderBottom: "1px solid rgba(212,105,58,0.4)",
+              paddingBottom: "0.2rem",
+            }}>
+              Conoce nuestra historia y todos los detalles de la boda →
+            </span>
+          </div>
+        </Link>
+        <p style={{ textAlign: "center", fontSize: "0.45rem", letterSpacing: "0.15em", textTransform: "uppercase", color: "#C0AFA0", marginTop: "0.6rem" }}>
+          carlayhely.com
+        </p>
       </div>
     </div>
   );
