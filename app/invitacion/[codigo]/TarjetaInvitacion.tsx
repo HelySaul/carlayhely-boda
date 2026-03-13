@@ -93,7 +93,7 @@ export default function TarjetaInvitacion({ inv, rondaActual, codigo }: Props) {
           {esIndividual ? (
             <p className="script" style={{
               fontSize: 'clamp(2.4rem, 11vw, 3.4rem)',
-              color: '#D4693A',
+              color: '#5C4A42',
               lineHeight: 1.05,
               letterSpacing: '0.01em',
             }}>
@@ -104,7 +104,7 @@ export default function TarjetaInvitacion({ inv, rondaActual, codigo }: Props) {
               {inv.invitados.map((i, idx) => (
                 <p key={i.id} className="script" style={{
                   fontSize: 'clamp(2rem, 9vw, 2.8rem)',
-                  color: '#D4693A',
+                  color: '#5C4A42',
                   lineHeight: 1.05,
                   opacity: idx === 0 ? 1 : 0.75,
                 }}>
@@ -256,7 +256,7 @@ function Horario({ label, hora }: { label: string; hora: string }) {
       <p className="sans" style={{ fontSize: '0.48rem', letterSpacing: '0.2em', textTransform: 'uppercase', color: '#9A8880', marginBottom: '0.25rem' }}>
         {label}
       </p>
-      <p className="serif" style={{ fontSize: '1.2rem', color: '#2C2320'  }}>{hora}</p>
+      <p className="serif" style={{ fontSize: '1.2rem', color: '#2C2320' }}>{hora}</p>
     </div>
   )
 }
