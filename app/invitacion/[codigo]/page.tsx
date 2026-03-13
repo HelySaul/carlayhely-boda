@@ -26,7 +26,7 @@ function nombresLista(invitados: Invitado[]) {
 function saludo(invitados: Invitado[]) {
   if (invitados.length === 1) {
     const i = invitados[0];
-    const t = i.sexo === "F" ? "Querida" : i.sexo === "M" ? "Querido" : "Querido/a";
+    const t = i.sexo === "F" ? "Querida" : "Querido";
     return `${t} ${i.nombre.split(" ")[0]},`;
   }
   const primeros = invitados.map(i => i.nombre.split(" ")[0]);
@@ -144,12 +144,24 @@ export default function PaginaInvitacion() {
 
       {/* ── Manchas de fondo — igual que Hero ─────── */}
       <div style={{ position: "absolute", inset: 0, overflow: "hidden", pointerEvents: "none", zIndex: 0 }}>
-        <div style={{ position: "absolute", top: "-10%", right: "0", width: "clamp(220px,55vw,420px)", height: "clamp(220px,55vw,420px)", borderRadius: "50%", background: "radial-gradient(circle, rgba(201,79,79,0.18) 0%, rgba(212,105,58,0.08) 50%, transparent 75%)" }} />
-        <div style={{ position: "absolute", bottom: "0%", left: "0", width: "clamp(180px,45vw,340px)", height: "clamp(180px,45vw,340px)", borderRadius: "50%", background: "radial-gradient(circle, rgba(122,148,56,0.18) 0%, rgba(122,148,56,0.06) 55%, transparent 75%)" }} />
-        <div style={{ position: "absolute", top: "40%", left: "5%", width: "clamp(80px,18vw,140px)", height: "clamp(80px,18vw,140px)", borderRadius: "50%", background: "radial-gradient(circle, rgba(212,168,50,0.14) 0%, transparent 70%)" }} />
+        <div style={{ position: "absolute", top: "-10%", right: "0", width: "clamp(220px,55vw,420px)", height: "clamp(220px,55vw,420px)", borderRadius: "50%", background: "radial-gradient(circle, rgba(201,79,79,0.32) 0%, rgba(212,105,58,0.14) 50%, transparent 75%)" }} />
+        <div style={{ position: "absolute", bottom: "0%", left: "0", width: "clamp(180px,45vw,340px)", height: "clamp(180px,45vw,340px)", borderRadius: "50%", background: "radial-gradient(circle, rgba(122,148,56,0.30) 0%, rgba(122,148,56,0.10) 55%, transparent 75%)" }} />
+        <div style={{ position: "absolute", top: "40%", left: "5%", width: "clamp(80px,18vw,140px)", height: "clamp(80px,18vw,140px)", borderRadius: "50%", background: "radial-gradient(circle, rgba(212,168,50,0.22) 0%, transparent 70%)" }} />
       </div>
 
-      {/* Sin tulipanes laterales */}
+      {/* Tulipanes sutiles en el fondo — esquinas de la página */}
+      <div style={{ position: "absolute", left: 0, bottom: 0, pointerEvents: "none", opacity: 0.28, zIndex: 0 }}>
+        <TulipSVG size={130} petalColor="#C94F4F" petalColor2="#D4693A" rotate={8} />
+      </div>
+      <div style={{ position: "absolute", left: 22, bottom: 0, pointerEvents: "none", opacity: 0.18, zIndex: 0 }}>
+        <TulipSVG size={90} petalColor="#D4A832" petalColor2="#C94F4F" rotate={-4} />
+      </div>
+      <div style={{ position: "absolute", right: 0, top: 0, pointerEvents: "none", opacity: 0.22, zIndex: 0, transform: "scaleX(-1)" }}>
+        <TulipSVG size={110} petalColor="#9B8BB4" petalColor2="#D4A832" rotate={-10} />
+      </div>
+      <div style={{ position: "absolute", right: 20, top: 0, pointerEvents: "none", opacity: 0.15, zIndex: 0, transform: "scaleX(-1)" }}>
+        <TulipSVG size={75} petalColor="#D4693A" petalColor2="#9B8BB4" rotate={-18} />
+      </div>
 
       {/* ── FASE: SOBRE ─────────────────────────────── */}
       {fase === "sobre" && (
@@ -428,11 +440,11 @@ function Tarjeta({ inv, esIndividual, todosConfirmaron, algunoConfirmo, rondaAct
       overflow: "hidden",
     }}>
 
-      {/* Manchas de fondo — igual que Hero */}
+      {/* Manchas de fondo — igual que Hero, más vivas */}
       <div style={{ position: "absolute", inset: 0, pointerEvents: "none" }}>
-        <div style={{ position: "absolute", top: "-20%", right: "-10%", width: "45%", height: "45%", borderRadius: "50%", background: "radial-gradient(circle, rgba(201,79,79,0.07) 0%, transparent 70%)" }} />
-        <div style={{ position: "absolute", bottom: "-15%", left: "-5%", width: "35%", height: "35%", borderRadius: "50%", background: "radial-gradient(circle, rgba(122,148,56,0.07) 0%, transparent 70%)" }} />
-        <div style={{ position: "absolute", top: "40%", left: "10%", width: "25%", height: "25%", borderRadius: "50%", background: "radial-gradient(circle, rgba(212,168,50,0.05) 0%, transparent 70%)" }} />
+        <div style={{ position: "absolute", top: "-20%", right: "-10%", width: "45%", height: "45%", borderRadius: "50%", background: "radial-gradient(circle, rgba(201,79,79,0.14) 0%, transparent 70%)" }} />
+        <div style={{ position: "absolute", bottom: "-15%", left: "-5%", width: "35%", height: "35%", borderRadius: "50%", background: "radial-gradient(circle, rgba(122,148,56,0.13) 0%, transparent 70%)" }} />
+        <div style={{ position: "absolute", top: "40%", left: "10%", width: "25%", height: "25%", borderRadius: "50%", background: "radial-gradient(circle, rgba(212,168,50,0.10) 0%, transparent 70%)" }} />
       </div>
 
       <div style={{ position: "relative", zIndex: 1 }}>
@@ -440,7 +452,12 @@ function Tarjeta({ inv, esIndividual, todosConfirmaron, algunoConfirmo, rondaAct
         {/* C & H — logo arriba, estilo Hero */}
         <div style={{ textAlign: "center", marginBottom: "1.4rem" }}>
           <h1 className="script" style={{ fontSize: "clamp(3.5rem,16vw,5rem)", color: "#2C2320", lineHeight: 0.95 }}>Carla</h1>
-          <p className="serif" style={{ fontSize: "1rem", color: "#C94F4F", letterSpacing: "0.5em", fontStyle: "italic", margin: "0.15rem 0" }}>&amp;</p>
+          {/* Separador corazón estilo OurStory */}
+          <div style={{ display: "flex", alignItems: "center", gap: "0.8rem", maxWidth: "240px", margin: "0.3rem auto 0.2rem" }}>
+            <div style={{ flex: 1, height: "1px", background: "linear-gradient(90deg, transparent, rgba(201,79,79,0.4))" }} />
+            <span className="serif" style={{ color: "#C94F4F", fontSize: "1.2rem", fontStyle: "italic", lineHeight: 1 }}>♡</span>
+            <div style={{ flex: 1, height: "1px", background: "linear-gradient(90deg, rgba(201,79,79,0.4), transparent)" }} />
+          </div>
           <h1 className="script" style={{ fontSize: "clamp(3.5rem,16vw,5rem)", color: "#2C2320", lineHeight: 0.95 }}>Hely</h1>
           {/* Separador ondulado — igual que Hero */}
           <div style={{ margin: "0.9rem auto 0", maxWidth: "220px" }}>
