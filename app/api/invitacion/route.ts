@@ -8,7 +8,7 @@ export async function GET(req: NextRequest) {
 
   const { data, error } = await getSupabaseAdmin()
     .from('invitaciones')
-    .select('id, codigo, nombre, invitados(id, nombre, whatsapp, confirmacion_1, confirmacion_2, confirmacion_3)')
+    .select('id, codigo, nombre, invitados(id, nombre, whatsapp, sexo, confirmacion_1, confirmacion_2, confirmacion_3)')
     .eq('codigo', codigo)
     .single();
 
