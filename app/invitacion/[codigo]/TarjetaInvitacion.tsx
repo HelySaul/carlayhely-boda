@@ -50,7 +50,7 @@ export default function TarjetaInvitacion({ inv, rondaActual, codigo }: Props) {
 
       {/* Manchas de fondo */}
       <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
-        <div style={{ position: 'absolute', top: '-20%', right: '-10%', width: '45%', height: '45%', borderRadius: '50%', background: 'radial-gradient(circle, rgba(201,79,79,0.14) 0%, transparent 70%)' }} />
+        <div style={{ position: 'absolute', top: '-20%', right: '-10%', width: '55%', height: '55%', borderRadius: '50%', background: 'radial-gradient(circle, rgba(201,79,79,0.06) 0%, transparent 65%)' }} />
         <div style={{ position: 'absolute', bottom: '-15%', left: '-5%', width: '35%', height: '35%', borderRadius: '50%', background: 'radial-gradient(circle, rgba(122,148,56,0.13) 0%, transparent 70%)' }} />
         <div style={{ position: 'absolute', top: '40%', left: '10%', width: '25%', height: '25%', borderRadius: '50%', background: 'radial-gradient(circle, rgba(212,168,50,0.10) 0%, transparent 70%)' }} />
       </div>
