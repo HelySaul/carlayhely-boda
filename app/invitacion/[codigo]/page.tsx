@@ -203,25 +203,7 @@ export default function PaginaInvitacion() {
         <div style={{ position: "absolute", top: "40%", left: "5%", width: "clamp(80px,18vw,140px)", height: "clamp(80px,18vw,140px)", borderRadius: "50%", background: "radial-gradient(circle, rgba(212,168,50,0.14) 0%, transparent 70%)" }} />
       </div>
 
-      {/* ── Tulipanes laterales — FUERA del sobre, flanqueándolo ── */}
-      {/* Izquierdo — abajo */}
-      <div style={{ position: "absolute", left: "0", bottom: "0", pointerEvents: "none", opacity: 0.75, zIndex: 10 }}>
-        <div style={{ position: "relative", display: "inline-block" }}>
-          <TulipSVG size={120} petalColor="#C94F4F" petalColor2="#D4693A" rotate={6} />
-          <div style={{ position: "absolute", bottom: 0, left: 38 }}>
-            <TulipSVG size={85} petalColor="#D4693A" petalColor2="#C94F4F" rotate={-4} />
-          </div>
-        </div>
-      </div>
-      {/* Derecho — arriba, espejado */}
-      <div style={{ position: "absolute", right: "0", top: "0", pointerEvents: "none", opacity: 0.68, transform: "scaleX(-1)", zIndex: 10 }}>
-        <div style={{ position: "relative", display: "inline-block" }}>
-          <TulipSVG size={105} petalColor="#D4A832" petalColor2="#9B8BB4" rotate={-8} />
-          <div style={{ position: "absolute", bottom: 0, left: 33 }}>
-            <TulipSVG size={75} petalColor="#9B8BB4" petalColor2="#D4A832" rotate={-16} />
-          </div>
-        </div>
-      </div>
+      {/* Sin tulipanes laterales */}
 
       {/* ── FASE: SOBRE ─────────────────────────────── */}
       {(fase === "sobre" || fase === "cortando" || fase === "abriendo") && (
@@ -316,39 +298,69 @@ export default function PaginaInvitacion() {
                 <text x="0" y="12" textAnchor="middle" fontFamily="'Montserrat', sans-serif" fontSize="4.5" fill="#9A8880" letterSpacing="2.5">2026</text>
               </g>
 
-              {/* Flores decorativas lado izquierdo del sello */}
-              <g transform="translate(96, 38)" opacity="0.75">
-                {/* Tallo */}
-                <path d="M0 36 Q-1 22 0 12" stroke="#7A9438" strokeWidth="1.2" strokeLinecap="round"/>
-                <path d="M-1 28 Q-8 22 -7 16 Q-3 23 -1 26Z" fill="#7A9438" opacity="0.5"/>
-                <path d="M1 24 Q8 18 7 12 Q3 19 1 22Z" fill="#7A9438" opacity="0.4"/>
-                {/* Copa */}
-                <path d="M0 12 Q-7 9 -8 2 Q-7 -5 -4 -7 Q-2 0 0 5Z" fill="#C94F4F" opacity="0.82"/>
-                <path d="M0 12 Q7 9 8 2 Q7 -5 4 -7 Q2 0 0 5Z" fill="#D4693A" opacity="0.76"/>
-                <path d="M0 12 Q-3 6 -3 -1 Q-2 -8 0 -9 Q2 -8 3 -1 Q3 6 0 12Z" fill="#C94F4F" opacity="0.70"/>
-                {/* Segundo tulipán más pequeño */}
-                <g transform="translate(-18, 8) scale(0.7)">
-                  <path d="M0 36 Q-1 22 0 12" stroke="#7A9438" strokeWidth="1.2" strokeLinecap="round"/>
-                  <path d="M0 12 Q-7 9 -8 2 Q-7 -5 -4 -7 Q-2 0 0 5Z" fill="#D4A832" opacity="0.78"/>
-                  <path d="M0 12 Q7 9 8 2 Q7 -5 4 -7 Q2 0 0 5Z" fill="#9B8BB4" opacity="0.72"/>
-                  <path d="M0 12 Q-3 6 -3 -1 Q-2 -8 0 -9 Q2 -8 3 -1 Q3 6 0 12Z" fill="#D4A832" opacity="0.65"/>
+              {/* Ramo de rosas lado izquierdo del sello — blancas/crema */}
+              <g transform="translate(105, 62)" opacity="0.88">
+                {/* Tallos */}
+                <path d="M0 0 Q-2 -12 -1 -22" stroke="#8A9A62" strokeWidth="1" strokeLinecap="round"/>
+                <path d="M0 0 Q3 -10 5 -20" stroke="#9AAA72" strokeWidth="0.9" strokeLinecap="round"/>
+                <path d="M0 0 Q-6 -8 -9 -18" stroke="#8A9A62" strokeWidth="0.8" strokeLinecap="round"/>
+                {/* Hojas */}
+                <path d="M-1 -14 Q-8 -16 -9 -22 Q-4 -18 -2 -14Z" fill="#8A9A62" opacity="0.55"/>
+                <path d="M3 -12 Q10 -14 10 -20 Q5 -16 3 -12Z" fill="#9AAA72" opacity="0.50"/>
+                {/* Rosa grande — blanca */}
+                <g transform="translate(-1, -22)">
+                  <path d="M0,-9 Q6,-6 8,0 Q6,6 0,8 Q-5,7 -7,2 Q-8,-4 -4,-7 Q-2,-9 0,-9Z" fill="#FAFAFA" stroke="#E4D8D2" strokeWidth="0.5"/>
+                  <path d="M0,-5.5 Q4,-3 5,0 Q3.5,4 0,5 Q-3.5,4 -5,0 Q-3.5,-3 0,-5.5Z" fill="#F5F0EE" stroke="#DDD0CA" strokeWidth="0.3"/>
+                  <path d="M0,-2.5 Q2,-1 2.5,0.5 Q2,2.5 0,3 Q-2,2.5 -2.5,0.5 Q-2,-1 0,-2.5Z" fill="#EDE5E0"/>
+                  <circle cx="0" cy="0" r="1.2" fill="#D8CCC6"/>
+                  {/* pétalo extra */}
+                  <path d="M-9,0 Q-11,-5 -6,-9 Q-4,-5 -6,0Z" fill="#FAFAFA" stroke="#E4D8D2" strokeWidth="0.3" opacity="0.8"/>
+                  <path d="M9,0 Q11,-5 6,-9 Q4,-5 6,0Z" fill="#FAFAFA" stroke="#E4D8D2" strokeWidth="0.3" opacity="0.8"/>
                 </g>
+                {/* Rosa pequeña izquierda */}
+                <g transform="translate(-9, -20)">
+                  <path d="M0,-6 Q4,-4 5,0 Q3,4 0,5 Q-3,4 -4,0 Q-3,-4 0,-6Z" fill="#FDF9F8" stroke="#EAD8D4" strokeWidth="0.4"/>
+                  <path d="M0,-3.5 Q2.5,-2 3,0 Q2,2.5 0,3 Q-2,2.5 -3,0 Q-2,-2 0,-3.5Z" fill="#F0E8E4"/>
+                  <circle cx="0" cy="0" r="1" fill="#D8CCC6"/>
+                </g>
+                {/* Rosa pequeña derecha */}
+                <g transform="translate(5, -21)">
+                  <path d="M0,-5 Q3,-3 4,0 Q3,4 0,5 Q-3,4 -4,0 Q-3,-3 0,-5Z" fill="#FDF9F8" stroke="#EAD8D4" strokeWidth="0.4"/>
+                  <path d="M0,-3 Q2,-1.5 2.5,0 Q2,2 0,3 Q-2,2 -2.5,0 Q-2,-1.5 0,-3Z" fill="#F0E8E4"/>
+                  <circle cx="0" cy="0" r="0.9" fill="#D8CCC6"/>
+                </g>
+                {/* Perlas */}
+                <circle cx="-4" cy="-28" r="1.5" fill="#EEEAE6" opacity="0.75"/>
+                <circle cx="6" cy="-26" r="1.1" fill="#E4E0DC" opacity="0.65"/>
               </g>
 
-              {/* Flores decorativas lado derecho del sello (espejadas) */}
-              <g transform="translate(244, 38) scale(-1,1)" opacity="0.70">
-                <path d="M0 36 Q-1 22 0 12" stroke="#7A9438" strokeWidth="1.2" strokeLinecap="round"/>
-                <path d="M-1 28 Q-8 22 -7 16 Q-3 23 -1 26Z" fill="#7A9438" opacity="0.5"/>
-                <path d="M1 24 Q8 18 7 12 Q3 19 1 22Z" fill="#7A9438" opacity="0.4"/>
-                <path d="M0 12 Q-7 9 -8 2 Q-7 -5 -4 -7 Q-2 0 0 5Z" fill="#D4A832" opacity="0.82"/>
-                <path d="M0 12 Q7 9 8 2 Q7 -5 4 -7 Q2 0 0 5Z" fill="#9B8BB4" opacity="0.76"/>
-                <path d="M0 12 Q-3 6 -3 -1 Q-2 -8 0 -9 Q2 -8 3 -1 Q3 6 0 12Z" fill="#D4A832" opacity="0.70"/>
-                <g transform="translate(-18, 8) scale(0.7)">
-                  <path d="M0 36 Q-1 22 0 12" stroke="#7A9438" strokeWidth="1.2" strokeLinecap="round"/>
-                  <path d="M0 12 Q-7 9 -8 2 Q-7 -5 -4 -7 Q-2 0 0 5Z" fill="#C94F4F" opacity="0.78"/>
-                  <path d="M0 12 Q7 9 8 2 Q7 -5 4 -7 Q2 0 0 5Z" fill="#D4693A" opacity="0.72"/>
-                  <path d="M0 12 Q-3 6 -3 -1 Q-2 -8 0 -9 Q2 -8 3 -1 Q3 6 0 12Z" fill="#C94F4F" opacity="0.65"/>
+              {/* Ramo de rosas lado derecho del sello — espejado */}
+              <g transform="translate(235, 62) scale(-1,1)" opacity="0.85">
+                <path d="M0 0 Q-2 -12 -1 -22" stroke="#8A9A62" strokeWidth="1" strokeLinecap="round"/>
+                <path d="M0 0 Q3 -10 5 -20" stroke="#9AAA72" strokeWidth="0.9" strokeLinecap="round"/>
+                <path d="M0 0 Q-6 -8 -9 -18" stroke="#8A9A62" strokeWidth="0.8" strokeLinecap="round"/>
+                <path d="M-1 -14 Q-8 -16 -9 -22 Q-4 -18 -2 -14Z" fill="#8A9A62" opacity="0.55"/>
+                <path d="M3 -12 Q10 -14 10 -20 Q5 -16 3 -12Z" fill="#9AAA72" opacity="0.50"/>
+                <g transform="translate(-1, -22)">
+                  <path d="M0,-9 Q6,-6 8,0 Q6,6 0,8 Q-5,7 -7,2 Q-8,-4 -4,-7 Q-2,-9 0,-9Z" fill="#FAFAFA" stroke="#E4D8D2" strokeWidth="0.5"/>
+                  <path d="M0,-5.5 Q4,-3 5,0 Q3.5,4 0,5 Q-3.5,4 -5,0 Q-3.5,-3 0,-5.5Z" fill="#F5F0EE" stroke="#DDD0CA" strokeWidth="0.3"/>
+                  <path d="M0,-2.5 Q2,-1 2.5,0.5 Q2,2.5 0,3 Q-2,2.5 -2.5,0.5 Q-2,-1 0,-2.5Z" fill="#EDE5E0"/>
+                  <circle cx="0" cy="0" r="1.2" fill="#D8CCC6"/>
+                  <path d="M-9,0 Q-11,-5 -6,-9 Q-4,-5 -6,0Z" fill="#FAFAFA" stroke="#E4D8D2" strokeWidth="0.3" opacity="0.8"/>
+                  <path d="M9,0 Q11,-5 6,-9 Q4,-5 6,0Z" fill="#FAFAFA" stroke="#E4D8D2" strokeWidth="0.3" opacity="0.8"/>
                 </g>
+                <g transform="translate(-9, -20)">
+                  <path d="M0,-6 Q4,-4 5,0 Q3,4 0,5 Q-3,4 -4,0 Q-3,-4 0,-6Z" fill="#FDF9F8" stroke="#EAD8D4" strokeWidth="0.4"/>
+                  <path d="M0,-3.5 Q2.5,-2 3,0 Q2,2.5 0,3 Q-2,2.5 -3,0 Q-2,-2 0,-3.5Z" fill="#F0E8E4"/>
+                  <circle cx="0" cy="0" r="1" fill="#D8CCC6"/>
+                </g>
+                <g transform="translate(5, -21)">
+                  <path d="M0,-5 Q3,-3 4,0 Q3,4 0,5 Q-3,4 -4,0 Q-3,-3 0,-5Z" fill="#FDF9F8" stroke="#EAD8D4" strokeWidth="0.4"/>
+                  <path d="M0,-3 Q2,-1.5 2.5,0 Q2,2 0,3 Q-2,2 -2.5,0 Q-2,-1.5 0,-3Z" fill="#F0E8E4"/>
+                  <circle cx="0" cy="0" r="0.9" fill="#D8CCC6"/>
+                </g>
+                <circle cx="-4" cy="-28" r="1.5" fill="#EEEAE6" opacity="0.75"/>
+                <circle cx="6" cy="-26" r="1.1" fill="#E4E0DC" opacity="0.65"/>
               </g>
 
               {/* Línea de corte al deslizar */}
@@ -418,7 +430,7 @@ export default function PaginaInvitacion() {
 
       {/* ── FASE: ABIERTO — tarjeta ─────────────── */}
       {fase === "abierto" && (
-        <div className="tarjeta-entra" style={{ width: "min(420px, 95vw)", maxHeight: "90svh", overflowY: "auto", position: "relative", zIndex: 1 }}>
+        <div className="tarjeta-entra" style={{ width: "min(420px, 95vw)", position: "relative", zIndex: 1, paddingBottom: "2rem" }}>
           <Tarjeta
             inv={inv}
             esIndividual={esIndividual}
