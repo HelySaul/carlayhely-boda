@@ -1,18 +1,16 @@
-// ── TabLista.tsx ──────────────────────────────────────────────────────────────
+// ── TabConfirmados.tsx ────────────────────────────────────────────────────────
 
 import { type FiltrosState } from "./types";
 import { fechaCorta } from "./helpers";
 import { BarraFiltros } from "./BarraFiltros";
 
 interface InvitadoFlat {
-  id: string; nombre: string; codigo: string; creado_por: string | null; esGrupo: boolean;
+  id: string; nombre: string; codigo: string;
   confirmacion_1: boolean | null; confirmacion_1_fecha: string | null;
   confirmacion_2: boolean | null; confirmacion_2_fecha: string | null;
   confirmacion_3: boolean | null; confirmacion_3_fecha: string | null;
-  asistio: boolean | null;
 }
 
-// ── PildoraRonda ──────────────────────────────────────────────────────────────
 function PildoraRonda({ label, valor, fecha, color }: {
   label: string; valor: boolean | null; fecha: string | null; color: string;
 }) {
@@ -40,13 +38,13 @@ function PildoraRonda({ label, valor, fecha, color }: {
   );
 }
 
-export function TabLista({ lista, filtros }: { lista: InvitadoFlat[]; filtros: FiltrosState }) {
+export function TabConfirmados({ lista, filtros }: { lista: InvitadoFlat[]; filtros: FiltrosState }) {
   return (
     <>
       <BarraFiltros {...filtros} />
-      <p className="sans" style={{ fontSize: "0.8rem", color: "var(--ink-light)", marginBottom: "0.8rem" }}>{lista.length} personas</p>
+      <p className="sans" style={{ fontSize: "0.8rem", color: "var(--ink-light)", marginBottom: "0.8rem" }}>{lista.length} personas con al menos una confirmación</p>
       {lista.length === 0
-        ? <p className="sans" style={{ textAlign: "center", color: "var(--ink-light)", padding: "3rem 0", fontSize: "0.8rem" }}>Sin resultados.</p>
+        ? <p className="sans" style={{ textAlign: "center", color: "var(--ink-light)", padding: "3rem 0", fontSize: "0.8rem" }}>Nadie ha confirmado aún.</p>
         : lista.map((inv, idx) => (
           <div key={inv.id} style={{ padding: "0.7rem 0.8rem", background: "var(--cream-mid)", border: "1px solid var(--border-subtle)", borderRadius: "2px", marginBottom: "0.3rem" }}>
 
@@ -56,10 +54,7 @@ export function TabLista({ lista, filtros }: { lista: InvitadoFlat[]; filtros: F
                 <span className="sans" style={{ fontSize: "0.7rem", color: "var(--ink-light)", flexShrink: 0 }}>{idx + 1}.</span>
                 <span className="sans" style={{ fontSize: "0.9rem", fontWeight: 500, color: "var(--ink)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{inv.nombre}</span>
               </div>
-              <div style={{ display: "flex", gap: "0.4rem", alignItems: "center", flexShrink: 0 }}>
-                <span className="sans" style={{ fontSize: "0.6rem", color: "var(--terracotta)" }}>{inv.codigo}</span>
-                {inv.creado_por && <span className="sans" style={{ fontSize: "0.58rem", fontWeight: 600, color: "var(--terracotta)", background: "rgba(212,105,58,0.1)", padding: "0.1rem 0.4rem", borderRadius: "2px" }}>por {inv.creado_por}</span>}
-              </div>
+              <span className="sans" style={{ fontSize: "0.6rem", color: "var(--terracotta)", flexShrink: 0 }}>{inv.codigo}</span>
             </div>
 
             {/* Fila pildoras */}
@@ -67,7 +62,6 @@ export function TabLista({ lista, filtros }: { lista: InvitadoFlat[]; filtros: F
               <PildoraRonda label="R1" valor={inv.confirmacion_1} fecha={inv.confirmacion_1_fecha} color="var(--olive)" />
               <PildoraRonda label="R2" valor={inv.confirmacion_2} fecha={inv.confirmacion_2_fecha} color="var(--periwinkle)" />
               <PildoraRonda label="R3" valor={inv.confirmacion_3} fecha={inv.confirmacion_3_fecha} color="var(--gold)" />
-              <PildoraRonda label="Asistió" valor={inv.asistio} fecha={null} color="var(--terracotta)" />
             </div>
 
           </div>
