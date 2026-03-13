@@ -23,12 +23,18 @@ function saludoInvitados(invitados: Invitado[]): string {
   return todasF ? `Queridas ${lista},` : `Queridos ${lista},`;
 }
 
-function mensajeWhatsApp(invitados: Invitado[], ronda: 1 | 2 | 3, link: string): string {
+function mensajeInvitacion(invitados: Invitado[], link: string): string {
   const saludo  = saludoInvitados(invitados);
   const esGrupo = invitados.length > 1;
-  if (ronda === 1) return `${saludo}\ncon mucho cariño queremos contarte que ${esGrupo ? "son parte" : "eres parte"} de nuestra boda. Preparamos ${esGrupo ? "su" : "tu"} invitación con amor — ábrela cuando ${esGrupo ? "puedan" : "puedas"} 🤍\n${link}`;
-  if (ronda === 2) return `${saludo}\nya falta poco y queremos ${esGrupo ? "tenerlos presentes" : "tenerte presente"}. ${esGrupo ? "Les" : "Te"} pedimos que ${esGrupo ? "confirmen su" : "confirmes tu"} asistencia una vez más, para poder organizarlo todo con el cuidado que ${esGrupo ? "merecen" : "mereces"} 🤍\n${link}`;
-  return `${saludo}\neste es nuestro último aviso antes del gran día. Los espacios son limitados y necesitamos ${esGrupo ? "su confirmación para reservar los suyos" : "tu confirmación para reservar el tuyo"} 🤍\n${link}`;
+  return `${saludo}\n\nCon mucho cariño queremos contarte que ${esGrupo ? "son parte" : "eres parte"} de nuestra boda. Preparamos ${esGrupo ? "su" : "tu"} invitación con amor — ábrela cuando ${esGrupo ? "puedan" : "puedas"} 🤍\n\n${link}`;
+}
+
+function mensajeConfirmacion(invitados: Invitado[], ronda: 1 | 2 | 3, link: string): string {
+  const saludo  = saludoInvitados(invitados);
+  const esGrupo = invitados.length > 1;
+  if (ronda === 1) return `${saludo}\n\nCon mucho cariño queremos contarte que ${esGrupo ? "son parte" : "eres parte"} de nuestra boda. Preparamos ${esGrupo ? "su" : "tu"} invitación con amor — ábrela cuando ${esGrupo ? "puedan" : "puedas"} 🤍\n\n${link}`;
+  if (ronda === 2) return `${saludo}\n\nYa falta poco y queremos ${esGrupo ? "tenerlos presentes" : "tenerte presente"}. ${esGrupo ? "Les" : "Te"} pedimos que ${esGrupo ? "confirmen su" : "confirmes tu"} asistencia una vez más, para poder organizarlo todo con el cuidado que ${esGrupo ? "merecen" : "mereces"} 🤍\n\n${link}`;
+  return `${saludo}\n\nEste es nuestro último aviso antes del gran día. Los espacios son limitados y necesitamos ${esGrupo ? "su confirmación para reservar los suyos" : "tu confirmación para reservar el tuyo"} 🤍\n\n${link}`;
 }
 
 // ── Three-way check ───────────────────────────────────────────────────────────
@@ -193,28 +199,38 @@ function BloqueLinks({ codigo, rondaActual }: { codigo: string; rondaActual: 1 |
   );
 }
 
-// ── BloqueWhatsApp ────────────────────────────────────────────────────────────
-function BloqueWhatsApp({ invitados, codigo, rondaActual }: {
-  invitados: Invitado[]; codigo: string; rondaActual: 1 | 2 | 3;
-}) {
+// ── MensajeBlock ──────────────────────────────────────────────────────────────
+function MensajeBlock({ titulo, mensaje }: { titulo: string; mensaje: string }) {
   const [copiado, setCopiado] = useState(false);
-  const origin  = typeof window !== "undefined" ? window.location.origin : "";
-  const link    = rondaActual === 1 ? `${origin}/invitacion/${codigo}` : `${origin}/confirmar/${codigo}?r=${rondaActual}`;
-  const mensaje = mensajeWhatsApp(invitados, rondaActual, link);
-
   function copiar() { navigator.clipboard.writeText(mensaje); setCopiado(true); setTimeout(() => setCopiado(false), 1800); }
-
   return (
-    <div style={{ background: "var(--cream)", border: "1px solid var(--border-subtle)", borderRadius: "2px", padding: "0.9rem 1rem", marginBottom: "0.8rem" }}>
+    <div style={{ background: "var(--cream)", border: "1px solid var(--border-subtle)", borderRadius: "2px", padding: "0.9rem 1rem", marginBottom: "0.5rem" }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.6rem" }}>
-        <p className="sans" style={{ fontSize: "0.6rem", letterSpacing: "0.18em", textTransform: "uppercase", color: "var(--terracotta)" }}>Mensaje WhatsApp · R{rondaActual}</p>
+        <p className="sans" style={{ fontSize: "0.6rem", letterSpacing: "0.18em", textTransform: "uppercase", color: "var(--terracotta)" }}>{titulo}</p>
         <button onClick={copiar} style={{ ...btnOutline, padding: "0.25rem 0.7rem", fontSize: "0.58rem", ...(copiado ? { borderColor: "var(--olive)", color: "var(--olive)" } : {}) }}>
-          {copiado ? "✓ Copiado" : "Copiar mensaje"}
+          {copiado ? "✓ Copiado" : "Copiar"}
         </button>
       </div>
       <pre className="sans" style={{ fontSize: "0.72rem", color: "var(--ink-mid)", lineHeight: 1.6, whiteSpace: "pre-wrap", wordBreak: "break-word", margin: 0, background: "var(--cream-mid)", padding: "0.7rem", borderRadius: "2px", border: "1px solid var(--border-subtle)" }}>
         {mensaje}
       </pre>
+    </div>
+  );
+}
+
+// ── BloqueMensajes ────────────────────────────────────────────────────────────
+function BloqueMensajes({ invitados, codigo, rondaActual }: {
+  invitados: Invitado[]; codigo: string; rondaActual: 1 | 2 | 3;
+}) {
+  const origin   = typeof window !== "undefined" ? window.location.origin : "";
+  const linkInv  = `${origin}/invitacion/${codigo}`;
+  const linkConf = `${origin}/confirmar/${codigo}?r=${rondaActual}`;
+
+  return (
+    <div style={{ marginBottom: "0.8rem" }}>
+      <p className="sans" style={{ fontSize: "0.6rem", letterSpacing: "0.18em", textTransform: "uppercase", color: "var(--terracotta)", marginBottom: "0.5rem" }}>Mensajes WhatsApp</p>
+      <MensajeBlock titulo="Invitación" mensaje={mensajeInvitacion(invitados, linkInv)} />
+      <MensajeBlock titulo={`Confirmación R${rondaActual}`} mensaje={mensajeConfirmacion(invitados, rondaActual, linkConf)} />
     </div>
   );
 }
@@ -288,7 +304,7 @@ function TarjetaInvitacion({ invitacion, rondaActual, onUpdateInv, onUpdateTexto
       {open && (
         <div style={{ padding: "0 1.2rem 1.2rem" }}>
           <BloqueLinks codigo={invitacion.codigo} rondaActual={rondaActual} />
-          <BloqueWhatsApp invitados={invitacion.invitados} codigo={invitacion.codigo} rondaActual={rondaActual} />
+          <BloqueMensajes invitados={invitacion.invitados} codigo={invitacion.codigo} rondaActual={rondaActual} />
           {invitacion.invitados.map(inv => (
             <FilaInvitado key={inv.id} inv={inv} codigo={invitacion.codigo}
               onUpdate={(id, field, val) => onUpdateInv(invitacion.id, id, field, val)}
