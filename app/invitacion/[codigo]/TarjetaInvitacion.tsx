@@ -1,6 +1,6 @@
 'use client'
 
-import { type Invitacion, type Invitado } from './types'
+import { type Invitacion } from './types'
 
 // ── TarjetaInvitacion.tsx ─────────────────────────────────────────────────────
 // Muestra el contenido de la invitación: nombres, fecha, lugar, versículo
@@ -15,19 +15,6 @@ interface Props {
   inv: Invitacion
   rondaActual: number
   codigo: string
-}
-
-// ── helpers de texto ──────────────────────────────────────────────────────────
-
-function saludo(invitados: Invitado[]): string {
-  if (invitados.length === 1) {
-    const i = invitados[0]
-    const t = i.sexo === 'F' ? 'Querida' : 'Querido'
-    return `${t} ${i.nombre.split(' ')[0]},`
-  }
-  const primeros  = invitados.map(i => i.nombre.split(' ')[0])
-  const todasF    = invitados.every(i => i.sexo === 'F')
-  return `${todasF ? 'Queridas' : 'Queridos'} ${primeros.slice(0, -1).join(', ')} y ${primeros[primeros.length - 1]},`
 }
 
 // ── componente ────────────────────────────────────────────────────────────────
@@ -87,18 +74,46 @@ export default function TarjetaInvitacion({ inv, rondaActual, codigo }: Props) {
           </div>
         </div>
 
-        {/* Saludo */}
-        <div style={{ textAlign: 'center', marginBottom: '1.2rem' }}>
-          <p className="serif" style={{ fontSize: '1.15rem', color: '#2C2320', fontStyle: 'italic' }}>
-            {saludo(inv.invitados)}
-          </p>
-          <p className="serif" style={{ fontSize: '0.92rem', color: '#5C4A42', marginTop: '0.55rem', lineHeight: 1.75 }}>
+        {/* Dedicatoria al invitado */}
+        <div style={{ textAlign: 'center', marginBottom: '1.4rem' }}>
+          <p className="sans" style={{
+            fontSize: '0.48rem', letterSpacing: '0.3em',
+            textTransform: 'uppercase', color: '#9A8880', marginBottom: '0.7rem',
+          }}>
             {esIndividual
-              ? esF
-                ? 'Queremos que seas nuestra invitada especial en este día tan significativo para nosotros.'
-                : 'Queremos que seas nuestro invitado especial en este día tan significativo para nosotros.'
-              : 'Queremos que sean parte de este día tan especial para nosotros.'}
+              ? esF ? 'Esta invitación es para' : 'Esta invitación es para'
+              : 'Esta invitación es para'}
           </p>
+
+          {esIndividual ? (
+            <p className="script" style={{
+              fontSize: 'clamp(2.4rem, 11vw, 3.4rem)',
+              color: '#C94F4F',
+              lineHeight: 1.05,
+              letterSpacing: '0.01em',
+            }}>
+              {invitado.nombre}
+            </p>
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.1rem' }}>
+              {inv.invitados.map((i, idx) => (
+                <p key={i.id} className="script" style={{
+                  fontSize: 'clamp(2rem, 9vw, 2.8rem)',
+                  color: '#C94F4F',
+                  lineHeight: 1.05,
+                  opacity: idx === 0 ? 1 : 0.75,
+                }}>
+                  {i.nombre}
+                </p>
+              ))}
+            </div>
+          )}
+
+          <div style={{
+            width: '80px', height: '1px',
+            background: 'linear-gradient(90deg, transparent, rgba(201,79,79,0.45), transparent)',
+            margin: '0.8rem auto 0',
+          }} />
         </div>
 
         <Separador />
