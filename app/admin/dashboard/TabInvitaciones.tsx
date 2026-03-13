@@ -1,11 +1,45 @@
 "use client";
 // ── TabInvitaciones.tsx ───────────────────────────────────────────────────────
 
-import { useState } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { type Invitacion, type Invitado, type FiltrosState } from "./types";
 import { fechaCorta } from "./helpers";
 import { inputStyle, btnPrimary, btnOutline } from "./styles";
 import { BarraFiltros } from "./BarraFiltros";
+
+// ── Toast ─────────────────────────────────────────────────────────────────────
+function Toast({ mensaje, visible }: { mensaje: string; visible: boolean }) {
+  return (
+    <div style={{
+      position: "fixed", bottom: "1.8rem", left: "50%",
+      transform: `translateX(-50%) translateY(${visible ? "0" : "12px"})`,
+      opacity: visible ? 1 : 0,
+      transition: "opacity 0.22s ease, transform 0.22s ease",
+      pointerEvents: "none", zIndex: 999,
+      background: "var(--ink)", color: "var(--cream)",
+      padding: "0.5rem 1.1rem", borderRadius: "20px",
+      fontFamily: "'Montserrat', sans-serif",
+      fontSize: "0.65rem", letterSpacing: "0.08em",
+      boxShadow: "0 4px 16px rgba(0,0,0,0.18)",
+      whiteSpace: "nowrap",
+    }}>
+      {mensaje}
+    </div>
+  );
+}
+
+function useToast() {
+  const [state, setState] = useState({ mensaje: "", visible: false });
+  const timeoutRef = { current: null as ReturnType<typeof setTimeout> | null };
+
+  const mostrar = useCallback((mensaje: string) => {
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    setState({ mensaje, visible: true });
+    timeoutRef.current = setTimeout(() => setState(s => ({ ...s, visible: false })), 2000);
+  }, []);
+
+  return { toast: state, mostrar };
+}
 
 // ── Helpers de texto ──────────────────────────────────────────────────────────
 
@@ -166,72 +200,83 @@ function FilaInvitado({ inv, codigo, onUpdate, onUpdateTexto, onDelete }: {
   );
 }
 
-// ── LinkRow ───────────────────────────────────────────────────────────────────
-function LinkRow({ label, url }: { label: string; url: string }) {
-  const [copiado, setCopiado] = useState(false);
-  function copiar() { navigator.clipboard.writeText(url); setCopiado(true); setTimeout(() => setCopiado(false), 1800); }
+// ── CopyButton ────────────────────────────────────────────────────────────────
+function CopyButton({ label, text, onCopy }: { label: string; text: string; onCopy?: (msg: string) => void }) {
+  function copiar(e: React.MouseEvent) {
+    e.stopPropagation();
+    navigator.clipboard.writeText(text);
+    onCopy?.("Copiado al portapapeles");
+  }
   return (
-    <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.35rem" }}>
-      <span className="sans" style={{ fontSize: "0.58rem", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--ink-light)", minWidth: "110px" }}>{label}</span>
-      <span className="sans" style={{ fontSize: "0.68rem", color: "var(--ink-mid)", flex: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{url}</span>
-      <button onClick={copiar} style={{ ...btnOutline, padding: "0.25rem 0.7rem", fontSize: "0.58rem", flexShrink: 0, ...(copiado ? { borderColor: "var(--olive)", color: "var(--olive)" } : {}) }}>
-        {copiado ? "✓ Copiado" : "Copiar"}
-      </button>
+    <button onClick={copiar} style={{ ...btnOutline, padding: "0.45rem 0.9rem", fontSize: "0.6rem" }}>
+      {label}
+    </button>
+  );
+}
+
+// ── ModalMensaje ──────────────────────────────────────────────────────────────
+function ModalMensaje({ titulo, mensaje, onClose, onCopy }: {
+  titulo: string; mensaje: string; onClose: () => void; onCopy?: (msg: string) => void;
+}) {
+  function copiar() {
+    navigator.clipboard.writeText(mensaje);
+    onCopy?.("Mensaje copiado");
+    onClose();
+  }
+  return (
+    <div onClick={onClose} style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.4)", zIndex: 500, display: "flex", alignItems: "flex-end", justifyContent: "center" }}>
+      <div onClick={e => e.stopPropagation()} style={{ background: "var(--cream)", borderRadius: "12px 12px 0 0", padding: "1.5rem 1.2rem 2rem", width: "100%", maxWidth: "560px", boxShadow: "0 -8px 40px rgba(0,0,0,0.15)" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem" }}>
+          <p className="sans" style={{ fontSize: "0.62rem", letterSpacing: "0.18em", textTransform: "uppercase", color: "var(--terracotta)" }}>{titulo}</p>
+          <button onClick={onClose} style={{ background: "none", border: "none", color: "var(--ink-light)", fontSize: "1.4rem", cursor: "pointer", lineHeight: 1 }}>×</button>
+        </div>
+        <pre className="sans" style={{ fontSize: "0.82rem", color: "var(--ink-mid)", lineHeight: 1.7, whiteSpace: "pre-wrap", wordBreak: "break-word", margin: "0 0 1.2rem", background: "var(--cream-mid)", padding: "0.9rem", borderRadius: "2px", border: "1px solid var(--border-subtle)" }}>
+          {mensaje}
+        </pre>
+        <button onClick={copiar} style={{ ...btnPrimary, width: "100%", padding: "0.75rem", fontSize: "0.65rem" }}>
+          Copiar mensaje
+        </button>
+      </div>
     </div>
   );
 }
 
 // ── BloqueLinks ───────────────────────────────────────────────────────────────
-function BloqueLinks({ codigo, rondaActual }: { codigo: string; rondaActual: 1 | 2 | 3 }) {
-  const origin  = typeof window !== "undefined" ? window.location.origin : "";
-  const linkInv = `${origin}/invitacion/${codigo}`;
-  const linkConf = `${origin}/confirmar/${codigo}?r=${rondaActual}`;
-
+function BloqueLinks({ codigo, rondaActual, onCopy }: { codigo: string; rondaActual: 1 | 2 | 3; onCopy: (msg: string) => void }) {
+  const origin   = typeof window !== "undefined" ? window.location.origin : "";
+  const linkInv  = `${origin}/invitacion/${codigo}`;
+  const linkConf = rondaActual === 1 ? linkInv : `${origin}/confirmar/${codigo}?r=${rondaActual}`;
   return (
-    <div style={{ background: "var(--cream)", border: "1px solid var(--border-subtle)", borderRadius: "2px", padding: "0.9rem 1rem", marginBottom: "0.8rem" }}>
-      <p className="sans" style={{ fontSize: "0.6rem", letterSpacing: "0.18em", textTransform: "uppercase", color: "var(--terracotta)", marginBottom: "0.7rem" }}>Links</p>
-      <LinkRow label="Invitación" url={linkInv} />
-      {rondaActual === 1
-        ? <p className="sans" style={{ fontSize: "0.62rem", color: "var(--ink-light)", fontStyle: "italic" }}>En R1 el link de confirmación es el mismo que el de invitación.</p>
-        : <LinkRow label={`Confirmación R${rondaActual}`} url={linkConf} />
-      }
-    </div>
-  );
-}
-
-// ── MensajeBlock ──────────────────────────────────────────────────────────────
-function MensajeBlock({ titulo, mensaje }: { titulo: string; mensaje: string }) {
-  const [copiado, setCopiado] = useState(false);
-  function copiar() { navigator.clipboard.writeText(mensaje); setCopiado(true); setTimeout(() => setCopiado(false), 1800); }
-  return (
-    <div style={{ background: "var(--cream)", border: "1px solid var(--border-subtle)", borderRadius: "2px", padding: "0.9rem 1rem", marginBottom: "0.5rem" }}>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.6rem" }}>
-        <p className="sans" style={{ fontSize: "0.6rem", letterSpacing: "0.18em", textTransform: "uppercase", color: "var(--terracotta)" }}>{titulo}</p>
-        <button onClick={copiar} style={{ ...btnOutline, padding: "0.25rem 0.7rem", fontSize: "0.58rem", ...(copiado ? { borderColor: "var(--olive)", color: "var(--olive)" } : {}) }}>
-          {copiado ? "✓ Copiado" : "Copiar"}
-        </button>
-      </div>
-      <pre className="sans" style={{ fontSize: "0.72rem", color: "var(--ink-mid)", lineHeight: 1.6, whiteSpace: "pre-wrap", wordBreak: "break-word", margin: 0, background: "var(--cream-mid)", padding: "0.7rem", borderRadius: "2px", border: "1px solid var(--border-subtle)" }}>
-        {mensaje}
-      </pre>
+    <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap", marginBottom: "0.8rem" }}>
+      <CopyButton label="Copiar link invitación" text={linkInv} onCopy={onCopy} />
+      <CopyButton label={`Copiar link confirmación R${rondaActual}`} text={linkConf} onCopy={onCopy} />
     </div>
   );
 }
 
 // ── BloqueMensajes ────────────────────────────────────────────────────────────
-function BloqueMensajes({ invitados, codigo, rondaActual }: {
-  invitados: Invitado[]; codigo: string; rondaActual: 1 | 2 | 3;
+function BloqueMensajes({ invitados, codigo, rondaActual, onCopy }: {
+  invitados: Invitado[]; codigo: string; rondaActual: 1 | 2 | 3; onCopy: (msg: string) => void;
 }) {
+  const [modal, setModal] = useState<"inv" | "conf" | null>(null);
   const origin   = typeof window !== "undefined" ? window.location.origin : "";
   const linkInv  = `${origin}/invitacion/${codigo}`;
-  const linkConf = `${origin}/confirmar/${codigo}?r=${rondaActual}`;
-
+  const linkConf = rondaActual === 1 ? linkInv : `${origin}/confirmar/${codigo}?r=${rondaActual}`;
+  const msgInv   = mensajeInvitacion(invitados, linkInv);
+  const msgConf  = mensajeConfirmacion(invitados, rondaActual, linkConf);
   return (
-    <div style={{ marginBottom: "0.8rem" }}>
-      <p className="sans" style={{ fontSize: "0.6rem", letterSpacing: "0.18em", textTransform: "uppercase", color: "var(--terracotta)", marginBottom: "0.5rem" }}>Mensajes WhatsApp</p>
-      <MensajeBlock titulo="Invitación" mensaje={mensajeInvitacion(invitados, linkInv)} />
-      <MensajeBlock titulo={`Confirmación R${rondaActual}`} mensaje={mensajeConfirmacion(invitados, rondaActual, linkConf)} />
-    </div>
+    <>
+      <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap", marginBottom: "0.8rem" }}>
+        <button onClick={e => { e.stopPropagation(); setModal("inv"); }} style={{ ...btnOutline, padding: "0.45rem 0.9rem", fontSize: "0.6rem" }}>
+          Ver mensaje invitación
+        </button>
+        <button onClick={e => { e.stopPropagation(); setModal("conf"); }} style={{ ...btnOutline, padding: "0.45rem 0.9rem", fontSize: "0.6rem" }}>
+          Ver mensaje confirmación R{rondaActual}
+        </button>
+      </div>
+      {modal === "inv"  && <ModalMensaje titulo="Mensaje invitación" mensaje={msgInv} onClose={() => setModal(null)} onCopy={onCopy} />}
+      {modal === "conf" && <ModalMensaje titulo={`Mensaje confirmación R${rondaActual}`} mensaje={msgConf} onClose={() => setModal(null)} onCopy={onCopy} />}
+    </>
   );
 }
 
@@ -248,12 +293,14 @@ function TarjetaInvitacion({ invitacion, rondaActual, onUpdateInv, onUpdateTexto
   const [open, setOpen]               = useState(false);
   const [editNombre, setEditNombre]   = useState(false);
   const [nuevoNombre, setNuevoNombre] = useState(invitacion.nombre ?? "");
+  const { toast, mostrar }            = useToast();
   const total = invitacion.invitados.length;
 
   function guardarNombre() { onUpdateNombreGrupo(invitacion.id, nuevoNombre.trim() || null); setEditNombre(false); }
 
   return (
     <div style={{ border: "1px solid var(--border-subtle)", borderRadius: "2px", marginBottom: "0.6rem", background: "var(--cream-mid)" }}>
+      <Toast mensaje={toast.mensaje} visible={toast.visible} />
 
       {/* Header */}
       <div onClick={() => !editNombre && setOpen(o => !o)} style={{ padding: "0.9rem 1rem", cursor: editNombre ? "default" : "pointer" }}>
@@ -307,8 +354,8 @@ function TarjetaInvitacion({ invitacion, rondaActual, onUpdateInv, onUpdateTexto
       {/* Contenido expandido */}
       {open && (
         <div style={{ padding: "0 1.2rem 1.2rem" }}>
-          <BloqueLinks codigo={invitacion.codigo} rondaActual={rondaActual} />
-          <BloqueMensajes invitados={invitacion.invitados} codigo={invitacion.codigo} rondaActual={rondaActual} />
+          <BloqueLinks codigo={invitacion.codigo} rondaActual={rondaActual} onCopy={mostrar} />
+          <BloqueMensajes invitados={invitacion.invitados} codigo={invitacion.codigo} rondaActual={rondaActual} onCopy={mostrar} />
           {invitacion.invitados.map(inv => (
             <FilaInvitado key={inv.id} inv={inv} codigo={invitacion.codigo}
               onUpdate={(id, field, val) => onUpdateInv(invitacion.id, id, field, val)}
