@@ -1,7 +1,8 @@
 "use client";
 // ── TabInvitaciones.tsx ───────────────────────────────────────────────────────
 
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useRef } from "react";
+import { Link as LinkIcon, Mail as MailIcon, CalendarCheck as CalendarCheckIcon } from "lucide-react";
 import { type Invitacion, type Invitado, type FiltrosState } from "./types";
 import { fechaCorta } from "./helpers";
 import { inputStyle, btnPrimary, btnOutline } from "./styles";
@@ -30,7 +31,7 @@ function Toast({ mensaje, visible }: { mensaje: string; visible: boolean }) {
 
 function useToast() {
   const [state, setState] = useState({ mensaje: "", visible: false });
-  const timeoutRef = { current: null as ReturnType<typeof setTimeout> | null };
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const mostrar = useCallback((mensaje: string) => {
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
@@ -200,20 +201,6 @@ function FilaInvitado({ inv, codigo, onUpdate, onUpdateTexto, onDelete }: {
   );
 }
 
-// ── CopyButton ────────────────────────────────────────────────────────────────
-function CopyButton({ label, text, onCopy }: { label: string; text: string; onCopy?: (msg: string) => void }) {
-  function copiar(e: React.MouseEvent) {
-    e.stopPropagation();
-    navigator.clipboard.writeText(text);
-    onCopy?.("Copiado al portapapeles");
-  }
-  return (
-    <button onClick={copiar} style={{ ...btnOutline, padding: "0.45rem 0.9rem", fontSize: "0.6rem" }}>
-      {label}
-    </button>
-  );
-}
-
 // ── ModalMensaje ──────────────────────────────────────────────────────────────
 function ModalMensaje({ titulo, mensaje, onClose, onCopy }: {
   titulo: string; mensaje: string; onClose: () => void; onCopy?: (msg: string) => void;
@@ -241,39 +228,60 @@ function ModalMensaje({ titulo, mensaje, onClose, onCopy }: {
   );
 }
 
-// ── BloqueLinks ───────────────────────────────────────────────────────────────
-function BloqueLinks({ codigo, rondaActual, onCopy }: { codigo: string; rondaActual: 1 | 2 | 3; onCopy: (msg: string) => void }) {
-  const origin   = typeof window !== "undefined" ? window.location.origin : "";
-  const linkInv  = `${origin}/invitacion/${codigo}`;
-  const linkConf = rondaActual === 1 ? linkInv : `${origin}/confirmar/${codigo}?r=${rondaActual}`;
-  return (
-    <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap", marginBottom: "0.8rem" }}>
-      <CopyButton label="Copiar link invitación" text={linkInv} onCopy={onCopy} />
-      <CopyButton label={`Copiar link confirmación R${rondaActual}`} text={linkConf} onCopy={onCopy} />
-    </div>
-  );
-}
-
-// ── BloqueMensajes ────────────────────────────────────────────────────────────
-function BloqueMensajes({ invitados, codigo, rondaActual, onCopy }: {
+// ── BloqueAcciones ────────────────────────────────────────────────────────────
+function BloqueAcciones({ invitados, codigo, rondaActual, onCopy }: {
   invitados: Invitado[]; codigo: string; rondaActual: 1 | 2 | 3; onCopy: (msg: string) => void;
 }) {
   const [modal, setModal] = useState<"inv" | "conf" | null>(null);
   const origin   = typeof window !== "undefined" ? window.location.origin : "";
   const linkInv  = `${origin}/invitacion/${codigo}`;
-  const linkConf = rondaActual === 1 ? linkInv : `${origin}/confirmar/${codigo}?r=${rondaActual}`;
+  const linkConf = `${origin}/confirmar/${codigo}?r=${rondaActual}`;
   const msgInv   = mensajeInvitacion(invitados, linkInv);
   const msgConf  = mensajeConfirmacion(invitados, rondaActual, linkConf);
+
+  const iconBtn: React.CSSProperties = {
+    width: "36px", height: "36px",
+    display: "flex", alignItems: "center", justifyContent: "center",
+    background: "var(--cream)", border: "1px solid var(--border-subtle)",
+    borderRadius: "4px", cursor: "pointer", flexShrink: 0,
+    transition: "border-color 0.15s, background 0.15s",
+    color: "var(--ink-mid)",
+  };
+
   return (
     <>
-      <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap", marginBottom: "0.8rem" }}>
-        <button onClick={e => { e.stopPropagation(); setModal("inv"); }} style={{ ...btnOutline, padding: "0.45rem 0.9rem", fontSize: "0.6rem" }}>
-          Ver mensaje invitación
+      <div style={{ display: "flex", gap: "0.5rem", marginBottom: "1rem" }}>
+
+        {/* Link invitación — copia directo */}
+        <button
+          title="Copiar link de invitación"
+          onClick={e => { e.stopPropagation(); navigator.clipboard.writeText(linkInv); onCopy("Link copiado"); }}
+          style={iconBtn}
+        >
+          <LinkIcon size={15} />
         </button>
-        <button onClick={e => { e.stopPropagation(); setModal("conf"); }} style={{ ...btnOutline, padding: "0.45rem 0.9rem", fontSize: "0.6rem" }}>
-          Ver mensaje confirmación R{rondaActual}
+
+        {/* Mensaje invitación — abre modal */}
+        <button
+          title="Ver mensaje de invitación"
+          onClick={e => { e.stopPropagation(); setModal("inv"); }}
+          style={iconBtn}
+        >
+          <MailIcon size={15} />
         </button>
+
+        {/* Mensaje confirmación R2/R3 — solo si ronda >= 2 */}
+        {rondaActual >= 2 && (
+          <button
+            title={`Ver mensaje confirmación R${rondaActual}`}
+            onClick={e => { e.stopPropagation(); setModal("conf"); }}
+            style={iconBtn}
+          >
+            <CalendarCheckIcon size={15} />
+          </button>
+        )}
       </div>
+
       {modal === "inv"  && <ModalMensaje titulo="Mensaje invitación" mensaje={msgInv} onClose={() => setModal(null)} onCopy={onCopy} />}
       {modal === "conf" && <ModalMensaje titulo={`Mensaje confirmación R${rondaActual}`} mensaje={msgConf} onClose={() => setModal(null)} onCopy={onCopy} />}
     </>
@@ -354,8 +362,7 @@ function TarjetaInvitacion({ invitacion, rondaActual, onUpdateInv, onUpdateTexto
       {/* Contenido expandido */}
       {open && (
         <div style={{ padding: "0 1.2rem 1.2rem" }}>
-          <BloqueLinks codigo={invitacion.codigo} rondaActual={rondaActual} onCopy={mostrar} />
-          <BloqueMensajes invitados={invitacion.invitados} codigo={invitacion.codigo} rondaActual={rondaActual} onCopy={mostrar} />
+            <BloqueAcciones invitados={invitacion.invitados} codigo={invitacion.codigo} rondaActual={rondaActual} onCopy={mostrar} />
           {invitacion.invitados.map(inv => (
             <FilaInvitado key={inv.id} inv={inv} codigo={invitacion.codigo}
               onUpdate={(id, field, val) => onUpdateInv(invitacion.id, id, field, val)}
