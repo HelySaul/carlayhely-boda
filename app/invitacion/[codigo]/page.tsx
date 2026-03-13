@@ -82,7 +82,8 @@ export default function PaginaInvitacion() {
   }, [codigo]);
 
   function abrirSobre() {
-    setFase("abierto");
+    setFase("floreciendo");
+    setTimeout(() => setFase("abierto"), 2200);
   }
 
   async function confirmar() {
@@ -127,7 +128,7 @@ export default function PaginaInvitacion() {
       alignItems: "center", justifyContent: "center",
       padding: "2rem 1rem",
       fontFamily: "'Montserrat', sans-serif",
-      position: "relative", overflow: "hidden",
+      position: "relative",
     }}>
 
       <style>{`
@@ -138,6 +139,19 @@ export default function PaginaInvitacion() {
         @keyframes graciasFade  { 0%{opacity:0;transform:scale(0.9)} 100%{opacity:1;transform:scale(1)} }
         @keyframes sobreFlota   { 0%,100%{transform:translateY(0px)} 50%{transform:translateY(-5px)} }
         @keyframes pulso        { 0%,100%{opacity:0.7;transform:scale(1)} 50%{opacity:1;transform:scale(1.03)} }
+        @keyframes florExplota  {
+          0%   { opacity:0; transform: translate(0,0) scale(0.1) rotate(0deg); }
+          20%  { opacity:1; }
+          60%  { opacity:1; transform: translate(var(--fx), var(--fy)) scale(1.15) rotate(var(--fr)); }
+          85%  { opacity:0.5; transform: translate(calc(var(--fx)*1.55), calc(var(--fy)*1.55)) scale(0.85) rotate(calc(var(--fr)*1.5)); }
+          100% { opacity:0; transform: translate(calc(var(--fx)*2.3), calc(var(--fy)*2.3)) scale(0.2) rotate(calc(var(--fr)*2)); }
+        }
+        @keyframes fondoFlores  {
+          0%   { opacity:0; }
+          25%  { opacity:1; }
+          70%  { opacity:1; }
+          100% { opacity:0; }
+        }
         .tarjeta-entra { animation: tarjetaSube 0.9s cubic-bezier(0.22,1,0.36,1) forwards; }
         .gracias-entra { animation: graciasFade 0.6s ease forwards; }
       `}</style>
@@ -468,44 +482,57 @@ const FLORES_CONFIG = [
 
 function ExplosionFlores() {
   return (
-    <div style={{
-      position: "fixed", inset: 0, zIndex: 50,
-      display: "flex", alignItems: "center", justifyContent: "center",
-      pointerEvents: "none",
-      animation: "fondoFlores 2.2s ease forwards",
-    }}>
-      {/* Flash blanco inicial muy breve */}
-      <div style={{
-        position: "absolute", inset: 0,
-        background: "radial-gradient(circle at center, rgba(253,250,246,0.95) 0%, rgba(253,250,246,0.6) 60%, transparent 100%)",
-        animation: "fondoFlores 2.2s ease forwards",
-        pointerEvents: "none",
-      }} />
+    <>
+      {/* Keyframes individuales por flor — inyectados directo en el DOM */}
+      <style>{`
+        ${FLORES_CONFIG.map(([fx, fy, fr,,,,delay], i) => `
+          @keyframes flor${i} {
+            0%   { opacity:0; transform: translate(-50%,-50%) scale(0.08) rotate(0deg); }
+            18%  { opacity:1; }
+            58%  { opacity:1; transform: translate(calc(-50% + ${fx}vmin), calc(-50% + ${fy}vmin)) scale(1.15) rotate(${fr}deg); }
+            82%  { opacity:0.4; transform: translate(calc(-50% + ${(fx as number)*1.6}vmin), calc(-50% + ${(fy as number)*1.6}vmin)) scale(0.8) rotate(${(fr as number)*1.5}deg); }
+            100% { opacity:0; transform: translate(calc(-50% + ${(fx as number)*2.4}vmin), calc(-50% + ${(fy as number)*2.4}vmin)) scale(0.15) rotate(${(fr as number)*2}deg); }
+          }
+        `).join('')}
+        @keyframes flashBlanco {
+          0%   { opacity: 0; }
+          15%  { opacity: 0.85; }
+          65%  { opacity: 0.85; }
+          100% { opacity: 0; }
+        }
+      `}</style>
 
-      {FLORES_CONFIG.map(([fx, fy, fr, p1, p2, sz, delay], i) => (
-        <div
-          key={i}
-          style={{
-            position: "absolute",
-            top: "50%", left: "50%",
-            marginTop: `-${(sz as number) / 2}px`,
-            marginLeft: `-${(sz as number) / 2}px`,
-            // CSS custom properties para la animación
-            ["--fx" as string]: `${fx}vmin`,
-            ["--fy" as string]: `${fy}vmin`,
-            ["--fr" as string]: `${fr}deg`,
-            animation: `florExplota 2.2s cubic-bezier(0.22,1,0.36,1) ${delay}s both`,
-          }}
-        >
-          <TulipSVG
-            size={sz as number}
-            petalColor={p1 as string}
-            petalColor2={p2 as string}
-            rotate={fr as number}
-          />
-        </div>
-      ))}
-    </div>
+      <div style={{
+        position: "fixed", inset: 0, zIndex: 50,
+        pointerEvents: "none",
+        overflow: "hidden",
+      }}>
+        {/* Flash crema de fondo */}
+        <div style={{
+          position: "absolute", inset: 0,
+          background: "radial-gradient(circle at 50% 50%, rgba(253,250,246,0.92) 0%, rgba(250,242,234,0.75) 50%, rgba(246,248,242,0.4) 100%)",
+          animation: "flashBlanco 2.2s ease forwards",
+        }} />
+
+        {FLORES_CONFIG.map(([fx, fy, fr, p1, p2, sz, delay], i) => (
+          <div
+            key={i}
+            style={{
+              position: "absolute",
+              top: "50%", left: "50%",
+              animation: `flor${i} 2.2s cubic-bezier(0.25,0.8,0.3,1) ${(delay as number)}s both`,
+            }}
+          >
+            <TulipSVG
+              size={sz as number}
+              petalColor={p1 as string}
+              petalColor2={p2 as string}
+              rotate={fr as number}
+            />
+          </div>
+        ))}
+      </div>
+    </>
   );
 }
 
