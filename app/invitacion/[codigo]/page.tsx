@@ -58,18 +58,12 @@ export default function PaginaInvitacion() {
   const router = useRouter();
   const [inv, setInv] = useState<Invitacion | null>(null);
   const [error, setError] = useState("");
-  const [fase, setFase] = useState<"sobre" | "cortando" | "abriendo" | "abierto" | "gracias">("sobre");
-  const [cortePct, setCortePct] = useState(0);
+  const [fase, setFase] = useState<"sobre" | "abierto" | "gracias">("sobre");
   const [confirmaciones, setConfirmaciones] = useState<Record<string, boolean>>({});
   const [whatsapps, setWhatsapps] = useState<Record<string, string>>({});
   const [enviando, setEnviando] = useState(false);
   const [declinados, setDeclinados] = useState<Record<string, boolean>>({});
   const [rondaActual, setRondaActual] = useState(1);
-  // animación de apertura
-  const [solapaAngulo, setSolapaAngulo] = useState(0); // 0→-180 grados
-
-  const sobreRef = useRef<HTMLDivElement>(null);
-  const dragStart = useRef<{ x: number } | null>(null);
 
   useEffect(() => {
     Promise.all([
@@ -87,50 +81,8 @@ export default function PaginaInvitacion() {
     }).catch(() => setError("No pudimos cargar tu invitación."));
   }, [codigo]);
 
-  function getX(e: React.TouchEvent | React.MouseEvent) {
-    if ("touches" in e) return e.touches[0].clientX;
-    return (e as React.MouseEvent).clientX;
-  }
-
-  function onDragStart(e: React.TouchEvent | React.MouseEvent) {
-    if (fase !== "sobre") return;
-    dragStart.current = { x: getX(e) };
-    setFase("cortando");
-  }
-
-  function onDragMove(e: React.TouchEvent | React.MouseEvent) {
-    if (fase !== "cortando" || !dragStart.current || !sobreRef.current) return;
-    const delta = getX(e) - dragStart.current.x;
-    const rect = sobreRef.current.getBoundingClientRect();
-    const pct = Math.min(100, Math.max(0, (delta / rect.width) * 160));
-    setCortePct(pct);
-    if (pct >= 100) abrirSobre();
-  }
-
-  function onDragEnd() {
-    if (fase === "cortando" && cortePct < 100) {
-      setFase("sobre");
-      setCortePct(0);
-      dragStart.current = null;
-    }
-  }
-
   function abrirSobre() {
-    dragStart.current = null;
-    setFase("abriendo");
-    setCortePct(100);
-    // Animar la solapa abriéndose lentamente
-    let angulo = 0;
-    const step = () => {
-      angulo -= 1.2; // ~2.5 segundos para abrir completamente
-      setSolapaAngulo(angulo);
-      if (angulo > -180) {
-        requestAnimationFrame(step);
-      } else {
-        setTimeout(() => setFase("abierto"), 600);
-      }
-    };
-    requestAnimationFrame(step);
+    setFase("abierto");
   }
 
   async function confirmar() {
@@ -167,12 +119,6 @@ export default function PaginaInvitacion() {
   const algunoConfirmo = inv.invitados.some(i => i.confirmacion_1);
   const hayAlgunoSinWpp = inv.invitados.some(i => !i.whatsapp && confirmaciones[i.id]);
 
-  // Interpolación de la solapa durante la apertura
-  const solapaAbierta = fase === "abriendo" || fase === "abierto";
-  const solapaY = solapaAbierta
-    ? Math.max(108 - Math.abs(solapaAngulo) * 1.2, -100)
-    : 108 - cortePct * 0.5;
-
   return (
     <div style={{
       minHeight: "100svh",
@@ -187,11 +133,11 @@ export default function PaginaInvitacion() {
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@300;400;500&display=swap');
         @font-face { font-family: 'PinyonScript'; src: url('/fonts/PinyonScript-Regular.ttf'); }
-        @keyframes spin     { to { transform: rotate(360deg); } }
-        @keyframes sobreFloat { 0%,100%{transform:translateY(0px) rotate(0deg)} 50%{transform:translateY(-6px) rotate(0.5deg)} }
-        @keyframes tarjetaSube { 0%{opacity:0;transform:translateY(50px) scale(0.96)} 100%{opacity:1;transform:translateY(0) scale(1)} }
-        @keyframes graciasFade { 0%{opacity:0;transform:scale(0.9)} 100%{opacity:1;transform:scale(1)} }
-        @keyframes hintar { 0%,100%{transform:translateX(0)} 50%{transform:translateX(8px)} }
+        @keyframes spin        { to { transform: rotate(360deg); } }
+        @keyframes tarjetaSube  { 0%{opacity:0;transform:translateY(50px) scale(0.96)} 100%{opacity:1;transform:translateY(0) scale(1)} }
+        @keyframes graciasFade  { 0%{opacity:0;transform:scale(0.9)} 100%{opacity:1;transform:scale(1)} }
+        @keyframes sobreFlota   { 0%,100%{transform:translateY(0px)} 50%{transform:translateY(-5px)} }
+        @keyframes pulso        { 0%,100%{opacity:0.7;transform:scale(1)} 50%{opacity:1;transform:scale(1.03)} }
         .tarjeta-entra { animation: tarjetaSube 0.9s cubic-bezier(0.22,1,0.36,1) forwards; }
         .gracias-entra { animation: graciasFade 0.6s ease forwards; }
       `}</style>
@@ -206,7 +152,7 @@ export default function PaginaInvitacion() {
       {/* Sin tulipanes laterales */}
 
       {/* ── FASE: SOBRE ─────────────────────────────── */}
-      {(fase === "sobre" || fase === "cortando" || fase === "abriendo") && (
+      {fase === "sobre" && (
         <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "1.8rem", position: "relative", zIndex: 1 }}>
 
           {/* Carla & Hely encima */}
@@ -219,212 +165,191 @@ export default function PaginaInvitacion() {
             </p>
           </div>
 
-          {/* El sobre — cerrado elegante */}
+          {/* ── Tarjeta estilo cartulina embossed — horizontal ── */}
           <div
-            ref={sobreRef}
-            onMouseDown={onDragStart} onMouseMove={onDragMove} onMouseUp={onDragEnd} onMouseLeave={onDragEnd}
-            onTouchStart={onDragStart} onTouchMove={onDragMove} onTouchEnd={onDragEnd}
+            onClick={() => abrirSobre()}
             style={{
               position: "relative",
-              width: "min(340px, 88vw)", height: "min(230px, 60vw)",
-              cursor: fase === "sobre" ? "grab" : fase === "cortando" ? "grabbing" : "default",
-              userSelect: "none", touchAction: "none",
-              filter: "drop-shadow(0 16px 48px rgba(80,40,30,0.16)) drop-shadow(0 4px 12px rgba(80,40,30,0.10))",
-              animation: fase === "sobre" ? "sobreFloat 4s ease-in-out infinite" : "none",
+              width: "min(360px, 90vw)",
+              cursor: "pointer",
+              animation: "sobreFlota 4s ease-in-out infinite",
+              filter: "drop-shadow(0 18px 50px rgba(60,30,20,0.15)) drop-shadow(0 4px 14px rgba(60,30,20,0.09))",
             }}
           >
-            <svg viewBox="0 0 340 230" style={{ position: "absolute", inset: 0, width: "100%", height: "100%" }} xmlns="http://www.w3.org/2000/svg">
+            <svg
+              viewBox="0 0 360 190"
+              style={{ width: "100%", display: "block" }}
+              xmlns="http://www.w3.org/2000/svg"
+            >
               <defs>
-                <linearGradient id="sobreFondo" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stopColor="#FFFFFF"/>
-                  <stop offset="100%" stopColor="#F9F3F0"/>
+                {/* Fondo cartulina marfil */}
+                <linearGradient id="cartulina" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="#FEFCF9"/>
+                  <stop offset="40%" stopColor="#FBF7F2"/>
+                  <stop offset="100%" stopColor="#F7F2EC"/>
                 </linearGradient>
-                <linearGradient id="sobreSombra" x1="0%" y1="0%" x2="0%" y2="100%">
-                  <stop offset="0%" stopColor="rgba(180,140,130,0.08)"/>
-                  <stop offset="100%" stopColor="rgba(180,140,130,0.18)"/>
+                {/* Cinta central satinada */}
+                <linearGradient id="cinta" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stopColor="rgba(230,210,200,0.0)"/>
+                  <stop offset="20%" stopColor="rgba(230,210,200,0.35)"/>
+                  <stop offset="50%" stopColor="rgba(235,218,208,0.55)"/>
+                  <stop offset="80%" stopColor="rgba(230,210,200,0.35)"/>
+                  <stop offset="100%" stopColor="rgba(230,210,200,0.0)"/>
                 </linearGradient>
-                <linearGradient id="solapaSup" x1="0%" y1="0%" x2="0%" y2="100%">
-                  <stop offset="0%" stopColor="#FFFFFF"/>
-                  <stop offset="100%" stopColor="#F4ECEB"/>
-                </linearGradient>
-                <linearGradient id="solapaInf" x1="0%" y1="100%" x2="0%" y2="0%">
-                  <stop offset="0%" stopColor="#F0E8E5"/>
-                  <stop offset="100%" stopColor="#F9F3F0"/>
-                </linearGradient>
-                <linearGradient id="lateralL" x1="0%" y1="0%" x2="100%" y2="0%">
-                  <stop offset="0%" stopColor="#EDE5E2"/>
-                  <stop offset="100%" stopColor="#F9F3F0"/>
-                </linearGradient>
-                <linearGradient id="lateralR" x1="100%" y1="0%" x2="0%" y2="0%">
-                  <stop offset="0%" stopColor="#EAE2DF"/>
-                  <stop offset="100%" stopColor="#F9F3F0"/>
-                </linearGradient>
-                {/* Patrón de puntos finos */}
-                <pattern id="dots" x="0" y="0" width="16" height="16" patternUnits="userSpaceOnUse">
-                  <circle cx="8" cy="8" r="0.7" fill="#C8B0A8" opacity="0.3"/>
-                </pattern>
-                <filter id="suave">
-                  <feDropShadow dx="0" dy="1" stdDeviation="2" floodColor="rgba(160,100,80,0.12)"/>
+                {/* Sombra suave para dar volumen a las rosas */}
+                <filter id="rosaSombra" x="-30%" y="-30%" width="160%" height="160%">
+                  <feDropShadow dx="1" dy="2" stdDeviation="2.5" floodColor="rgba(100,70,60,0.22)"/>
                 </filter>
+                <filter id="rosaSombraChica" x="-30%" y="-30%" width="160%" height="160%">
+                  <feDropShadow dx="0.5" dy="1.5" stdDeviation="1.8" floodColor="rgba(100,70,60,0.18)"/>
+                </filter>
+                {/* Plata metálica */}
+                <linearGradient id="plata" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="#E8E8E8"/>
+                  <stop offset="40%" stopColor="#D0D0D0"/>
+                  <stop offset="70%" stopColor="#C4C4C4"/>
+                  <stop offset="100%" stopColor="#B8B8B8"/>
+                </linearGradient>
+                <linearGradient id="plataBrillo" x1="0%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" stopColor="#F0F0F0"/>
+                  <stop offset="50%" stopColor="#C8C8C8"/>
+                  <stop offset="100%" stopColor="#A8A8A8"/>
+                </linearGradient>
+                {/* Textura embossed — patrón floral en relieve */}
+                <pattern id="emboss" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+                  {/* Rama curva */}
+                  <path d="M5 35 Q12 20 20 15 Q28 10 35 5" stroke="rgba(180,160,145,0.13)" strokeWidth="0.8" fill="none"/>
+                  {/* Hojita izquierda */}
+                  <path d="M12 26 Q8 20 12 16 Q14 22 12 26Z" fill="rgba(180,160,145,0.10)"/>
+                  {/* Hojita derecha */}
+                  <path d="M22 18 Q26 12 30 14 Q26 18 22 18Z" fill="rgba(180,160,145,0.09)"/>
+                  {/* Florcita */}
+                  <circle cx="20" cy="15" r="2.5" fill="none" stroke="rgba(180,160,145,0.11)" strokeWidth="0.6"/>
+                  <circle cx="20" cy="15" r="1" fill="rgba(180,160,145,0.12)"/>
+                  {/* Otra ramita */}
+                  <path d="M0 20 Q6 15 10 8" stroke="rgba(180,160,145,0.09)" strokeWidth="0.6" fill="none"/>
+                  <path d="M6 14 Q3 10 6 7 Q8 11 6 14Z" fill="rgba(180,160,145,0.08)"/>
+                </pattern>
               </defs>
 
-              {/* Cuerpo del sobre */}
-              <rect x="1" y="1" width="338" height="228" rx="4" fill="url(#sobreFondo)" stroke="#E0D0C8" strokeWidth="0.8"/>
-              {/* Textura puntitos sutil */}
-              <rect x="1" y="1" width="338" height="228" rx="4" fill="url(#dots)"/>
+              {/* ── Cuerpo cartulina ── */}
+              <rect x="0" y="0" width="360" height="190" rx="3" fill="url(#cartulina)"/>
+              {/* Patrón embossed en toda la superficie */}
+              <rect x="0" y="0" width="360" height="190" rx="3" fill="url(#emboss)"/>
+              {/* Sombra interior sutil en bordes para dar grosor */}
+              <rect x="0" y="0" width="360" height="190" rx="3" fill="none"
+                stroke="rgba(160,130,110,0.12)" strokeWidth="2"/>
 
-              {/* Solapa inferior (sobre cerrado — se ve siempre) */}
-              <polygon points="1,229 170,130 339,229" fill="url(#solapaInf)" stroke="#E0D0C8" strokeWidth="0.6"/>
+              {/* ── Cinta vertical central ── */}
+              <rect x="166" y="0" width="28" height="190" fill="url(#cinta)"/>
+              {/* Borde cinta — líneas muy finas */}
+              <line x1="166" y1="0" x2="166" y2="190" stroke="rgba(200,175,160,0.20)" strokeWidth="0.5"/>
+              <line x1="194" y1="0" x2="194" y2="190" stroke="rgba(200,175,160,0.20)" strokeWidth="0.5"/>
 
-              {/* Solapas laterales */}
-              <polygon points="1,1 1,229 118,128" fill="url(#lateralL)" stroke="#DDD0CA" strokeWidth="0.5"/>
-              <polygon points="339,1 339,229 222,128" fill="url(#lateralR)" stroke="#DDD0CA" strokeWidth="0.5"/>
+              {/* ══ ARREGLO FLORAL 3D — centrado en la cinta, parte superior ══ */}
 
-              {/* Solapa superior — animada al abrir */}
-              <polygon
-                points={`1,1 339,1 170,${solapaY}`}
-                fill="url(#solapaSup)"
-                stroke="#E0D0C8" strokeWidth="0.6"
-              />
-
-              {/* Borde decorativo interior — línea fina rosa */}
-              <rect x="8" y="8" width="324" height="214" rx="3" fill="none" stroke="#E8C8C0" strokeWidth="0.5" opacity="0.7"/>
-
-              {/* Sello superior centrado — como un lacre */}
-              <g transform="translate(170, 38)">
-                <circle cx="0" cy="0" r="28" fill="white" stroke="#E8C8C0" strokeWidth="0.8"/>
-                <circle cx="0" cy="0" r="23" fill="none" stroke="#D4A8A0" strokeWidth="0.5" strokeDasharray="2.5,2.5"/>
-                <text x="0" y="-2" textAnchor="middle" fontFamily="'PinyonScript', serif" fontSize="20" fill="#C94F4F" opacity="0.9">C &amp; H</text>
-                <text x="0" y="12" textAnchor="middle" fontFamily="'Montserrat', sans-serif" fontSize="4.5" fill="#9A8880" letterSpacing="2.5">2026</text>
-              </g>
-
-              {/* Ramo de rosas lado izquierdo del sello — blancas/crema */}
-              <g transform="translate(105, 62)" opacity="0.88">
-                {/* Tallos */}
-                <path d="M0 0 Q-2 -12 -1 -22" stroke="#8A9A62" strokeWidth="1" strokeLinecap="round"/>
-                <path d="M0 0 Q3 -10 5 -20" stroke="#9AAA72" strokeWidth="0.9" strokeLinecap="round"/>
-                <path d="M0 0 Q-6 -8 -9 -18" stroke="#8A9A62" strokeWidth="0.8" strokeLinecap="round"/>
+              {/* Tallos y hojas detrás */}
+              <g opacity="0.65">
+                <path d="M162 78 Q158 90 155 105" stroke="#8A9A62" strokeWidth="1.2" strokeLinecap="round" fill="none"/>
+                <path d="M180 78 Q180 92 180 108" stroke="#9AAA72" strokeWidth="1.1" strokeLinecap="round" fill="none"/>
+                <path d="M198 78 Q202 90 205 105" stroke="#8A9A62" strokeWidth="1.2" strokeLinecap="round" fill="none"/>
                 {/* Hojas */}
-                <path d="M-1 -14 Q-8 -16 -9 -22 Q-4 -18 -2 -14Z" fill="#8A9A62" opacity="0.55"/>
-                <path d="M3 -12 Q10 -14 10 -20 Q5 -16 3 -12Z" fill="#9AAA72" opacity="0.50"/>
-                {/* Rosa grande — blanca */}
-                <g transform="translate(-1, -22)">
-                  <path d="M0,-9 Q6,-6 8,0 Q6,6 0,8 Q-5,7 -7,2 Q-8,-4 -4,-7 Q-2,-9 0,-9Z" fill="#FAFAFA" stroke="#E4D8D2" strokeWidth="0.5"/>
-                  <path d="M0,-5.5 Q4,-3 5,0 Q3.5,4 0,5 Q-3.5,4 -5,0 Q-3.5,-3 0,-5.5Z" fill="#F5F0EE" stroke="#DDD0CA" strokeWidth="0.3"/>
-                  <path d="M0,-2.5 Q2,-1 2.5,0.5 Q2,2.5 0,3 Q-2,2.5 -2.5,0.5 Q-2,-1 0,-2.5Z" fill="#EDE5E0"/>
-                  <circle cx="0" cy="0" r="1.2" fill="#D8CCC6"/>
-                  {/* pétalo extra */}
-                  <path d="M-9,0 Q-11,-5 -6,-9 Q-4,-5 -6,0Z" fill="#FAFAFA" stroke="#E4D8D2" strokeWidth="0.3" opacity="0.8"/>
-                  <path d="M9,0 Q11,-5 6,-9 Q4,-5 6,0Z" fill="#FAFAFA" stroke="#E4D8D2" strokeWidth="0.3" opacity="0.8"/>
-                </g>
-                {/* Rosa pequeña izquierda */}
-                <g transform="translate(-9, -20)">
-                  <path d="M0,-6 Q4,-4 5,0 Q3,4 0,5 Q-3,4 -4,0 Q-3,-4 0,-6Z" fill="#FDF9F8" stroke="#EAD8D4" strokeWidth="0.4"/>
-                  <path d="M0,-3.5 Q2.5,-2 3,0 Q2,2.5 0,3 Q-2,2.5 -3,0 Q-2,-2 0,-3.5Z" fill="#F0E8E4"/>
-                  <circle cx="0" cy="0" r="1" fill="#D8CCC6"/>
-                </g>
-                {/* Rosa pequeña derecha */}
-                <g transform="translate(5, -21)">
-                  <path d="M0,-5 Q3,-3 4,0 Q3,4 0,5 Q-3,4 -4,0 Q-3,-3 0,-5Z" fill="#FDF9F8" stroke="#EAD8D4" strokeWidth="0.4"/>
-                  <path d="M0,-3 Q2,-1.5 2.5,0 Q2,2 0,3 Q-2,2 -2.5,0 Q-2,-1.5 0,-3Z" fill="#F0E8E4"/>
-                  <circle cx="0" cy="0" r="0.9" fill="#D8CCC6"/>
-                </g>
-                {/* Perlas */}
-                <circle cx="-4" cy="-28" r="1.5" fill="#EEEAE6" opacity="0.75"/>
-                <circle cx="6" cy="-26" r="1.1" fill="#E4E0DC" opacity="0.65"/>
+                <path d="M158 92 Q150 88 149 80 Q156 85 158 90Z" fill="#8A9A62" opacity="0.55"/>
+                <path d="M202 92 Q210 88 211 80 Q204 85 202 90Z" fill="#8A9A62" opacity="0.55"/>
+                <path d="M180 95 Q172 93 170 85 Q177 89 180 93Z" fill="#9AAA72" opacity="0.48"/>
+                <path d="M180 95 Q188 93 190 85 Q183 89 180 93Z" fill="#9AAA72" opacity="0.45"/>
               </g>
 
-              {/* Ramo de rosas lado derecho del sello — espejado */}
-              <g transform="translate(235, 62) scale(-1,1)" opacity="0.85">
-                <path d="M0 0 Q-2 -12 -1 -22" stroke="#8A9A62" strokeWidth="1" strokeLinecap="round"/>
-                <path d="M0 0 Q3 -10 5 -20" stroke="#9AAA72" strokeWidth="0.9" strokeLinecap="round"/>
-                <path d="M0 0 Q-6 -8 -9 -18" stroke="#8A9A62" strokeWidth="0.8" strokeLinecap="round"/>
-                <path d="M-1 -14 Q-8 -16 -9 -22 Q-4 -18 -2 -14Z" fill="#8A9A62" opacity="0.55"/>
-                <path d="M3 -12 Q10 -14 10 -20 Q5 -16 3 -12Z" fill="#9AAA72" opacity="0.50"/>
-                <g transform="translate(-1, -22)">
-                  <path d="M0,-9 Q6,-6 8,0 Q6,6 0,8 Q-5,7 -7,2 Q-8,-4 -4,-7 Q-2,-9 0,-9Z" fill="#FAFAFA" stroke="#E4D8D2" strokeWidth="0.5"/>
-                  <path d="M0,-5.5 Q4,-3 5,0 Q3.5,4 0,5 Q-3.5,4 -5,0 Q-3.5,-3 0,-5.5Z" fill="#F5F0EE" stroke="#DDD0CA" strokeWidth="0.3"/>
-                  <path d="M0,-2.5 Q2,-1 2.5,0.5 Q2,2.5 0,3 Q-2,2.5 -2.5,0.5 Q-2,-1 0,-2.5Z" fill="#EDE5E0"/>
-                  <circle cx="0" cy="0" r="1.2" fill="#D8CCC6"/>
-                  <path d="M-9,0 Q-11,-5 -6,-9 Q-4,-5 -6,0Z" fill="#FAFAFA" stroke="#E4D8D2" strokeWidth="0.3" opacity="0.8"/>
-                  <path d="M9,0 Q11,-5 6,-9 Q4,-5 6,0Z" fill="#FAFAFA" stroke="#E4D8D2" strokeWidth="0.3" opacity="0.8"/>
-                </g>
-                <g transform="translate(-9, -20)">
-                  <path d="M0,-6 Q4,-4 5,0 Q3,4 0,5 Q-3,4 -4,0 Q-3,-4 0,-6Z" fill="#FDF9F8" stroke="#EAD8D4" strokeWidth="0.4"/>
-                  <path d="M0,-3.5 Q2.5,-2 3,0 Q2,2.5 0,3 Q-2,2.5 -3,0 Q-2,-2 0,-3.5Z" fill="#F0E8E4"/>
-                  <circle cx="0" cy="0" r="1" fill="#D8CCC6"/>
-                </g>
-                <g transform="translate(5, -21)">
-                  <path d="M0,-5 Q3,-3 4,0 Q3,4 0,5 Q-3,4 -4,0 Q-3,-3 0,-5Z" fill="#FDF9F8" stroke="#EAD8D4" strokeWidth="0.4"/>
-                  <path d="M0,-3 Q2,-1.5 2.5,0 Q2,2 0,3 Q-2,2 -2.5,0 Q-2,-1.5 0,-3Z" fill="#F0E8E4"/>
-                  <circle cx="0" cy="0" r="0.9" fill="#D8CCC6"/>
-                </g>
-                <circle cx="-4" cy="-28" r="1.5" fill="#EEEAE6" opacity="0.75"/>
-                <circle cx="6" cy="-26" r="1.1" fill="#E4E0DC" opacity="0.65"/>
+              {/* Ramitas plateadas — berries metálicos */}
+              <g filter="url(#rosaSombraChica)">
+                {/* Rama izquierda */}
+                <path d="M163 45 Q156 36 152 28" stroke="url(#plata)" strokeWidth="1" fill="none" opacity="0.8"/>
+                <circle cx="152" cy="28" r="3.5" fill="url(#plataBrillo)" opacity="0.9"/>
+                <circle cx="148" cy="32" r="2.8" fill="url(#plataBrillo)" opacity="0.85"/>
+                <circle cx="155" cy="24" r="2.5" fill="url(#plataBrillo)" opacity="0.8"/>
+                <path d="M158 40 Q154 30 150 22" stroke="url(#plata)" strokeWidth="0.8" fill="none" opacity="0.7"/>
+                <circle cx="150" cy="22" r="2.2" fill="url(#plataBrillo)" opacity="0.75"/>
+                <circle cx="147" cy="26" r="1.8" fill="url(#plataBrillo)" opacity="0.7"/>
+                {/* Rama derecha */}
+                <path d="M197 45 Q204 36 208 28" stroke="url(#plata)" strokeWidth="1" fill="none" opacity="0.8"/>
+                <circle cx="208" cy="28" r="3.5" fill="url(#plataBrillo)" opacity="0.9"/>
+                <circle cx="212" cy="32" r="2.8" fill="url(#plataBrillo)" opacity="0.85"/>
+                <circle cx="205" cy="24" r="2.5" fill="url(#plataBrillo)" opacity="0.8"/>
+                <path d="M202 40 Q206 30 210 22" stroke="url(#plata)" strokeWidth="0.8" fill="none" opacity="0.7"/>
+                <circle cx="210" cy="22" r="2.2" fill="url(#plataBrillo)" opacity="0.75"/>
+                <circle cx="213" cy="26" r="1.8" fill="url(#plataBrillo)" opacity="0.7"/>
+                {/* Ramitas centrales */}
+                <path d="M175 38 Q172 28 170 20" stroke="url(#plata)" strokeWidth="0.7" fill="none" opacity="0.65"/>
+                <circle cx="170" cy="20" r="2" fill="url(#plataBrillo)" opacity="0.7"/>
+                <path d="M185 38 Q188 28 190 20" stroke="url(#plata)" strokeWidth="0.7" fill="none" opacity="0.65"/>
+                <circle cx="190" cy="20" r="2" fill="url(#plataBrillo)" opacity="0.7"/>
               </g>
 
-              {/* Línea de corte al deslizar */}
-              {fase === "cortando" && cortePct > 3 && (
-                <>
-                  <line
-                    x1="1" y1="1.5"
-                    x2={1 + (cortePct / 100) * 338} y2="1.5"
-                    stroke="#C94F4F" strokeWidth="1.2" strokeLinecap="round"
-                    opacity={0.5} strokeDasharray="5,3"
-                  />
-                  <g transform={`translate(${1 + (cortePct / 100) * 338}, 1)`} opacity="0.75">
-                    <circle cx="0" cy="0" r="5" fill="white" stroke="#C94F4F" strokeWidth="0.8"/>
-                    <text x="0" y="3.5" textAnchor="middle" fontSize="6" fill="#C94F4F">✂</text>
-                  </g>
-                </>
-              )}
+              {/* ── Rosa pequeña izquierda ── */}
+              <g transform="translate(158, 58)" filter="url(#rosaSombraChica)">
+                {/* Pétalos exteriores */}
+                <path d="M0,-18 Q10,-14 14,-4 Q12,8 4,14 Q-6,16 -13,8 Q-17,-4 -12,-13 Q-6,-18 0,-18Z"
+                  fill="#FEFEFE" stroke="#EEE6E0" strokeWidth="0.6"/>
+                {/* Pétalos medios */}
+                <path d="M0,-12 Q7,-8 9,-1 Q7,6 0,9 Q-7,6 -9,-1 Q-7,-8 0,-12Z"
+                  fill="#FAF8F6" stroke="#E8E0DA" strokeWidth="0.5"/>
+                {/* Pétalos interiores */}
+                <path d="M0,-7 Q4,-4 5,0 Q4,5 0,6 Q-4,5 -5,0 Q-4,-4 0,-7Z"
+                  fill="#F4F0EC"/>
+                {/* Centro */}
+                <path d="M0,-3 Q2,-1.5 2.5,0.5 Q2,2.5 0,3 Q-2,2.5 -2.5,0.5 Q-2,-1.5 0,-3Z"
+                  fill="#EDE5DF"/>
+                <circle cx="0" cy="0" r="1.5" fill="#E0D5CE"/>
+              </g>
 
-              {/* Interior visible al abrir */}
-              {solapaAbierta && (
-                <rect x="8" y="8" width="324" height="110" rx="2"
-                  fill="rgba(253,250,246,0.6)" opacity={Math.min(1, Math.abs(solapaAngulo) / 80)}
-                />
-              )}
+              {/* ── Rosa grande central ── */}
+              <g transform="translate(180, 52)" filter="url(#rosaSombra)">
+                {/* Pétalos exteriores — capa 1 */}
+                <path d="M0,-24 Q14,-18 18,-5 Q16,10 5,18 Q-7,22 -17,12 Q-23,-3 -15,-17 Q-8,-24 0,-24Z"
+                  fill="#FEFEFE" stroke="#EEE6E0" strokeWidth="0.7"/>
+                {/* Pétalos — capa 2 */}
+                <path d="M0,-17 Q10,-12 13,-3 Q11,7 3,12 Q-6,14 -12,6 Q-15,-5 -9,-13 Q-5,-17 0,-17Z"
+                  fill="#FBF9F7" stroke="#E8E0DA" strokeWidth="0.5"/>
+                {/* Pétalos — capa 3 */}
+                <path d="M0,-11 Q7,-7 9,0 Q7,7 0,9 Q-7,7 -9,0 Q-7,-7 0,-11Z"
+                  fill="#F6F3F0"/>
+                {/* Pétalos interiores */}
+                <path d="M0,-6 Q4,-3 5,1 Q4,5 0,7 Q-4,5 -5,1 Q-4,-3 0,-6Z"
+                  fill="#F0EAE5"/>
+                {/* Centro */}
+                <path d="M0,-3 Q2.5,-1.5 3,0.8 Q2.5,3 0,3.8 Q-2.5,3 -3,0.8 Q-2.5,-1.5 0,-3Z"
+                  fill="#E8DDD6"/>
+                <circle cx="0" cy="0" r="2" fill="#DDD0C8"/>
+                <circle cx="0" cy="0" r="0.8" fill="#D0C4BC"/>
+              </g>
+
+              {/* ── Rosa pequeña derecha ── */}
+              <g transform="translate(202, 58)" filter="url(#rosaSombraChica)">
+                <path d="M0,-18 Q10,-14 14,-4 Q12,8 4,14 Q-6,16 -13,8 Q-17,-4 -12,-13 Q-6,-18 0,-18Z"
+                  fill="#FEFEFE" stroke="#EEE6E0" strokeWidth="0.6"/>
+                <path d="M0,-12 Q7,-8 9,-1 Q7,6 0,9 Q-7,6 -9,-1 Q-7,-8 0,-12Z"
+                  fill="#FAF8F6" stroke="#E8E0DA" strokeWidth="0.5"/>
+                <path d="M0,-7 Q4,-4 5,0 Q4,5 0,6 Q-4,5 -5,0 Q-4,-4 0,-7Z"
+                  fill="#F4F0EC"/>
+                <path d="M0,-3 Q2,-1.5 2.5,0.5 Q2,2.5 0,3 Q-2,2.5 -2.5,0.5 Q-2,-1.5 0,-3Z"
+                  fill="#EDE5DF"/>
+                <circle cx="0" cy="0" r="1.5" fill="#E0D5CE"/>
+              </g>
+
+              {/* Destellos plata extra — pequeños cristales sueltos */}
+              <circle cx="167" cy="35" r="2" fill="url(#plataBrillo)" opacity="0.7"/>
+              <circle cx="193" cy="35" r="2" fill="url(#plataBrillo)" opacity="0.7"/>
+              <circle cx="175" cy="28" r="1.5" fill="url(#plataBrillo)" opacity="0.6"/>
+              <circle cx="185" cy="28" r="1.5" fill="url(#plataBrillo)" opacity="0.6"/>
             </svg>
           </div>
 
-          {/* Instrucción */}
-          {fase === "sobre" && (
-            <div style={{ textAlign: "center", animation: "hintar 2.5s ease-in-out infinite" }}>
-              <p className="serif" style={{ fontStyle: "italic", fontSize: "0.92rem", color: "#9A8880", letterSpacing: "0.04em" }}>
-                Desliza hacia la derecha para abrir
-              </p>
-              <p className="sans" style={{ fontSize: "0.55rem", letterSpacing: "0.22em", textTransform: "uppercase", color: "#D4693A", marginTop: "0.35rem", opacity: 0.7 }}>
-                ────── ✂ ──────
-              </p>
-            </div>
-          )}
-          {fase === "cortando" && cortePct > 0 && (
-            <p className="sans" style={{ fontSize: "0.6rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "#C94F4F" }}>
-              Sigue abriendo...
+          {/* Texto indicación */}
+          <div style={{ textAlign: "center", animation: "pulso 2.8s ease-in-out infinite", marginTop: "0.5rem" }}>
+            <p className="serif" style={{ fontStyle: "italic", fontSize: "0.95rem", color: "#9A8880", letterSpacing: "0.04em" }}>
+              Toca para abrir tu invitación
             </p>
-          )}
-          {fase === "abriendo" && (
-            <p className="sans" style={{ fontSize: "0.6rem", letterSpacing: "0.22em", textTransform: "uppercase", color: "#9A8880" }}>
-              Abriendo...
-            </p>
-          )}
-
-          {/* Botón fallback */}
-          {fase === "sobre" && (
-            <button
-              onClick={() => abrirSobre()}
-              style={{
-                background: "none", border: "1px solid #D4693A",
-                padding: "0.65rem 2.2rem", borderRadius: "2px",
-                fontFamily: "'Montserrat',sans-serif", fontSize: "0.58rem",
-                letterSpacing: "0.28em", textTransform: "uppercase",
-                color: "#D4693A", cursor: "pointer",
-              }}
-            >
-              Toca para abrir
-            </button>
-          )}
+          </div>
         </div>
       )}
 
