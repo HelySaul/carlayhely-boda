@@ -58,7 +58,7 @@ export default function PaginaInvitacion() {
   const router = useRouter();
   const [inv, setInv] = useState<Invitacion | null>(null);
   const [error, setError] = useState("");
-  const [fase, setFase] = useState<"sobre" | "abierto" | "gracias">("sobre");
+  const [fase, setFase] = useState<"sobre" | "floreciendo" | "abierto" | "gracias">("sobre");
   const [confirmaciones, setConfirmaciones] = useState<Record<string, boolean>>({});
   const [whatsapps, setWhatsapps] = useState<Record<string, string>>({});
   const [enviando, setEnviando] = useState(false);
@@ -389,6 +389,9 @@ export default function PaginaInvitacion() {
         </div>
       )}
 
+      {/* ── FASE: FLORECIENDO — explosión de flores ── */}
+      {fase === "floreciendo" && <ExplosionFlores />}
+
       {/* ── FASE: ABIERTO — tarjeta ─────────────── */}
       {fase === "abierto" && (
         <div className="tarjeta-entra" style={{ width: "min(420px, 95vw)", position: "relative", zIndex: 1, paddingBottom: "2rem" }}>
@@ -422,6 +425,91 @@ export default function PaginaInvitacion() {
 }
 
 // ── Tarjeta de invitación ──────────────────────────────
+// ── Explosión de flores ────────────────────────────────────────────────────
+const FLORES_CONFIG = [
+  // [ offsetX%, offsetY%, rotacion, petalColor, petalColor2, size, delay ]
+  // Centro → arriba
+  [  0, -90, 0,    "#C94F4F", "#D4693A", 70, 0    ],
+  [ 15, -85, 20,   "#D4A832", "#C94F4F", 55, 0.04 ],
+  [-15, -80, -18,  "#9B8BB4", "#D4A832", 60, 0.06 ],
+  // Arriba derecha
+  [ 55, -75, 30,   "#D4693A", "#C94F4F", 65, 0.02 ],
+  [ 80, -60, -10,  "#C94F4F", "#9B8BB4", 50, 0.08 ],
+  [ 95, -40, 45,   "#7A9438", "#D4A832", 58, 0.05 ],
+  // Derecha
+  [ 110,-15, -25,  "#D4A832", "#D4693A", 72, 0.03 ],
+  [ 105, 15, 15,   "#9B8BB4", "#C94F4F", 52, 0.07 ],
+  [ 95,  45, -35,  "#C94F4F", "#7A9438", 63, 0.01 ],
+  // Abajo derecha
+  [ 75,  70, 50,   "#D4693A", "#9B8BB4", 56, 0.09 ],
+  [ 45,  88, -20,  "#7A9438", "#C94F4F", 68, 0.04 ],
+  [ 20,  95, 10,   "#D4A832", "#D4693A", 54, 0.06 ],
+  // Abajo
+  [  0,  98, -5,   "#C94F4F", "#D4A832", 70, 0.02 ],
+  [-20,  92, 30,   "#9B8BB4", "#7A9438", 58, 0.08 ],
+  [-45,  82, -40,  "#D4693A", "#C94F4F", 62, 0.05 ],
+  // Abajo izquierda
+  [-72,  68, 15,   "#7A9438", "#D4A832", 55, 0.03 ],
+  [-92,  42, -22,  "#C94F4F", "#9B8BB4", 67, 0.07 ],
+  [-105, 12, 38,   "#D4A832", "#C94F4F", 52, 0.01 ],
+  // Izquierda
+  [-108,-18, -12,  "#D4693A", "#7A9438", 60, 0.09 ],
+  [-98, -45, 28,   "#9B8BB4", "#D4693A", 57, 0.04 ],
+  [-82, -65, -30,  "#C94F4F", "#D4A832", 65, 0.06 ],
+  // Arriba izquierda
+  [-58, -78, 18,   "#7A9438", "#C94F4F", 53, 0.02 ],
+  [-30, -88, -8,   "#D4A832", "#9B8BB4", 70, 0.08 ],
+  // Extra centro-izquierda y centro-derecha (llenan el medio)
+  [ 35, -50, -22,  "#C94F4F", "#D4693A", 48, 0.05 ],
+  [-35, -52, 14,   "#9B8BB4", "#D4A832", 50, 0.03 ],
+  [ 60,  20, -40,  "#D4693A", "#7A9438", 46, 0.07 ],
+  [-60,  18, 25,   "#D4A832", "#C94F4F", 49, 0.09 ],
+] as const;
+
+function ExplosionFlores() {
+  return (
+    <div style={{
+      position: "fixed", inset: 0, zIndex: 50,
+      display: "flex", alignItems: "center", justifyContent: "center",
+      pointerEvents: "none",
+      animation: "fondoFlores 2.2s ease forwards",
+    }}>
+      {/* Flash blanco inicial muy breve */}
+      <div style={{
+        position: "absolute", inset: 0,
+        background: "radial-gradient(circle at center, rgba(253,250,246,0.95) 0%, rgba(253,250,246,0.6) 60%, transparent 100%)",
+        animation: "fondoFlores 2.2s ease forwards",
+        pointerEvents: "none",
+      }} />
+
+      {FLORES_CONFIG.map(([fx, fy, fr, p1, p2, sz, delay], i) => (
+        <div
+          key={i}
+          style={{
+            position: "absolute",
+            top: "50%", left: "50%",
+            marginTop: `-${(sz as number) / 2}px`,
+            marginLeft: `-${(sz as number) / 2}px`,
+            // CSS custom properties para la animación
+            ["--fx" as string]: `${fx}vmin`,
+            ["--fy" as string]: `${fy}vmin`,
+            ["--fr" as string]: `${fr}deg`,
+            animation: `florExplota 2.2s cubic-bezier(0.22,1,0.36,1) ${delay}s both`,
+          }}
+        >
+          <TulipSVG
+            size={sz as number}
+            petalColor={p1 as string}
+            petalColor2={p2 as string}
+            rotate={fr as number}
+          />
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// ── Tarjeta de invitación ──────────────────────────────────────────────────
 function Tarjeta({ inv, esIndividual, todosConfirmaron, algunoConfirmo, rondaActual, codigo }: {
   inv: Invitacion; esIndividual: boolean;
   todosConfirmaron: boolean; algunoConfirmo: boolean;
