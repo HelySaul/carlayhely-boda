@@ -176,10 +176,11 @@ interface Flower {
 
 interface Props {
   triggerRef: React.MutableRefObject<(() => void) | null>
+  onExitStart?: () => void  // se llama cuando las flores empiezan a salir (t=EXIT_START)
   onComplete: () => void
 }
 
-export default function ExplosionFlores({ triggerRef, onComplete }: Props) {
+export default function ExplosionFlores({ triggerRef, onExitStart, onComplete }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const animRef   = useRef<number | null>(null)
 
@@ -253,10 +254,17 @@ export default function ExplosionFlores({ triggerRef, onComplete }: Props) {
     const EXIT_START = 0.68
 
     if (animRef.current) cancelAnimationFrame(animRef.current)
+    let exitStartFired = false
 
     function tick(now: number) {
       const t = Math.min((now - t0) / DUR, 1)
       ctx!.clearRect(0, 0, W, H)
+
+      // Disparar onExitStart cuando las flores empiezan a salir
+      if (!exitStartFired && t >= EXIT_START) {
+        exitStartFired = true
+        onExitStart?.()
+      }
 
       for (const f of flowers) {
         const ft = Math.max(0, (t - f.delay) / (1 - f.delay))
@@ -289,7 +297,7 @@ export default function ExplosionFlores({ triggerRef, onComplete }: Props) {
     }
 
     animRef.current = requestAnimationFrame(tick)
-  }, [spawn, onComplete])
+  }, [spawn, onExitStart, onComplete])
 
   useEffect(() => {
     triggerRef.current = trigger

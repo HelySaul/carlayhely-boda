@@ -40,14 +40,25 @@ export default function TarjetaInvitacion({ inv, rondaActual, codigo }: Props) {
   const esF            = esIndividual && invitado?.sexo === 'F'
 
   return (
-    <div style={{
-      background: 'linear-gradient(160deg, #FDFAF6 0%, #FAF2EA 60%, #F6F8F2 100%)',
-      borderRadius: '3px',
-      padding: '2.6rem 2rem 2rem',
-      boxShadow: '0 12px 50px rgba(80,40,30,0.14), 0 2px 10px rgba(80,40,30,0.08)',
-      position: 'relative',
-      overflow: 'hidden',
-    }}>
+    <>
+      <style>{`
+        @media (max-width: 767px) {
+          .tarjeta-inner {
+            background: transparent !important;
+            box-shadow: none !important;
+            border-radius: 0 !important;
+            padding: 2.2rem 1.4rem 2rem !important;
+          }
+        }
+      `}</style>
+      <div className="tarjeta-inner" style={{
+        background: 'linear-gradient(160deg, #FDFAF6 0%, #FAF2EA 60%, #F6F8F2 100%)',
+        borderRadius: '3px',
+        padding: '2.6rem 2rem 2rem',
+        boxShadow: '0 12px 50px rgba(80,40,30,0.14), 0 2px 10px rgba(80,40,30,0.08)',
+        position: 'relative',
+        overflow: 'hidden',
+      }}>
 
       {/* Manchas de fondo */}
       <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
@@ -155,7 +166,8 @@ export default function TarjetaInvitacion({ inv, rondaActual, codigo }: Props) {
           </div>
         )}
       </div>
-    </div>
+      </div>
+    </>
   )
 }
 

@@ -64,9 +64,13 @@ export default function PaginaInvitacion() {
     explosionRef.current?.()
   }
 
-  const handleExplosionComplete = useCallback(() => {
+  // Cuando las flores empiezan a salir → mostrar tarjeta (sincronizado)
+  const handleExitStart = useCallback(() => {
     setFase('abierto')
   }, [])
+
+  // onComplete ya no necesita hacer nada con la fase
+  const handleExplosionComplete = useCallback(() => {}, [])
 
   function handleGracias() {
     setFase('gracias')
@@ -105,17 +109,36 @@ export default function PaginaInvitacion() {
         @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@300;400;500&display=swap');
         @font-face { font-family: 'PinyonScript'; src: url('/fonts/PinyonScript-Regular.ttf'); }
         @keyframes spin        { to { transform: rotate(360deg); } }
-        @keyframes tarjetaSube { 0%{opacity:0;transform:translateY(50px) scale(0.96)} 100%{opacity:1;transform:translateY(0) scale(1)} }
+        @keyframes tarjetaAparece {
+          0%   { opacity:0; transform: scale(0.88); }
+          60%  { opacity:1; transform: scale(1.02); }
+          100% { opacity:1; transform: scale(1); }
+        }
         @keyframes graciasFade { 0%{opacity:0;transform:scale(0.9)} 100%{opacity:1;transform:scale(1)} }
         @keyframes sobreFlota  { 0%,100%{transform:translateY(0px)} 50%{transform:translateY(-5px)} }
         @keyframes pulso       { 0%,100%{opacity:0.7;transform:scale(1)} 50%{opacity:1;transform:scale(1.03)} }
-        .tarjeta-entra { animation: tarjetaSube 0.9s cubic-bezier(0.22,1,0.36,1) forwards; }
+        .tarjeta-entra { animation: tarjetaAparece 0.85s cubic-bezier(0.22,1,0.36,1) forwards; }
         .gracias-entra { animation: graciasFade 0.6s ease forwards; }
+        @media (max-width: 767px) {
+          .tarjeta-wrap {
+            position: fixed !important;
+            inset: 0 !important;
+            width: 100% !important;
+            height: 100svh !important;
+            overflow-y: auto !important;
+            z-index: 60 !important;
+            background: #FDFAF6 !important;
+            display: flex !important;
+            align-items: flex-start !important;
+            justify-content: center !important;
+          }
+        }
       `}</style>
 
       {/* Canvas de explosión — siempre montado, invisible hasta el trigger */}
       <ExplosionFlores
         triggerRef={explosionRef}
+        onExitStart={handleExitStart}
         onComplete={handleExplosionComplete}
       />
 
@@ -152,7 +175,13 @@ export default function PaginaInvitacion() {
 
       {/* ── FASE: ABIERTO ───────────────────────────────────────────────────── */}
       {fase === 'abierto' && (
-        <div className="tarjeta-entra" style={{ width: 'min(420px, 95vw)', position: 'relative', zIndex: 1, paddingBottom: '2rem' }}>
+        <div className="tarjeta-entra tarjeta-wrap" style={{
+          // Desktop: tarjeta centrada con ancho limitado
+          width: 'min(420px, 95vw)',
+          position: 'relative',
+          zIndex: 60,
+          paddingBottom: '2rem',
+        }}>
           <TarjetaInvitacion
             inv={inv}
             rondaActual={rondaActual}
