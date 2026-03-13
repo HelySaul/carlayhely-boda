@@ -46,7 +46,7 @@ export function TabConfirmados({ lista, filtros }: { lista: InvitadoFlat[]; filt
       {lista.length === 0
         ? <p className="sans" style={{ textAlign: "center", color: "var(--ink-light)", padding: "3rem 0", fontSize: "0.8rem" }}>Nadie ha confirmado aún.</p>
         : lista.map((inv, idx) => (
-          <div key={inv.id} style={{ padding: "0.7rem 0.8rem", background: "var(--cream-mid)", border: "1px solid var(--border-subtle)", borderRadius: "2px", marginBottom: "0.3rem" }}>
+          <div key={inv.id} style={{ padding: "0.7rem 0.8rem", border: "1px solid var(--border-subtle)", borderRadius: "2px", marginBottom: "0.3rem" }}>
 
             {/* Fila nombre + código */}
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.4rem", gap: "0.4rem" }}>

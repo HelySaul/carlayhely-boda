@@ -156,7 +156,7 @@ function FilaInvitado({ inv, codigo, onUpdate, onUpdateTexto, onDelete }: {
   }
 
   return (
-    <div style={{ background: "var(--cream)", border: "1px solid var(--border-subtle)", borderRadius: "2px", marginBottom: "0.35rem", padding: "0.65rem 0.8rem" }}>
+    <div style={{ border: "1px solid var(--border-subtle)", borderRadius: "2px", marginBottom: "0.35rem", padding: "0.65rem 0.8rem" }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "0.5rem", gap: "0.5rem" }}>
         <div style={{ flex: 1 }}>
           {editando ? (
@@ -241,7 +241,7 @@ function BloqueAcciones({ invitados, codigo, rondaActual, onCopy }: {
   const iconBtn: React.CSSProperties = {
     width: "36px", height: "36px",
     display: "flex", alignItems: "center", justifyContent: "center",
-    background: "var(--cream)", border: "1px solid var(--border-subtle)",
+    border: "1px solid var(--border-subtle)",
     borderRadius: "4px", cursor: "pointer", flexShrink: 0,
     transition: "border-color 0.15s, background 0.15s",
     color: "var(--ink-mid)",
@@ -306,7 +306,7 @@ function TarjetaInvitacion({ invitacion, rondaActual, onUpdateInv, onUpdateTexto
   function guardarNombre() { onUpdateNombreGrupo(invitacion.id, nuevoNombre.trim() || null); setEditNombre(false); }
 
   return (
-    <div style={{ border: "1px solid var(--border-subtle)", borderRadius: "2px", marginBottom: "0.6rem", background: "var(--cream-mid)" }}>
+    <div style={{ border: "1px solid var(--border-subtle)", borderRadius: "2px", marginBottom: "0.6rem" }}>
       <Toast mensaje={toast.mensaje} visible={toast.visible} />
 
       {/* Header */}

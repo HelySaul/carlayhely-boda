@@ -13,7 +13,7 @@ export function TabUsuarios({ usuarios, onNuevo }: { usuarios: Usuario[]; onNuev
       {usuarios.length === 0
         ? <p className="sans" style={{ textAlign: "center", color: "var(--ink-light)", padding: "3rem 0", fontSize: "0.8rem" }}>Cargando usuarios...</p>
         : usuarios.map(u => (
-          <div key={u.id} style={{ padding: "0.9rem 1rem", background: "var(--cream-mid)", border: "1px solid var(--border-subtle)", borderRadius: "2px", marginBottom: "0.4rem", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "0.4rem" }}>
+          <div key={u.id} style={{ padding: "0.9rem 1rem", border: "1px solid var(--border-subtle)", borderRadius: "2px", marginBottom: "0.4rem", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "0.4rem" }}>
             <div>
               <p className="sans" style={{ fontSize: "1rem", fontWeight: 600, color: "var(--ink)", margin: 0 }}>{u.nombre}</p>
               <p className="sans" style={{ fontSize: "0.65rem", color: "var(--ink-light)", margin: 0 }}>@{u.username}</p>
