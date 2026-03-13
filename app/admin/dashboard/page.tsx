@@ -82,7 +82,7 @@ export default function AdminDashboard() {
     setCambiandoRonda(false);
   }
 
-  async function updateInvitado(invitacionId: string, invId: string, field: string, val: boolean) {
+  async function updateInvitado(invitacionId: string, invId: string, field: string, val: boolean | null) {
     await fetch(`/api/admin/invitados?id=${invId}`, { method: "PATCH", headers: authHeaders(), body: JSON.stringify({ [field]: val }) });
     setInvitaciones(rs => rs.map(r => r.id !== invitacionId ? r : {
       ...r, invitados: r.invitados.map(i => {
@@ -250,6 +250,7 @@ export default function AdminDashboard() {
         ) : tab === "invitaciones" ? (
           <TabInvitaciones
             invitaciones={invitacionesFiltradas} filtros={filtros}
+            rondaActual={rondaActual}
             onNueva={() => setModalNueva(true)}
             onUpdateInv={updateInvitado} onUpdateTexto={updateInvitadoTexto}
             onUpdateNombreGrupo={updateNombreGrupo}
