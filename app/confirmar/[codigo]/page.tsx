@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import { useParams, useSearchParams, useRouter } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 import Link from "next/link";
 
 // ── PaginaConfirmar ───────────────────────────────────────────────────────────
@@ -89,7 +89,6 @@ function CornerDecor() {
 export default function PaginaConfirmar() {
   const { codigo } = useParams<{ codigo: string }>();
   const searchParams = useSearchParams();
-  const router = useRouter();
 
   // Ronda válida: 1, 2 o 3. Default 1.
   const rondaParam = parseInt(searchParams.get("r") ?? "1");
@@ -139,7 +138,6 @@ export default function PaginaConfirmar() {
     });
     setEnviando(false);
     setListo(true);
-    setTimeout(() => router.push("/"), 4000);
   }
 
   // ── estados de carga / error ────────────────────────────────────────────────
@@ -214,9 +212,7 @@ export default function PaginaConfirmar() {
           </span>
         </div>
       </Link>
-      <p style={{ fontSize: "0.6rem", letterSpacing: "0.15em", textTransform: "uppercase", color: "#B5A090", marginTop: "1.5rem" }}>
-        Redirigiendo...
-      </p>
+
     </div>
   );
 
