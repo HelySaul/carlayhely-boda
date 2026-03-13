@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>C&H Logo Preview</title>
+  <link href="https://fonts.googleapis.com/css2?family=Pinyon+Script&family=Cormorant+Garamond:ital,wght@1,400&family=Montserrat:wght@300;400&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #F2EBE0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      gap: 48px;
+      font-family: 'Montserrat', sans-serif;
+    }
+
+    .row {
+      display: flex;
+      gap: 40px;
+      align-items: center;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .lbl {
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: #9A8880;
+    }
+
+    /* ── Favicon 512×512 ── */
+    .fav {
+      width: 512px;
+      height: 512px;
+      border-radius: 80px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    /* ── Thumbnail 180×180 ── */
+    .fav-sm {
+      width: 180px;
+      height: 180px;
+      border-radius: 32px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .line {
+      width: 65%;
+      height: 1px;
+      background: #D4A832;
+      opacity: 0.45;
+    }
+
+    .ch {
+      display: flex;
+      align-items: baseline;
+      font-family: 'Pinyon Script', cursive;
+      line-height: 1;
+    }
+
+    /* Variante crema */
+    .cream { background: #FDFAF6; }
+    .cream .c { color: #2C2320; }
+    .cream .amp { color: #D4693A; }
+    .cream .line { background: #D4A832; }
+
+    /* Variante ink */
+    .ink { background: #2C2320; }
+    .ink .c { color: #FDFAF6; }
+    .ink .amp { color: #D4693A; }
+    .ink .line { background: #D4A832; opacity: 0.6; }
+
+    /* Variante terracotta */
+    .terra { background: #D4693A; }
+    .terra .c { color: #FDFAF6; }
+    .terra .amp { color: #FAE8D8; }
+    .terra .line { background: #FAE8D8; opacity: 0.5; }
+  </style>
+</head>
+<body>
+
+  <!-- 512px — para captura y conversión -->
+  <p class="lbl">512 × 512 — para captura</p>
+  <div class="row">
+
+    <div class="item">
+      <div class="fav cream" style="border: 1px solid rgba(212,105,58,0.2);">
+        <div class="line" style="margin-bottom: 18px;"></div>
+        <div class="ch">
+          <span class="c"  style="font-size: 260px;">C</span>
+          <span class="amp" style="font-size: 140px; margin: 0 -12px; position: relative; top: -30px;">&#38;</span>
+          <span class="c"  style="font-size: 260px;">H</span>
+        </div>
+        <div class="line" style="margin-top: 18px;"></div>
+      </div>
+      <span class="lbl">Crema</span>
+    </div>
+
+    <div class="item">
+      <div class="fav ink">
+        <div class="line" style="margin-bottom: 18px;"></div>
+        <div class="ch">
+          <span class="c"  style="font-size: 260px;">C</span>
+          <span class="amp" style="font-size: 140px; margin: 0 -12px; position: relative; top: -30px;">&#38;</span>
+          <span class="c"  style="font-size: 260px;">H</span>
+        </div>
+        <div class="line" style="margin-top: 18px;"></div>
+      </div>
+      <span class="lbl">Oscuro</span>
+    </div>
+
+    <div class="item">
+      <div class="fav terra">
+        <div class="line" style="margin-bottom: 18px;"></div>
+        <div class="ch">
+          <span class="c"  style="font-size: 260px;">C</span>
+          <span class="amp" style="font-size: 140px; margin: 0 -12px; position: relative; top: -30px;">&#38;</span>
+          <span class="c"  style="font-size: 260px;">H</span>
+        </div>
+        <div class="line" style="margin-top: 18px;"></div>
+      </div>
+      <span class="lbl">Terracotta</span>
+    </div>
+
+  </div>
+
+  <!-- 180px — para ver cómo quedan pequeños -->
+  <p class="lbl" style="margin-top: 16px;">180 × 180 — thumbnail</p>
+  <div class="row">
+
+    <div class="fav-sm cream" style="border: 1px solid rgba(212,105,58,0.2);">
+      <div class="line" style="margin-bottom: 6px;"></div>
+      <div class="ch">
+        <span class="c"  style="font-size: 90px;">C</span>
+        <span class="amp" style="font-size: 50px; margin: 0 -4px; position: relative; top: -10px;">&#38;</span>
+        <span class="c"  style="font-size: 90px;">H</span>
+      </div>
+      <div class="line" style="margin-top: 6px;"></div>
+    </div>
+
+    <div class="fav-sm ink">
+      <div class="line" style="margin-bottom: 6px;"></div>
+      <div class="ch">
+        <span class="c"  style="font-size: 90px;">C</span>
+        <span class="amp" style="font-size: 50px; margin: 0 -4px; position: relative; top: -10px;">&#38;</span>
+        <span class="c"  style="font-size: 90px;">H</span>
+      </div>
+      <div class="line" style="margin-top: 6px;"></div>
+    </div>
+
+    <div class="fav-sm terra">
+      <div class="line" style="margin-bottom: 6px;"></div>
+      <div class="ch">
+        <span class="c"  style="font-size: 90px;">C</span>
+        <span class="amp" style="font-size: 50px; margin: 0 -4px; position: relative; top: -10px;">&#38;</span>
+        <span class="c"  style="font-size: 90px;">H</span>
+      </div>
+      <div class="line" style="margin-top: 6px;"></div>
+    </div>
+
+  </div>
+
+</body>
+</html>
