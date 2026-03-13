@@ -13,9 +13,10 @@ interface Invitado {
   id: string;
   nombre: string;
   whatsapp: string | null;
-  confirmacion_1: boolean;
-  confirmacion_2: boolean;
-  confirmacion_3: boolean;
+  confirmacion_1: boolean | null;
+  confirmacion_2: boolean | null;
+  confirmacion_3: boolean | null;
+  [key: string]: boolean | string | null;
 }
 interface Invitacion {
   id: string;
@@ -100,6 +101,7 @@ export default function PaginaConfirmar() {
   const [declinados, setDeclinados] = useState<Record<string, boolean>>({});
   const [enviando, setEnviando] = useState(false);
   const [listo, setListo] = useState(false);
+  const [yaRespondio, setYaRespondio] = useState(false);
 
   useEffect(() => {
     fetch(`/api/invitacion?codigo=${codigo}`)
@@ -107,17 +109,43 @@ export default function PaginaConfirmar() {
       .then(d => {
         if (d.error) { setError(d.error); return; }
         setInv(d);
-        // Pre-marcar según la ronda anterior si existe
+
         const conf: Record<string, boolean> = {};
         const dec: Record<string, boolean> = {};
+
+        // Campo de la ronda actual
+        const campoActual =
+          ronda === 1 ? "confirmacion_1" :
+          ronda === 2 ? "confirmacion_2" : "confirmacion_3";
+
+        // Campo de la ronda anterior para pre-marcar si aún no respondió
         const campoAnterior =
           ronda === 2 ? "confirmacion_1" :
           ronda === 3 ? "confirmacion_2" : null;
-        d.invitados.forEach((i: Invitado) => {
-          const valorAnterior = campoAnterior ? (i[campoAnterior] ?? false) : false;
-          conf[i.id] = valorAnterior;
-          dec[i.id] = campoAnterior ? !valorAnterior : false;
-        });
+
+        // ¿Ya respondió alguno en esta ronda? (fecha guardada o valor distinto de null)
+        // Consideramos que ya respondió si al menos un invitado tiene el campo definido
+        // La API guarda true o false, null significa que nunca se tocó ese campo
+        const yaRespondioRonda = d.invitados.some(
+          (i: Invitado) => i[campoActual] === true || i[campoActual] === false
+        );
+
+        if (yaRespondioRonda) {
+          // Mostrar lo que respondió, bloqueado
+          d.invitados.forEach((i: Invitado) => {
+            conf[i.id] = i[campoActual] === true;
+            dec[i.id] = i[campoActual] === false;
+          });
+          setYaRespondio(true);
+        } else {
+          // Pre-marcar con ronda anterior si existe
+          d.invitados.forEach((i: Invitado) => {
+            const valorAnterior = campoAnterior ? (i[campoAnterior] ?? false) : false;
+            conf[i.id] = valorAnterior;
+            dec[i.id] = campoAnterior ? !valorAnterior : false;
+          });
+        }
+
         setConfirmaciones(conf);
         setDeclinados(dec);
       })
@@ -159,6 +187,72 @@ export default function PaginaConfirmar() {
   const esIndividual = inv.invitados.length === 1;
   const todoMarcado = inv.invitados.every(i => confirmaciones[i.id] === true || declinados[i.id] === true);
   const nombres = saludoNombres(inv.invitados);
+  const alguienVa = inv.invitados.some(i => confirmaciones[i.id] === true);
+
+  // ── pantalla: ya respondiste esta ronda ────────────────────────────────────
+
+  if (yaRespondio) return (
+    <div style={{
+      minHeight: "100svh",
+      background: "linear-gradient(160deg, #F9F4EE 0%, #F2EBE0 100%)",
+      display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
+      padding: "2rem", textAlign: "center",
+    }}>
+      <style>{`
+        @font-face { font-family: 'PinyonScript'; src: url('/fonts/PinyonScript-Regular.ttf'); }
+        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;1,400&family=Montserrat:wght@300;400&display=swap');
+      `}</style>
+      <p style={{ fontFamily: "'Montserrat', sans-serif", fontSize: "0.48rem", letterSpacing: "0.28em", textTransform: "uppercase", color: "#B5A090", marginBottom: "0.6rem" }}>
+        Confirmación · Ronda {ronda} de 3
+      </p>
+      <p style={{ fontFamily: "'PinyonScript', serif", fontSize: "3rem", color: "#C94F4F", marginBottom: "0.8rem" }}>
+        {alguienVa ? "¡Nos vemos pronto!" : "Lo entendemos"}
+      </p>
+      <p style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "1.05rem", color: "#5A4535", fontStyle: "italic", lineHeight: 1.7, maxWidth: "320px", marginBottom: "1.4rem" }}>
+        {alguienVa
+          ? "Ya confirmaste tu asistencia en esta ronda. Tu respuesta está guardada."
+          : "Ya registramos que no podrás acompañarnos. Gracias por avisarnos."}
+      </p>
+      {/* Respuestas bloqueadas — solo lectura */}
+      <div style={{ width: "min(340px, 90vw)", marginBottom: "1.8rem", display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+        {inv.invitados.map(i => (
+          <div key={i.id} style={{
+            display: "flex", alignItems: "center", justifyContent: "space-between",
+            padding: "0.7rem 1rem",
+            background: confirmaciones[i.id] ? "rgba(122,148,56,0.10)" : "rgba(201,79,79,0.07)",
+            border: `1px solid ${confirmaciones[i.id] ? "rgba(122,148,56,0.35)" : "rgba(201,79,79,0.25)"}`,
+            borderRadius: "2px",
+          }}>
+            <span style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "1rem", color: "#3D2B1F" }}>
+              {i.nombre}
+            </span>
+            <span style={{
+              fontFamily: "'Montserrat', sans-serif", fontSize: "0.55rem",
+              letterSpacing: "0.12em", textTransform: "uppercase",
+              color: confirmaciones[i.id] ? "#7A9438" : "#C94F4F",
+            }}>
+              {confirmaciones[i.id] ? "✓ Va" : "No va"}
+            </span>
+          </div>
+        ))}
+      </div>
+      <Link href="/" style={{ textDecoration: "none", display: "block", maxWidth: "340px", margin: "0 auto" }}>
+        <div style={{
+          background: "linear-gradient(135deg, rgba(212,168,50,0.10) 0%, rgba(212,105,58,0.08) 100%)",
+          border: "1px solid rgba(212,168,50,0.30)",
+          borderRadius: "3px", padding: "1.1rem 1.4rem",
+          textAlign: "center", cursor: "pointer",
+        }}>
+          <p style={{ fontFamily: "'Cormorant Garamond', serif", fontStyle: "italic", fontSize: "0.9rem", color: "#5C4A42", lineHeight: 1.75, marginBottom: "0.7rem" }}>
+            Preparamos una página especial para ustedes, llena de todo lo que necesitan saber sobre nosotros y sobre este día tan importante. La hicimos con mucho amor para que puedan vivirlo con nosotros desde ya.
+          </p>
+          <span style={{ fontFamily: "'Montserrat', sans-serif", fontSize: "0.52rem", letterSpacing: "0.22em", textTransform: "uppercase", color: "#D4693A", borderBottom: "1px solid rgba(212,105,58,0.4)", paddingBottom: "0.2rem" }}>
+            Conoce nuestra historia y todos los detalles de la boda →
+          </span>
+        </div>
+      </Link>
+    </div>
+  );
 
   // ── pantalla de éxito ───────────────────────────────────────────────────────
 
