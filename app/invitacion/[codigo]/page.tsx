@@ -110,14 +110,13 @@ export default function PaginaInvitacion() {
         @font-face { font-family: 'PinyonScript'; src: url('/fonts/PinyonScript-Regular.ttf'); }
         @keyframes spin        { to { transform: rotate(360deg); } }
         @keyframes tarjetaAparece {
-          0%   { opacity:0; transform: scale(0.88); }
-          60%  { opacity:1; transform: scale(1.02); }
+          0%   { opacity:0; transform: scale(0.94); }
           100% { opacity:1; transform: scale(1); }
         }
         @keyframes graciasFade { 0%{opacity:0;transform:scale(0.9)} 100%{opacity:1;transform:scale(1)} }
         @keyframes sobreFlota  { 0%,100%{transform:translateY(0px)} 50%{transform:translateY(-5px)} }
         @keyframes pulso       { 0%,100%{opacity:0.7;transform:scale(1)} 50%{opacity:1;transform:scale(1.03)} }
-        .tarjeta-entra { animation: tarjetaAparece 0.85s cubic-bezier(0.22,1,0.36,1) forwards; }
+        .tarjeta-entra { animation: tarjetaAparece 1.2s cubic-bezier(0.16,1,0.3,1) forwards; }
         .gracias-entra { animation: graciasFade 0.6s ease forwards; }
         @media (max-width: 767px) {
           .tarjeta-wrap {
