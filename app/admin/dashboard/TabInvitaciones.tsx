@@ -5,6 +5,7 @@ import { useState, useCallback, useRef } from "react";
 import { Link as LinkIcon, Mail as MailIcon, CalendarCheck as CalendarCheckIcon } from "lucide-react";
 import { type Invitacion, type Invitado, type FiltrosState } from "./types";
 import { fechaCorta } from "./helpers";
+import { ModalShell } from "./ModalShell";
 import { inputStyle, btnPrimary, btnOutline } from "./styles";
 import { BarraFiltros } from "./BarraFiltros";
 
@@ -211,20 +212,18 @@ function ModalMensaje({ titulo, mensaje, onClose, onCopy }: {
     onClose();
   }
   return (
-    <div onClick={onClose} style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.4)", zIndex: 500, display: "flex", alignItems: "flex-end", justifyContent: "center" }}>
-      <div onClick={e => e.stopPropagation()} style={{ background: "var(--cream)", borderRadius: "12px 12px 0 0", padding: "1.5rem 1.2rem 2rem", width: "100%", maxWidth: "560px", boxShadow: "0 -8px 40px rgba(0,0,0,0.15)" }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem" }}>
-          <p className="sans" style={{ fontSize: "0.62rem", letterSpacing: "0.18em", textTransform: "uppercase", color: "var(--terracotta)" }}>{titulo}</p>
-          <button onClick={onClose} style={{ background: "none", border: "none", color: "var(--ink-light)", fontSize: "1.4rem", cursor: "pointer", lineHeight: 1 }}>×</button>
-        </div>
-        <pre className="sans" style={{ fontSize: "0.82rem", color: "var(--ink-mid)", lineHeight: 1.7, whiteSpace: "pre-wrap", wordBreak: "break-word", margin: "0 0 1.2rem", background: "var(--cream-mid)", padding: "0.9rem", borderRadius: "2px", border: "1px solid var(--border-subtle)" }}>
-          {mensaje}
-        </pre>
-        <button onClick={copiar} style={{ ...btnPrimary, width: "100%", padding: "0.75rem", fontSize: "0.65rem" }}>
-          Copiar mensaje
-        </button>
+    <ModalShell onClose={onClose} maxWidth="520px" zIndex={600}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem" }}>
+        <p className="sans" style={{ fontSize: "0.62rem", letterSpacing: "0.18em", textTransform: "uppercase", color: "var(--terracotta)" }}>{titulo}</p>
+        <button onClick={onClose} style={{ background: "none", border: "none", color: "var(--ink-light)", fontSize: "1.4rem", cursor: "pointer", lineHeight: 1 }}>×</button>
       </div>
-    </div>
+      <pre className="sans" style={{ fontSize: "0.82rem", color: "var(--ink-mid)", lineHeight: 1.7, whiteSpace: "pre-wrap", wordBreak: "break-word", margin: "0 0 1.2rem", background: "var(--cream-mid)", padding: "0.9rem", borderRadius: "2px", border: "1px solid var(--border-subtle)" }}>
+        {mensaje}
+      </pre>
+      <button onClick={copiar} style={{ ...btnPrimary, width: "100%", padding: "0.75rem", fontSize: "0.65rem" }}>
+        Copiar mensaje
+      </button>
+    </ModalShell>
   );
 }
 

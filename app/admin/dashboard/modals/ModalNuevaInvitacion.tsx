@@ -4,6 +4,7 @@
 import { useState } from "react";
 import { type Invitacion } from "../types";
 import { authHeaders } from "../helpers";
+import { ModalShell } from "../ModalShell";
 import { labelStyle, inputStyle, btnPrimary, btnOutline } from "../styles";
 
 export function ModalNuevaInvitacion({ onClose, onCreated, nombreAdmin }: {
@@ -35,9 +36,8 @@ export function ModalNuevaInvitacion({ onClose, onCreated, nombreAdmin }: {
   }
 
   return (
-    <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.45)", zIndex: 1000, display: "flex", alignItems: "center", justifyContent: "center", padding: "1rem" }}>
-      <div style={{ background: "var(--cream)", border: "1px solid var(--border-subtle)", borderRadius: "2px", padding: "2rem", width: "100%", maxWidth: "520px", maxHeight: "90dvh", overflowY: "auto" }}>
-        <h3 className="serif" style={{ fontSize: "1.5rem", color: "var(--ink)", marginBottom: "0.3rem" }}>Nueva invitación</h3>
+    <ModalShell onClose={onClose} maxWidth="520px">
+      <h3 className="serif" style={{ fontSize: "1.5rem", color: "var(--ink)", marginBottom: "0.3rem" }}>Nueva invitación</h3>
         <p className="sans" style={{ fontSize: "0.68rem", color: "var(--ink-light)", marginBottom: "1.5rem" }}>El código de 6 dígitos se genera automáticamente.</p>
         {personas.map((p, idx) => (
           <div key={idx} style={{ marginBottom: "1rem", padding: "1rem", background: "var(--cream-mid)", border: "1px solid var(--border-subtle)", borderRadius: "2px" }}>
@@ -76,6 +76,6 @@ export function ModalNuevaInvitacion({ onClose, onCreated, nombreAdmin }: {
           <button onClick={crear} disabled={loading} style={btnPrimary}>{loading ? "Creando..." : "Crear invitación"}</button>
         </div>
       </div>
-    </div>
+    </ModalShell>
   );
 }

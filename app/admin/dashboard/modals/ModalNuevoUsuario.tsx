@@ -3,6 +3,7 @@
 
 import { useState } from "react";
 import { authHeaders } from "../helpers";
+import { ModalShell } from "../ModalShell";
 import { labelStyle, inputStyle, btnPrimary, btnOutline } from "../styles";
 
 export function ModalNuevoUsuario({ onClose, onCreated }: {
@@ -27,9 +28,8 @@ export function ModalNuevoUsuario({ onClose, onCreated }: {
   }
 
   return (
-    <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.45)", zIndex: 1000, display: "flex", alignItems: "center", justifyContent: "center", padding: "1rem" }}>
-      <div style={{ background: "var(--cream)", border: "1px solid var(--border-subtle)", borderRadius: "2px", padding: "2rem", width: "100%", maxWidth: "400px", maxHeight: "90dvh", overflowY: "auto" }}>
-        <h3 className="serif" style={{ fontSize: "1.3rem", color: "var(--ink)", marginBottom: "1.5rem" }}>Nuevo usuario</h3>
+    <ModalShell onClose={onClose} maxWidth="400px">
+      <h3 className="serif" style={{ fontSize: "1.3rem", color: "var(--ink)", marginBottom: "1.5rem" }}>Nuevo usuario</h3>
         <div style={{ display: "flex", flexDirection: "column", gap: "0.8rem" }}>
           <div>
             <label style={labelStyle}>Nombre completo</label>
@@ -50,6 +50,6 @@ export function ModalNuevoUsuario({ onClose, onCreated }: {
           </div>
         </div>
       </div>
-    </div>
+    </ModalShell>
   );
 }
