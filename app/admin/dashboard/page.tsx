@@ -2,7 +2,7 @@
 // ── app/admin/dashboard/page.tsx ──────────────────────────────────────────────
 // Solo orquesta: estado global, handlers de API, filtrado/ordenación, layout.
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { type Invitacion, type SortKey, type SortDir, type TipoFiltro, type ConfFiltro, type FiltrosState } from "./types";
 import { token, authHeaders, parseAdminToken } from "./helpers";
@@ -36,7 +36,13 @@ export default function AdminDashboard() {
 
   // ── UI state ─────────────────────────────────────────────────────────────────
   const [tab, setTab]               = useState<"invitaciones" | "lista" | "confirmados" | "usuarios">("invitaciones");
-  const [modalNueva, setModalNueva] = useState(false);
+  const [toastVisible, setToastVisible] = useState(false);
+  const toastRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  function mostrarToast() {
+    if (toastRef.current) clearTimeout(toastRef.current);
+    setToastVisible(true);
+    toastRef.current = setTimeout(() => setToastVisible(false), 2000);
+  }
   const [modalAdd, setModalAdd]     = useState<Invitacion | null>(null);
   const [modalUsuario, setModalUsuario] = useState(false);
 
@@ -124,109 +130,112 @@ export default function AdminDashboard() {
     const { default: autoTable } = await import("jspdf-autotable");
 
     const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
-    const all = invitaciones.flatMap(r => r.invitados);
     const fecha = new Date().toLocaleDateString("es-VE", { day: "2-digit", month: "long", year: "numeric" });
-
-    const confirmados  = all.filter(i => i.confirmacion_1 === true || i.confirmacion_2 === true || i.confirmacion_3 === true);
-    const declinados   = all.filter(i => i.confirmacion_1 === false && i.confirmacion_2 === false && i.confirmacion_3 === false && (i.confirmacion_1 !== null || i.confirmacion_2 !== null || i.confirmacion_3 !== null));
-    const sinResponder = all.filter(i => i.confirmacion_1 === null && i.confirmacion_2 === null && i.confirmacion_3 === null);
-
     const triStr = (v: boolean | null) => v === true ? "✓" : v === false ? "✗" : "—";
+
+    // Agrupar invitados por invitación, en el orden original
+    const confirmadosRows: string[][] = [];
+    const sinResponderRows: string[][] = [];
+    const declinadosRows: string[][] = [];
+
+    invitaciones.forEach(inv => {
+      inv.invitados.forEach((i, idx) => {
+        const grupo = idx === 0 ? (inv.nombre ?? inv.codigo) : "";
+        const r1 = triStr(i.confirmacion_1);
+        const r2 = triStr(i.confirmacion_2);
+        const r3 = triStr(i.confirmacion_3);
+        const row = [grupo, i.nombre, r1, r2, r3];
+
+        const confirmado = i.confirmacion_1 === true || i.confirmacion_2 === true || i.confirmacion_3 === true;
+        const declinado  = !confirmado && (i.confirmacion_1 === false || i.confirmacion_2 === false || i.confirmacion_3 === false);
+        const sinResp    = i.confirmacion_1 === null && i.confirmacion_2 === null && i.confirmacion_3 === null;
+
+        if (confirmado)   confirmadosRows.push(row);
+        else if (declinado) declinadosRows.push(row);
+        else if (sinResp) sinResponderRows.push([grupo, i.nombre]);
+      });
+    });
+
+    const all = invitaciones.flatMap(r => r.invitados);
+    const colStyles = { 0: { cellWidth: 38, fontStyle: "bold" as const, fontSize: 7 }, 1: { cellWidth: 60, fontSize: 7 }, 2: { cellWidth: 12, halign: "center" as const, fontSize: 7 }, 3: { cellWidth: 12, halign: "center" as const, fontSize: 7 }, 4: { cellWidth: 12, halign: "center" as const, fontSize: 7 } };
+    const tableStyles = { fontSize: 7, cellPadding: 1.4, minCellHeight: 5 };
 
     // ── Título ──
     doc.setFont("helvetica", "bold");
-    doc.setFontSize(18);
+    doc.setFontSize(16);
     doc.setTextColor(44, 35, 32);
-    doc.text("Carla & Hely — Reporte de invitados", 14, 18);
+    doc.text("Carla & Hely — Reporte de invitados", 14, 16);
     doc.setFont("helvetica", "normal");
-    doc.setFontSize(9);
+    doc.setFontSize(8);
     doc.setTextColor(154, 136, 128);
-    doc.text(`Generado el ${fecha}`, 14, 25);
+    doc.text(`Generado el ${fecha}`, 14, 22);
 
-    // ── Estadísticas ──
-    doc.setFontSize(13);
-    doc.setFont("helvetica", "bold");
-    doc.setTextColor(44, 35, 32);
-    doc.text("Estadísticas", 14, 36);
+    let y = 28;
 
+    // ── 1. Confirmados ──
+    doc.setFontSize(11); doc.setFont("helvetica", "bold"); doc.setTextColor(44, 35, 32);
+    doc.text(`1. Confirmados (${confirmadosRows.length})`, 14, y);
     autoTable(doc, {
-      startY: 40,
+      startY: y + 3,
+      head: [["Grupo", "Nombre", "R1", "R2", "R3"]],
+      body: confirmadosRows,
+      styles: tableStyles,
+      headStyles: { fillColor: [122, 148, 56], textColor: 255, fontStyle: "bold", fontSize: 7, cellPadding: 1.8 },
+      columnStyles: colStyles,
+      margin: { left: 14, right: 14 },
+    });
+
+    // ── 2. Sin respuesta ──
+    y = (doc as any).lastAutoTable.finalY + 8;
+    if (y > 265) { doc.addPage(); y = 14; }
+    doc.setFontSize(11); doc.setFont("helvetica", "bold"); doc.setTextColor(44, 35, 32);
+    doc.text(`2. Sin respuesta (${sinResponderRows.length})`, 14, y);
+    autoTable(doc, {
+      startY: y + 3,
+      head: [["Grupo", "Nombre"]],
+      body: sinResponderRows,
+      styles: tableStyles,
+      headStyles: { fillColor: [154, 136, 128], textColor: 255, fontStyle: "bold", fontSize: 7, cellPadding: 1.8 },
+      columnStyles: { 0: { cellWidth: 50, fontStyle: "bold" as const, fontSize: 7 }, 1: { cellWidth: 80, fontSize: 7 } },
+      margin: { left: 14, right: 14 },
+    });
+
+    // ── 3. Declinados ──
+    y = (doc as any).lastAutoTable.finalY + 8;
+    if (y > 265) { doc.addPage(); y = 14; }
+    doc.setFontSize(11); doc.setFont("helvetica", "bold"); doc.setTextColor(44, 35, 32);
+    doc.text(`3. Declinados (${declinadosRows.length})`, 14, y);
+    autoTable(doc, {
+      startY: y + 3,
+      head: [["Grupo", "Nombre", "R1", "R2", "R3"]],
+      body: declinadosRows,
+      styles: tableStyles,
+      headStyles: { fillColor: [201, 79, 79], textColor: 255, fontStyle: "bold", fontSize: 7, cellPadding: 1.8 },
+      columnStyles: colStyles,
+      margin: { left: 14, right: 14 },
+    });
+
+    // ── 4. Estadísticas ──
+    y = (doc as any).lastAutoTable.finalY + 8;
+    if (y > 240) { doc.addPage(); y = 14; }
+    doc.setFontSize(11); doc.setFont("helvetica", "bold"); doc.setTextColor(44, 35, 32);
+    doc.text("4. Estadísticas", 14, y);
+    autoTable(doc, {
+      startY: y + 3,
       head: [["Métrica", "Total"]],
       body: [
-        ["Total invitaciones", String(invitaciones.length)],
-        ["Total invitados", String(all.length)],
-        ["Confirmados (al menos 1 ronda)", String(confirmados.length)],
-        ["Declinados", String(declinados.length)],
-        ["Sin respuesta", String(sinResponder.length)],
-        ["Confirmaron R1", String(all.filter(i => i.confirmacion_1 === true).length)],
-        ["Confirmaron R2", String(all.filter(i => i.confirmacion_2 === true).length)],
-        ["Confirmaron R3", String(all.filter(i => i.confirmacion_3 === true).length)],
+        ["Total invitaciones",             String(invitaciones.length)],
+        ["Total invitados",                String(all.length)],
+        ["Confirmados (≥1 ronda)",         String(confirmadosRows.length)],
+        ["Sin respuesta",                  String(sinResponderRows.length)],
+        ["Declinados",                     String(declinadosRows.length)],
+        ["Confirmaron R1",                 String(all.filter(i => i.confirmacion_1 === true).length)],
+        ["Confirmaron R2",                 String(all.filter(i => i.confirmacion_2 === true).length)],
+        ["Confirmaron R3",                 String(all.filter(i => i.confirmacion_3 === true).length)],
       ],
-      styles: { fontSize: 9, cellPadding: 3 },
-      headStyles: { fillColor: [201, 79, 79], textColor: 255, fontStyle: "bold" },
+      styles: { fontSize: 8, cellPadding: 2 },
+      headStyles: { fillColor: [212, 168, 50], textColor: 255, fontStyle: "bold" },
       columnStyles: { 1: { halign: "center", fontStyle: "bold" } },
-      margin: { left: 14, right: 14 },
-    });
-
-    // ── Confirmados ──
-    let y = (doc as any).lastAutoTable.finalY + 12;
-    if (y > 260) { doc.addPage(); y = 14; }
-    doc.setFontSize(13);
-    doc.setFont("helvetica", "bold");
-    doc.setTextColor(44, 35, 32);
-    doc.text(`Confirmados (${confirmados.length})`, 14, y);
-
-    autoTable(doc, {
-      startY: y + 4,
-      head: [["Nombre", "Código", "R1", "R2", "R3"]],
-      body: confirmados.map(i => {
-        const inv = invitaciones.find(r => r.invitados.some(x => x.id === i.id));
-        return [i.nombre, inv?.codigo ?? "", triStr(i.confirmacion_1), triStr(i.confirmacion_2), triStr(i.confirmacion_3)];
-      }),
-      styles: { fontSize: 8, cellPadding: 2.5 },
-      headStyles: { fillColor: [122, 148, 56], textColor: 255, fontStyle: "bold" },
-      columnStyles: { 2: { halign: "center" }, 3: { halign: "center" }, 4: { halign: "center" } },
-      margin: { left: 14, right: 14 },
-    });
-
-    // ── Declinados ──
-    y = (doc as any).lastAutoTable.finalY + 12;
-    if (y > 260) { doc.addPage(); y = 14; }
-    doc.setFontSize(13);
-    doc.setFont("helvetica", "bold");
-    doc.setTextColor(44, 35, 32);
-    doc.text(`Declinados (${declinados.length})`, 14, y);
-
-    autoTable(doc, {
-      startY: y + 4,
-      head: [["Nombre", "Código", "R1", "R2", "R3"]],
-      body: declinados.map(i => {
-        const inv = invitaciones.find(r => r.invitados.some(x => x.id === i.id));
-        return [i.nombre, inv?.codigo ?? "", triStr(i.confirmacion_1), triStr(i.confirmacion_2), triStr(i.confirmacion_3)];
-      }),
-      styles: { fontSize: 8, cellPadding: 2.5 },
-      headStyles: { fillColor: [201, 79, 79], textColor: 255, fontStyle: "bold" },
-      columnStyles: { 2: { halign: "center" }, 3: { halign: "center" }, 4: { halign: "center" } },
-      margin: { left: 14, right: 14 },
-    });
-
-    // ── Sin respuesta ──
-    y = (doc as any).lastAutoTable.finalY + 12;
-    if (y > 260) { doc.addPage(); y = 14; }
-    doc.setFontSize(13);
-    doc.setFont("helvetica", "bold");
-    doc.setTextColor(44, 35, 32);
-    doc.text(`Sin respuesta (${sinResponder.length})`, 14, y);
-
-    autoTable(doc, {
-      startY: y + 4,
-      head: [["Nombre", "Código"]],
-      body: sinResponder.map(i => {
-        const inv = invitaciones.find(r => r.invitados.some(x => x.id === i.id));
-        return [i.nombre, inv?.codigo ?? ""];
-      }),
-      styles: { fontSize: 8, cellPadding: 2.5 },
-      headStyles: { fillColor: [154, 136, 128], textColor: 255, fontStyle: "bold" },
       margin: { left: 14, right: 14 },
     });
 
@@ -308,6 +317,23 @@ export default function AdminDashboard() {
   return (
     <div style={{ minHeight: "100svh", background: "var(--cream)" }}>
 
+      {/* Toast global */}
+      <div style={{
+        position: "fixed", bottom: "1.8rem", left: "50%",
+        transform: `translateX(-50%) translateY(${toastVisible ? "0" : "12px"})`,
+        opacity: toastVisible ? 1 : 0,
+        transition: "opacity 0.22s ease, transform 0.22s ease",
+        pointerEvents: "none", zIndex: 999,
+        background: "var(--ink)", color: "var(--cream)",
+        padding: "0.5rem 1.1rem", borderRadius: "20px",
+        fontFamily: "'Montserrat', sans-serif",
+        fontSize: "0.65rem", letterSpacing: "0.08em",
+        boxShadow: "0 4px 16px rgba(0,0,0,0.18)",
+        whiteSpace: "nowrap",
+      }}>
+        Link copiado
+      </div>
+
       {/* Header */}
       <header style={{ background: "var(--cream-mid)", borderBottom: "1px solid var(--border-subtle)", padding: "0.8rem 1rem", display: "flex", alignItems: "center", justifyContent: "space-between", position: "sticky", top: 0, zIndex: 100, gap: "0.8rem" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "0.8rem" }}>
@@ -335,7 +361,9 @@ export default function AdminDashboard() {
             onClick={() => {
               const url = typeof window !== "undefined" ? window.location.origin : "";
               navigator.clipboard.writeText(url);
+              mostrarToast();
             }}
+            id="btn-pagina"
             title="Copiar link de la página"
             style={{ ...btnOutline, fontSize: "0.7rem", padding: "0.55rem 1rem" }}
           >🔗 Página</button>
