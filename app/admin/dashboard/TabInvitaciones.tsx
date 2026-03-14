@@ -142,7 +142,7 @@ function IndicadorRonda({ invitados, ronda, color }: {
 function FilaInvitado({ inv, codigo, onUpdate, onUpdateTexto, onDelete }: {
   inv: Invitado; codigo: string;
   onUpdate: (id: string, field: string, val: TriState) => void;
-  onUpdateTexto: (id: string, nombre: string, whatsapp: string, sexo: string | null) => void;
+  onUpdateTexto: (invId: string, nombre: string, whatsapp: string, sexo: string | null) => void;
   onDelete: (id: string) => void;
 }) {
   const [editando, setEditando] = useState(false);
