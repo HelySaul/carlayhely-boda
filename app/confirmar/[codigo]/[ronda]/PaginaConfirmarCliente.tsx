@@ -223,7 +223,7 @@ export function PaginaConfirmarCliente() {
             <p className="sans" style={{ fontSize: "0.45rem", letterSpacing: "0.25em", textTransform: "uppercase", color: "#9A8880", marginBottom: "0.5rem" }}>
               Confirmación · Ronda {ronda} de 3
             </p>
-            <h1 className="script" style={{ fontSize: "clamp(3rem,14vw,4.2rem)", color: "#C94F4F", lineHeight: 1 }}>Gracias</h1>
+            <h1 className="script" style={{ fontSize: "clamp(3rem,14vw,4.2rem)", color: "#2C2320", lineHeight: 1 }}>Gracias</h1>
             {lineaDecor}
             <p className="serif" style={{ fontStyle: "italic", fontSize: "0.95rem", color: "#5C4A42", lineHeight: 1.75 }}>
               {ronda === 3 ? "¡Nos vemos el 13 de Junio! Tu presencia hará este día aún más especial." : ronda === 2 ? "Estaremos en contacto pronto con los últimos detalles." : "Recibimos tu respuesta. Estaremos en contacto pronto."}
