@@ -60,7 +60,7 @@ export default async function Image() {
         <div style={{
           fontSize: "60px",
           letterSpacing: "0.18em",
-          color: "#9A8880",
+          color: "#5C4A42",
           fontFamily: "Georgia, serif",
           fontStyle: "italic",
         }}>
