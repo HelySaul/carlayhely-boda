@@ -50,7 +50,7 @@ export default function AdminDashboard() {
   // ── Filtros ──────────────────────────────────────────────────────────────────
   const [search, setSearch]         = useState("");
   const [sortKey, setSortKey]       = useState<SortKey>("fecha");
-  const [sortDir, setSortDir]       = useState<SortDir>("desc");
+  const [sortDir, setSortDir]       = useState<SortDir>("asc");
   const [tipo, setTipo]             = useState<TipoFiltro>("todos");
   const [confFiltro, setConfFiltro] = useState<ConfFiltro>("todos");
   const [creadoPor, setCreadoPor]   = useState("");
