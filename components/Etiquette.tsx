@@ -5,9 +5,9 @@ import FloralAccent from "./FloralAccent";
 const RULES = [
   { title: "La puntualidad es un regalo", text: "La ceremonia iniciará exactamente a las 6:00 PM. Te pedimos llegar con anticipación para que puedas acomodarte y ser parte de cada momento desde el principio — no querrás perderte nada.", color: "var(--red)" },
   { title: "Solo los invitados confirmados", text: "Por razones de organización y aforo, el acceso es exclusivo para quienes están en nuestra lista. Cada lugar fue reservado con mucho cariño.", color: "var(--terracotta)" },
-  { title: "El personal está para servirte", text: "Nuestro equipo de mesoneros se encargará de atenderte con dedicación. Te pedimos esperar su indicación para acercarte a las mesas de comida y dulces.", color: "var(--olive)" },
+  { title: "El personal está para servirte", text: "Nuestro equipo estará pendiente de ti en todo momento. Cada mesa de comida y dulces se abrirá en el momento indicado para que puedas disfrutarla plenamente.", color: "var(--olive)" },
   { title: "Cuida este espacio tan bello", text: "Brisas del Renacer es tan hermoso porque es cuidado con amor. Te pedimos mantenerlo así: respetar la decoración, las plantas y cada rincón del local.", color: "var(--gold)" },
-  { title: "Todo a su tiempo", text: "Habrá momentos especiales a lo largo de la noche. El personal te indicará cuándo es cada uno. Déjate sorprender — lo mejor siempre vale la espera.", color: "var(--lavender)" },
+  { title: "Todo a su tiempo", text: "La noche tiene momentos especiales preparados con mucho cuidado. Cada uno llegará en su momento perfecto — confía en el orden y déjate sorprender.", color: "var(--lavender)" },
   { title: "Sobre todo, disfruta", text: "Este día fue soñado para compartirlo contigo. Ríe, baila, celebra. Tu alegría es el regalo más hermoso que puedes darnos.", color: "var(--red)" },
 ];
 
@@ -16,14 +16,8 @@ const ROMAN = ["I","II","III","IV","V","VI"];
 export default function Etiquette() {
   return (
     <section id="detalles" style={{ padding: "6rem 1.5rem", background: "var(--bg-details)", textAlign: "center", position: "relative", overflow: "visible" }}>
-      {/* Manchas decorativas */}
-
-      {/* Manchas — clip propio */}
-
       <div style={{ position: "absolute", inset: 0, overflow: "hidden", pointerEvents: "none", zIndex: 0 }}>
-
-      <div style={{ position: "absolute", top: "5%", right: "0", width: "clamp(140px,32vw,260px)", height: "clamp(140px,32vw,260px)", borderRadius: "50%", background: "radial-gradient(circle, rgba(122,148,56,0.16) 0%, transparent 70%)", pointerEvents: "none" }} />
-
+        <div style={{ position: "absolute", top: "5%", right: "0", width: "clamp(140px,32vw,260px)", height: "clamp(140px,32vw,260px)", borderRadius: "50%", background: "radial-gradient(circle, rgba(122,148,56,0.16) 0%, transparent 70%)", pointerEvents: "none" }} />
       </div>
       <div style={{ position: "absolute", bottom: "0%", left: "0", width: "clamp(160px,36vw,280px)", height: "clamp(160px,36vw,280px)", borderRadius: "50%", background: "radial-gradient(circle, rgba(201,79,79,0.14) 0%, transparent 70%)", pointerEvents: "none" }} />
       <FloralAccent side="right" x="-10px" y="top: -25px" size={80} petalColor="#9B8BB4" petalColor2="#D4693A" rotate={-12} opacity={0.68} />

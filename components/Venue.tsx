@@ -5,21 +5,15 @@ import FloralAccent from "./FloralAccent";
 const TIPS = [
   { label: "Al aire libre",   desc: "La ceremonia y la fiesta se celebran en espacios abiertos. Un cielo como techo, naturaleza como decoración.", color: "var(--olive)" },
   { label: "Calzado cómodo",  desc: "El terreno es de jardín. Tacones muy finos pueden dificultar el caminar; un tacón ancho o plataforma funciona perfecto.", color: "var(--terracotta)" },
-  { label: "Clima de junio",  desc: "La vía Coro–Churuguara es conocida por su brisa fresca, especialmente en la noche. Te recomendamos llevar un abrigo por si acaso.", color: "var(--gold)" },
+  { label: "Clima de junio",  desc: "La vía Coro–Churuguara es conocida por su brisa fresca, especialmente en la noche. Te recomendamos llevar algo de abrigo para disfrutar la velada con total comodidad.", color: "var(--gold)" },
   { label: "Estacionamiento", desc: "Hay espacio disponible en el local. Llegar con tiempo te garantizará un buen lugar.", color: "var(--red)" },
 ];
 
 export default function Venue() {
   return (
     <section id="lugar" style={{ padding: "6rem 1.5rem", background: "var(--bg-venue)", textAlign: "center", position: "relative", overflow: "visible" }}>
-      {/* Manchas decorativas */}
-
-      {/* Manchas — clip propio */}
-
       <div style={{ position: "absolute", inset: 0, overflow: "hidden", pointerEvents: "none", zIndex: 0 }}>
-
-      <div style={{ position: "absolute", top: "-5%", right: "0", width: "clamp(160px,38vw,300px)", height: "clamp(160px,38vw,300px)", borderRadius: "50%", background: "radial-gradient(circle, rgba(122,148,56,0.18) 0%, transparent 70%)", pointerEvents: "none" }} />
-
+        <div style={{ position: "absolute", top: "-5%", right: "0", width: "clamp(160px,38vw,300px)", height: "clamp(160px,38vw,300px)", borderRadius: "50%", background: "radial-gradient(circle, rgba(122,148,56,0.18) 0%, transparent 70%)", pointerEvents: "none" }} />
       </div>
       <div style={{ position: "absolute", bottom: "10%", left: "0", width: "clamp(120px,28vw,220px)", height: "clamp(120px,28vw,220px)", borderRadius: "50%", background: "radial-gradient(circle, rgba(212,168,50,0.16) 0%, transparent 70%)", pointerEvents: "none" }} />
       <FloralAccent side="right" x="-10px" y="bottom: -30px" size={85} petalColor="#7A9438" petalColor2="#D4A832" rotate={-5} opacity={0.70} />
@@ -41,13 +35,13 @@ export default function Venue() {
           <div style={{ width: "60px", height: "1px", background: "linear-gradient(90deg, transparent, var(--gold), transparent)", margin: "1.5rem auto 2rem" }} />
         </Reveal>
 
-        {/* Mapa embed */}
+        {/* Mapa embed — satelital */}
         <Reveal delay={0.22}>
           <div style={{ padding: "8px", background: "var(--cream-mid)", border: "1px solid var(--border-subtle)", borderRadius: "2px", marginBottom: "1rem", boxShadow: "0 2px 12px rgba(0,0,0,0.07)" }}>
             <div style={{ padding: "6px", border: "1px solid var(--gold-line)", borderRadius: "1px" }}>
               <div style={{ overflow: "hidden", borderRadius: "1px" }}>
                 <iframe
-                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3921.!2d-69.5855451!3d11.3661906!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8e842bfeee5f598d%3A0xf403a1c864647f4f!2sCentro%20Recreacional%20Brisas%20del%20Renacer!5e0!3m2!1ses!2sve!4v1"
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3921.!2d-69.5855451!3d11.3661906!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8e842bfeee5f598d%3A0xf403a1c864647f4f!2sCentro%20Recreacional%20Brisas%20del%20Renacer!5e0!3m2!1ses!2sve!4v1&maptype=satellite"
                   width="100%"
                   height="230"
                   style={{ border: 0, display: "block", filter: "saturate(0.85) brightness(1.02)" }}

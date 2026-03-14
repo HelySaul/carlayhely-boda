@@ -39,7 +39,7 @@ export default function Footer() {
         <div style={{ margin: "2rem auto", maxWidth: "320px" }}>
           <div style={{ height: "1px", background: "linear-gradient(90deg, transparent, var(--gold-line), transparent)" }} />
           <p className="serif" style={{ fontStyle: "italic", color: "var(--ink-mid)", fontSize: "clamp(0.88rem,2.8vw,1rem)", lineHeight: 1.7, padding: "1.5rem 0", letterSpacing: "0.02em" }}>
-            "Todo lo hizo hermoso en su tiempo"
+            &quot;Todo lo hizo hermoso en su tiempo&quot;
           </p>
           <p className="sans" style={{ fontSize: "0.6rem", color: "var(--terracotta)", letterSpacing: "0.2em", textTransform: "uppercase" }}>Eclesiastés 3 · 11</p>
           <div style={{ height: "1px", background: "linear-gradient(90deg, transparent, var(--gold-line), transparent)", marginTop: "1.5rem" }} />
