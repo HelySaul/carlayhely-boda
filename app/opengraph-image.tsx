@@ -58,9 +58,9 @@ export default async function Image() {
 
         {/* Fecha */}
         <div style={{
-          fontSize: "46px",
-          letterSpacing: "0.22em",
-          color: "#9A8880",
+          fontSize: "52px",
+          letterSpacing: "0.18em",
+          color: "#5C4A42",
           fontFamily: "Georgia, serif",
           fontStyle: "italic",
         }}>

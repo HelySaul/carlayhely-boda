@@ -1,49 +1,83 @@
-import type { Metadata } from "next";
-import "./globals.css";
+// app/opengraph-image.tsx
+import { ImageResponse } from "next/og";
+import { readFile } from "node:fs/promises";
+import { join } from "node:path";
 
-export const metadata: Metadata = {
-  metadataBase: new URL("https://carlayhely-boda.vercel.app"),
-  title: "Carla & Hely — 13 de Junio, 2026",
-  description: "Con alegría en el corazón, los invitamos a celebrar el inicio de nuestra vida juntos.",
+export const alt = "Carla & Hely · 13 de Junio 2026";
+export const size = { width: 1200, height: 630 };
+export const contentType = "image/png";
 
-  openGraph: {
-    title: "Carla Victoria & Hely Saul — 13 · 06 · 2026",
-    description: "Con alegría en el corazón, los invitamos a celebrar el inicio de nuestra vida juntos.",
-    type: "website",
-    images: [
-      {
-        url: "https://carlayhely-boda.vercel.app/opengraph-image",
-        width: 1200,
-        height: 630,
-        alt: "Carla & Hely · 13 de Junio 2026",
-      },
-    ],
-  },
+export default async function Image() {
+  const pinyon = await readFile(
+    join(process.cwd(), "public/fonts/PinyonScript-Regular.ttf")
+  );
 
-  icons: {
-    icon: [
-      { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
-      { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
-    ],
-    apple: "/apple-touch-icon.png",
-    other: [
-      { rel: "android-chrome", url: "/android-chrome-192x192.png" },
-      { rel: "android-chrome", url: "/android-chrome-512x512.png" },
-    ],
-  },
+  return new ImageResponse(
+    (
+      <div
+        style={{
+          width: "1200px",
+          height: "630px",
+          background: "#FDFAF6",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        {/* Nombres */}
+        <div style={{
+          display: "flex",
+          alignItems: "center",
+          fontSize: "240px",
+          color: "#2C2320",
+          fontFamily: "Pinyon",
+          lineHeight: 1,
+          marginBottom: "32px",
+        }}>
+          <span>Carla</span>
+          <span style={{ margin: "0 4px 0 80px", position: "relative", top: "-10px", display: "flex", alignItems: "center" }}>
+            <svg width="90" height="88" viewBox="-100 -20 170 145">
+              <path d="M0,40 C0,18 -18,2 -36,2 C-54,2 -68,16 -68,34 C-68,72 0,105 0,105 C0,105 68,72 68,34 C68,16 54,2 36,2 C18,2 0,18 0,40 Z"
+                fill="none" stroke="#C94F4F" stroke-width="2.5" stroke-linecap="round"
+                transform="matrix(1,0,-0.52,1.1,0,-20)"/>
+            </svg>
+          </span>
+          <span>Hely</span>
+        </div>
 
-  manifest: "/site.webmanifest",
-};
+        {/* Línea dorada */}
+        <div style={{
+          width: "900px",
+          height: "1px",
+          background: "#D4A832",
+          opacity: 0.5,
+          marginBottom: "40px",
+          display: "flex",
+        }} />
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
-  return (
-    <html lang="es">
-      <head>
-        <link rel="preload" href="/fonts/PinyonScript-Regular.ttf" as="font" type="font/ttf" crossOrigin="anonymous" />
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-      </head>
-      <body>{children}</body>
-    </html>
+        {/* Fecha */}
+        <div style={{
+          fontSize: "52px",
+          letterSpacing: "0.18em",
+          color: "#5C4A42",
+          fontFamily: "Georgia, serif",
+          fontStyle: "italic",
+        }}>
+          Sábado · 13 de Junio · 2026
+        </div>
+      </div>
+    ),
+    {
+      ...size,
+      fonts: [
+        {
+          name: "Pinyon",
+          data: pinyon,
+          style: "normal",
+          weight: 400,
+        },
+      ],
+    }
   );
 }
