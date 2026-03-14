@@ -119,14 +119,118 @@ export default function AdminDashboard() {
     setInvitaciones(rs => rs.filter(r => r.id !== id));
   }
 
-  function exportCSV() {
-    fetch("/api/admin/export", { headers: { Authorization: `Bearer ${token()}` } })
-      .then(r => r.blob()).then(blob => {
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url; a.download = `invitados-carlayhely-${new Date().toISOString().slice(0, 10)}.csv`;
-        a.click(); URL.revokeObjectURL(url);
-      });
+  async function exportPDF() {
+    const { default: jsPDF } = await import("jspdf");
+    const { default: autoTable } = await import("jspdf-autotable");
+
+    const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
+    const all = invitaciones.flatMap(r => r.invitados);
+    const fecha = new Date().toLocaleDateString("es-VE", { day: "2-digit", month: "long", year: "numeric" });
+
+    const confirmados  = all.filter(i => i.confirmacion_1 === true || i.confirmacion_2 === true || i.confirmacion_3 === true);
+    const declinados   = all.filter(i => i.confirmacion_1 === false && i.confirmacion_2 === false && i.confirmacion_3 === false && (i.confirmacion_1 !== null || i.confirmacion_2 !== null || i.confirmacion_3 !== null));
+    const sinResponder = all.filter(i => i.confirmacion_1 === null && i.confirmacion_2 === null && i.confirmacion_3 === null);
+
+    const triStr = (v: boolean | null) => v === true ? "✓" : v === false ? "✗" : "—";
+
+    // ── Título ──
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(18);
+    doc.setTextColor(44, 35, 32);
+    doc.text("Carla & Hely — Reporte de invitados", 14, 18);
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(9);
+    doc.setTextColor(154, 136, 128);
+    doc.text(`Generado el ${fecha}`, 14, 25);
+
+    // ── Estadísticas ──
+    doc.setFontSize(13);
+    doc.setFont("helvetica", "bold");
+    doc.setTextColor(44, 35, 32);
+    doc.text("Estadísticas", 14, 36);
+
+    autoTable(doc, {
+      startY: 40,
+      head: [["Métrica", "Total"]],
+      body: [
+        ["Total invitaciones", String(invitaciones.length)],
+        ["Total invitados", String(all.length)],
+        ["Confirmados (al menos 1 ronda)", String(confirmados.length)],
+        ["Declinados", String(declinados.length)],
+        ["Sin respuesta", String(sinResponder.length)],
+        ["Confirmaron R1", String(all.filter(i => i.confirmacion_1 === true).length)],
+        ["Confirmaron R2", String(all.filter(i => i.confirmacion_2 === true).length)],
+        ["Confirmaron R3", String(all.filter(i => i.confirmacion_3 === true).length)],
+      ],
+      styles: { fontSize: 9, cellPadding: 3 },
+      headStyles: { fillColor: [201, 79, 79], textColor: 255, fontStyle: "bold" },
+      columnStyles: { 1: { halign: "center", fontStyle: "bold" } },
+      margin: { left: 14, right: 14 },
+    });
+
+    // ── Confirmados ──
+    let y = (doc as any).lastAutoTable.finalY + 12;
+    if (y > 260) { doc.addPage(); y = 14; }
+    doc.setFontSize(13);
+    doc.setFont("helvetica", "bold");
+    doc.setTextColor(44, 35, 32);
+    doc.text(`Confirmados (${confirmados.length})`, 14, y);
+
+    autoTable(doc, {
+      startY: y + 4,
+      head: [["Nombre", "Código", "R1", "R2", "R3"]],
+      body: confirmados.map(i => {
+        const inv = invitaciones.find(r => r.invitados.some(x => x.id === i.id));
+        return [i.nombre, inv?.codigo ?? "", triStr(i.confirmacion_1), triStr(i.confirmacion_2), triStr(i.confirmacion_3)];
+      }),
+      styles: { fontSize: 8, cellPadding: 2.5 },
+      headStyles: { fillColor: [122, 148, 56], textColor: 255, fontStyle: "bold" },
+      columnStyles: { 2: { halign: "center" }, 3: { halign: "center" }, 4: { halign: "center" } },
+      margin: { left: 14, right: 14 },
+    });
+
+    // ── Declinados ──
+    y = (doc as any).lastAutoTable.finalY + 12;
+    if (y > 260) { doc.addPage(); y = 14; }
+    doc.setFontSize(13);
+    doc.setFont("helvetica", "bold");
+    doc.setTextColor(44, 35, 32);
+    doc.text(`Declinados (${declinados.length})`, 14, y);
+
+    autoTable(doc, {
+      startY: y + 4,
+      head: [["Nombre", "Código", "R1", "R2", "R3"]],
+      body: declinados.map(i => {
+        const inv = invitaciones.find(r => r.invitados.some(x => x.id === i.id));
+        return [i.nombre, inv?.codigo ?? "", triStr(i.confirmacion_1), triStr(i.confirmacion_2), triStr(i.confirmacion_3)];
+      }),
+      styles: { fontSize: 8, cellPadding: 2.5 },
+      headStyles: { fillColor: [201, 79, 79], textColor: 255, fontStyle: "bold" },
+      columnStyles: { 2: { halign: "center" }, 3: { halign: "center" }, 4: { halign: "center" } },
+      margin: { left: 14, right: 14 },
+    });
+
+    // ── Sin respuesta ──
+    y = (doc as any).lastAutoTable.finalY + 12;
+    if (y > 260) { doc.addPage(); y = 14; }
+    doc.setFontSize(13);
+    doc.setFont("helvetica", "bold");
+    doc.setTextColor(44, 35, 32);
+    doc.text(`Sin respuesta (${sinResponder.length})`, 14, y);
+
+    autoTable(doc, {
+      startY: y + 4,
+      head: [["Nombre", "Código"]],
+      body: sinResponder.map(i => {
+        const inv = invitaciones.find(r => r.invitados.some(x => x.id === i.id));
+        return [i.nombre, inv?.codigo ?? ""];
+      }),
+      styles: { fontSize: 8, cellPadding: 2.5 },
+      headStyles: { fillColor: [154, 136, 128], textColor: 255, fontStyle: "bold" },
+      margin: { left: 14, right: 14 },
+    });
+
+    doc.save(`reporte-carlayhely-${new Date().toISOString().slice(0, 10)}.pdf`);
   }
 
   function cargarUsuarios() {
@@ -226,7 +330,7 @@ export default function AdminDashboard() {
               }}>{r}</button>
             ))}
           </div>
-          <button onClick={exportCSV} style={{ ...btnOutline, fontSize: "0.7rem", padding: "0.55rem 1rem" }}>CSV</button>
+          <button onClick={exportPDF} style={{ ...btnOutline, fontSize: "0.7rem", padding: "0.55rem 1rem" }}>PDF</button>
           <button
             onClick={() => {
               const url = typeof window !== "undefined" ? window.location.origin : "";
