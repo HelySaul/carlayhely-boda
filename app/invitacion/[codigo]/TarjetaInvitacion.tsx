@@ -172,9 +172,6 @@ export default function TarjetaInvitacion({ inv, rondaActual, codigo }: Props) {
         {/* Bloque destacado — link al landing */}
         <BloqueVerBoda />
 
-        {/* Bloque destacado — link al landing */}
-        <BloqueVerBoda />
-
         {/* Confirmación */}
         {todosConfirm ? (
           <div style={{ textAlign: 'center' }}>
