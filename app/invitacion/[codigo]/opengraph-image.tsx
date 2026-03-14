@@ -36,7 +36,7 @@ export default async function Image() {
         </svg>
 
         {/* Texto */}
-        <div style={{ fontSize: "52px", color: "#2C2320", fontFamily: "Georgia, serif", fontStyle: "italic", letterSpacing: "0.05em", textAlign: "center" }}>
+        <div style={{ fontSize: "72px", color: "#2C2320", fontFamily: "Georgia, serif", fontStyle: "italic", letterSpacing: "0.05em", textAlign: "center" }}>
           Te guardamos un lugar en el día que Dios preparó para nosotros
         </div>
 

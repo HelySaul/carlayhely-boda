@@ -44,7 +44,7 @@ export default async function Image({ params }: { params: Promise<{ ronda: strin
         </svg>
 
         {/* Texto dinámico por ronda */}
-        <div style={{ fontSize: "52px", color: "#2C2320", fontFamily: "Georgia, serif", fontStyle: "italic", letterSpacing: "0.05em", textAlign: "center" }}>
+        <div style={{ fontSize: "72px", color: "#2C2320", fontFamily: "Georgia, serif", fontStyle: "italic", letterSpacing: "0.05em", textAlign: "center" }}>
           {texto}
         </div>
 

@@ -47,20 +47,18 @@ export default async function Image() {
         </div>
 
         {/* Línea dorada */}
-        <div style={{
-          width: "900px",
-          height: "1px",
-          background: "#D4A832",
-          opacity: 0.5,
-          marginBottom: "40px",
-          display: "flex",
-        }} />
+        {/* Separador ondulado */}
+        <svg width="600" height="20" viewBox="0 0 600 20" fill="none" style={{ marginBottom: "40px" }}>
+          <path d="M20 10 Q150 3 300 10 Q450 17 580 10" stroke="#C94F4F" stroke-width="2" stroke-linecap="round" opacity="0.5"/>
+          <circle cx="300" cy="10" r="4" fill="none" stroke="#D4693A" stroke-width="2" opacity="0.7"/>
+          <path d="M280 10 Q290 4 300 10 Q310 16 320 10" stroke="#D4693A" stroke-width="2" stroke-linecap="round" opacity="0.7"/>
+        </svg>
 
         {/* Fecha */}
         <div style={{
-          fontSize: "72px",
+          fontSize: "60px",
           letterSpacing: "0.18em",
-          color: "#5C4A42",
+          color: "#9A8880",
           fontFamily: "Georgia, serif",
           fontStyle: "italic",
         }}>
