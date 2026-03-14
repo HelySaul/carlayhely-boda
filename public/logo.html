@@ -45,7 +45,7 @@
     .fav {
       width: 512px;
       height: 512px;
-      border-radius: 80px;
+      border-radius: 0;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -57,7 +57,7 @@
     .fav-sm {
       width: 180px;
       height: 180px;
-      border-radius: 32px;
+      border-radius: 0;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -65,11 +65,10 @@
       position: relative;
     }
 
-    .line {
+    .line-svg {
       width: 65%;
-      height: 1px;
-      background: #D4A832;
-      opacity: 0.45;
+      display: block;
+      overflow: visible;
     }
 
     .ch {
@@ -98,6 +97,8 @@
     .terra .c { color: #FDFAF6; }
     .terra .amp { color: #FAE8D8; }
     .terra .line { background: #FAE8D8; opacity: 0.5; }
+    .ink .line-svg path, .ink .line-svg circle { stroke: #D4A832; }
+    .terra .line-svg path, .terra .line-svg circle { stroke: rgba(250,232,216,0.7); }
   </style>
 </head>
 <body>
@@ -107,40 +108,49 @@
   <div class="row">
 
     <div class="item">
-      <div class="fav cream" style="border: 1px solid rgba(212,105,58,0.2);">
-        <div class="line" style="margin-bottom: 18px;"></div>
+      <div class="fav cream">
         <div class="ch">
           <span class="c"  style="font-size: 260px;">C</span>
-          <span class="amp" style="font-size: 110px; margin: 0 -40px 0 10px; position: relative; top: -60px; z-index: 1;">&#38;</span>
+          <span class="amp" style="font-size: 110px; margin: 0 -70px 0 10px; position: relative; top: -60px; z-index: 1;">&#38;</span>
           <span class="c"  style="font-size: 260px;">H</span>
         </div>
-        <div class="line" style="margin-top: 18px;"></div>
+        <svg class="line-svg" style="margin-top: 18px;" viewBox="0 0 280 20" fill="none" height="20">
+          <path d="M10 10 Q70 3 140 10 Q210 17 270 10" stroke="#C94F4F" stroke-width="3" stroke-linecap="round" opacity="0.7"/>
+          <circle cx="140" cy="10" r="2.5" fill="none" stroke="#D4693A" stroke-width="3" opacity="0.9"/>
+          <path d="M130 10 Q135 6 140 10 Q145 14 150 10" stroke="#D4693A" stroke-width="3" stroke-linecap="round" opacity="0.9"/>
+        </svg>
       </div>
       <span class="lbl">Crema</span>
     </div>
 
     <div class="item">
       <div class="fav ink">
-        <div class="line" style="margin-bottom: 18px;"></div>
         <div class="ch">
           <span class="c"  style="font-size: 260px;">C</span>
-          <span class="amp" style="font-size: 110px; margin: 0 -40px 0 10px; position: relative; top: -60px; z-index: 1;">&#38;</span>
+          <span class="amp" style="font-size: 110px; margin: 0 -70px 0 10px; position: relative; top: -60px; z-index: 1;">&#38;</span>
           <span class="c"  style="font-size: 260px;">H</span>
         </div>
-        <div class="line" style="margin-top: 18px;"></div>
+        <svg class="line-svg" style="margin-top: 18px;" viewBox="0 0 280 20" fill="none" height="20">
+          <path d="M10 10 Q70 3 140 10 Q210 17 270 10" stroke="#C94F4F" stroke-width="3" stroke-linecap="round" opacity="0.7"/>
+          <circle cx="140" cy="10" r="2.5" fill="none" stroke="#D4693A" stroke-width="3" opacity="0.9"/>
+          <path d="M130 10 Q135 6 140 10 Q145 14 150 10" stroke="#D4693A" stroke-width="3" stroke-linecap="round" opacity="0.9"/>
+        </svg>
       </div>
       <span class="lbl">Oscuro</span>
     </div>
 
     <div class="item">
       <div class="fav terra">
-        <div class="line" style="margin-bottom: 18px;"></div>
         <div class="ch">
           <span class="c"  style="font-size: 260px;">C</span>
-          <span class="amp" style="font-size: 110px; margin: 0 -40px 0 10px; position: relative; top: -60px; z-index: 1;">&#38;</span>
+          <span class="amp" style="font-size: 110px; margin: 0 -70px 0 10px; position: relative; top: -60px; z-index: 1;">&#38;</span>
           <span class="c"  style="font-size: 260px;">H</span>
         </div>
-        <div class="line" style="margin-top: 18px;"></div>
+        <svg class="line-svg" style="margin-top: 18px;" viewBox="0 0 280 20" fill="none" height="20">
+          <path d="M10 10 Q70 3 140 10 Q210 17 270 10" stroke="#C94F4F" stroke-width="3" stroke-linecap="round" opacity="0.7"/>
+          <circle cx="140" cy="10" r="2.5" fill="none" stroke="#D4693A" stroke-width="3" opacity="0.9"/>
+          <path d="M130 10 Q135 6 140 10 Q145 14 150 10" stroke="#D4693A" stroke-width="3" stroke-linecap="round" opacity="0.9"/>
+        </svg>
       </div>
       <span class="lbl">Terracotta</span>
     </div>
@@ -151,34 +161,43 @@
   <p class="lbl" style="margin-top: 16px;">180 × 180 — thumbnail</p>
   <div class="row">
 
-    <div class="fav-sm cream" style="border: 1px solid rgba(212,105,58,0.2);">
-      <div class="line" style="margin-bottom: 6px;"></div>
+    <div class="fav-sm cream">
       <div class="ch">
         <span class="c"  style="font-size: 90px;">C</span>
         <span class="amp" style="font-size: 38px; margin: 0 -10px; position: relative; top: -20px; z-index: 1;">&#38;</span>
         <span class="c"  style="font-size: 90px;">H</span>
       </div>
-      <div class="line" style="margin-top: 6px;"></div>
+      <svg class="line-svg" style="margin-top: 6px;" viewBox="0 0 280 20" fill="none" height="10">
+        <path d="M10 10 Q70 3 140 10 Q210 17 270 10" stroke="#C94F4F" stroke-width="3" stroke-linecap="round" opacity="0.7"/>
+        <circle cx="140" cy="10" r="2.5" fill="none" stroke="#D4693A" stroke-width="3" opacity="0.9"/>
+        <path d="M130 10 Q135 6 140 10 Q145 14 150 10" stroke="#D4693A" stroke-width="3" stroke-linecap="round" opacity="0.9"/>
+      </svg>
     </div>
 
     <div class="fav-sm ink">
-      <div class="line" style="margin-bottom: 6px;"></div>
       <div class="ch">
         <span class="c"  style="font-size: 90px;">C</span>
         <span class="amp" style="font-size: 38px; margin: 0 -10px; position: relative; top: -20px; z-index: 1;">&#38;</span>
         <span class="c"  style="font-size: 90px;">H</span>
       </div>
-      <div class="line" style="margin-top: 6px;"></div>
+      <svg class="line-svg" style="margin-top: 6px;" viewBox="0 0 280 20" fill="none" height="10">
+        <path d="M10 10 Q70 3 140 10 Q210 17 270 10" stroke="#C94F4F" stroke-width="3" stroke-linecap="round" opacity="0.7"/>
+        <circle cx="140" cy="10" r="2.5" fill="none" stroke="#D4693A" stroke-width="3" opacity="0.9"/>
+        <path d="M130 10 Q135 6 140 10 Q145 14 150 10" stroke="#D4693A" stroke-width="3" stroke-linecap="round" opacity="0.9"/>
+      </svg>
     </div>
 
     <div class="fav-sm terra">
-      <div class="line" style="margin-bottom: 6px;"></div>
       <div class="ch">
         <span class="c"  style="font-size: 90px;">C</span>
         <span class="amp" style="font-size: 38px; margin: 0 -10px; position: relative; top: -20px; z-index: 1;">&#38;</span>
         <span class="c"  style="font-size: 90px;">H</span>
       </div>
-      <div class="line" style="margin-top: 6px;"></div>
+      <svg class="line-svg" style="margin-top: 6px;" viewBox="0 0 280 20" fill="none" height="10">
+        <path d="M10 10 Q70 3 140 10 Q210 17 270 10" stroke="#C94F4F" stroke-width="3" stroke-linecap="round" opacity="0.7"/>
+        <circle cx="140" cy="10" r="2.5" fill="none" stroke="#D4693A" stroke-width="3" opacity="0.9"/>
+        <path d="M130 10 Q135 6 140 10 Q145 14 150 10" stroke="#D4693A" stroke-width="3" stroke-linecap="round" opacity="0.9"/>
+      </svg>
     </div>
 
   </div>
