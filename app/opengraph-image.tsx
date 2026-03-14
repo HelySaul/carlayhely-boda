@@ -29,18 +29,18 @@ export default async function Image() {
         <div style={{
           display: "flex",
           alignItems: "center",
-          fontSize: "190px",
+          fontSize: "240px",
           color: "#2C2320",
           fontFamily: "Pinyon",
           lineHeight: 1,
-          marginBottom: "28px",
+          marginBottom: "32px",
         }}>
           <span>Carla</span>
-          <span style={{ margin: "0 10px", position: "relative", top: "-28px", display: "flex", alignItems: "center" }}>
-            <svg width="70" height="96" viewBox="-80 -60 160 130">
+          <span style={{ margin: "0 16px", position: "relative", top: "-10px", display: "flex", alignItems: "center" }}>
+            <svg width="90" height="130" viewBox="-75 -20 150 145">
               <path d="M0,40 C0,18 -18,2 -36,2 C-54,2 -68,16 -68,34 C-68,72 0,105 0,105 C0,105 68,72 68,34 C68,16 54,2 36,2 C18,2 0,18 0,40 Z"
-                fill="none" stroke="#C94F4F" stroke-width="1.2" stroke-linecap="round"
-                transform="matrix(1,0,-0.32,1.35,0,-50)"/>
+                fill="none" stroke="#C94F4F" stroke-width="2.5" stroke-linecap="round"
+                transform="matrix(1,0,-0.42,1.35,0,-20)"/>
             </svg>
           </span>
           <span>Hely</span>
@@ -48,35 +48,23 @@ export default async function Image() {
 
         {/* Línea dorada */}
         <div style={{
-          width: "580px",
+          width: "900px",
           height: "1px",
           background: "#D4A832",
           opacity: 0.5,
-          marginBottom: "44px",
+          marginBottom: "40px",
           display: "flex",
         }} />
 
         {/* Fecha */}
         <div style={{
-          fontSize: "36px",
+          fontSize: "46px",
           letterSpacing: "0.22em",
           color: "#9A8880",
           fontFamily: "Georgia, serif",
           fontStyle: "italic",
-          marginBottom: "18px",
         }}>
           Sábado · 13 de Junio · 2026
-        </div>
-
-        {/* Lugar */}
-        <div style={{
-          fontSize: "28px",
-          letterSpacing: "0.15em",
-          color: "#D4693A",
-          fontFamily: "Georgia, serif",
-          fontStyle: "italic",
-        }}>
-          Brisas del Renacer · Falcón
         </div>
       </div>
     ),
