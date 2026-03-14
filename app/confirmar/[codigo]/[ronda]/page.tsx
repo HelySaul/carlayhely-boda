@@ -1,10 +1,10 @@
 "use client";
 import { useState, useEffect } from "react";
-import { useParams, useSearchParams } from "next/navigation";
+import { useParams } from "next/navigation";
 import Link from "next/link";
 
 // ── PaginaConfirmar ───────────────────────────────────────────────────────────
-// app/confirmar/[codigo]/page.tsx
+// app/confirmar/[codigo]/[ronda]/page.tsx
 
 interface Invitado {
   id: string;
@@ -89,10 +89,8 @@ function Manchas() {
 }
 
 export default function PaginaConfirmar() {
-  const { codigo } = useParams<{ codigo: string }>();
-  const searchParams = useSearchParams();
-  const rondaParam = parseInt(searchParams.get("r") ?? "1");
-  const ronda = (Math.min(3, Math.max(1, isNaN(rondaParam) ? 1 : rondaParam))) as 1 | 2 | 3;
+  const { codigo, ronda: rondaParam } = useParams<{ codigo: string; ronda: string }>();
+  const ronda = (Math.min(3, Math.max(1, isNaN(parseInt(rondaParam)) ? 1 : parseInt(rondaParam)))) as 1 | 2 | 3;
 
   const [inv, setInv] = useState<Invitacion | null>(null);
   const [error, setError] = useState("");

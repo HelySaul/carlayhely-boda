@@ -234,7 +234,7 @@ function BloqueAcciones({ invitados, codigo, rondaActual, onCopy }: {
   const [modal, setModal] = useState<"inv" | "conf" | null>(null);
   const origin   = typeof window !== "undefined" ? window.location.origin : "";
   const linkInv  = `${origin}/invitacion/${codigo}`;
-  const linkConf = `${origin}/confirmar/${codigo}?r=${rondaActual}`;
+  const linkConf = `${origin}/confirmar/${codigo}/${rondaActual}`;
   const msgInv   = mensajeInvitacion(invitados, linkInv);
   const msgConf  = mensajeConfirmacion(invitados, rondaActual, linkConf);
 

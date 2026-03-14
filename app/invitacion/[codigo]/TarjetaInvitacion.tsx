@@ -179,7 +179,7 @@ export default function TarjetaInvitacion({ inv, rondaActual, codigo }: Props) {
         ) : (
           <div style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
             <Link
-              href={`/confirmar/${codigo}?r=${rondaActual}`}
+              href={`/confirmar/${codigo}/${rondaActual}`}
               style={{
                 display: 'block', background: '#C94F4F', color: '#FDFAF6',
                 borderRadius: '2px', padding: '0.88rem 2rem',
