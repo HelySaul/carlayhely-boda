@@ -223,6 +223,7 @@ function BloqueVerBoda() {
     <Link href="/" style={{ textDecoration: 'none', display: 'block' }}>
       <div style={{
         marginTop: '1.4rem',
+        marginBottom: '1.4rem',
         background: 'linear-gradient(135deg, rgba(212,168,50,0.10) 0%, rgba(212,105,58,0.08) 100%)',
         border: '1px solid rgba(212,168,50,0.30)',
         borderRadius: '3px',
