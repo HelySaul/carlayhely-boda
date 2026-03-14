@@ -16,7 +16,7 @@ export default async function Image() {
       <div style={{ width: "1200px", height: "630px", background: "#FDFAF6", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
 
         {/* Nombres */}
-        <div style={{ display: "flex", alignItems: "center", fontSize: "240px", color: "#2C2320", fontFamily: "Pinyon", lineHeight: 1, marginBottom: "32px" }}>
+        <div style={{ display: "flex", alignItems: "center", fontSize: "180px", color: "#2C2320", fontFamily: "Pinyon", lineHeight: 1, marginBottom: "24px" }}>
           <span>Carla</span>
           <span style={{ margin: "0 4px 0 80px", position: "relative", top: "-10px", display: "flex", alignItems: "center" }}>
             <svg width="90" height="88" viewBox="-100 -20 170 145">
@@ -36,7 +36,7 @@ export default async function Image() {
         </svg>
 
         {/* Texto */}
-        <div style={{ fontSize: "46px", color: "#9A8880", fontFamily: "Georgia, serif", fontStyle: "italic", letterSpacing: "0.05em", textAlign: "center" }}>
+        <div style={{ fontSize: "52px", color: "#2C2320", fontFamily: "Georgia, serif", fontStyle: "italic", letterSpacing: "0.05em", textAlign: "center" }}>
           Te guardamos un lugar en el día que Dios preparó para nosotros
         </div>
 
