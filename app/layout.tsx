@@ -1,93 +1,49 @@
-// app/opengraph-image.tsx
+import type { Metadata } from "next";
+import "./globals.css";
 
-import { ImageResponse } from "next/og";
-import fs from "fs";
-import path from "path";
+export const metadata: Metadata = {
+  metadataBase: new URL("https://carlayhely-boda.vercel.app"),
+  title: "Carla & Hely — 13 de Junio, 2026",
+  description: "Con alegría en el corazón, los invitamos a celebrar el inicio de nuestra vida juntos.",
 
-export const runtime = "nodejs";
-export const alt = "Carla & Hely · 13 de Junio 2026";
-export const size = { width: 1200, height: 630 };
-export const contentType = "image/png";
+  openGraph: {
+    title: "Carla Victoria & Hely Saul — 13 · 06 · 2026",
+    description: "Con alegría en el corazón, los invitamos a celebrar el inicio de nuestra vida juntos.",
+    type: "website",
+    images: [
+      {
+        url: "https://carlayhely-boda.vercel.app/opengraph-image",
+        width: 1200,
+        height: 630,
+        alt: "Carla & Hely · 13 de Junio 2026",
+      },
+    ],
+  },
 
-export default async function OGImage() {
-  // Variable fonts fallan con @next/og — usar solo Pinyon que es estática
-  const pinyon = fs.readFileSync(
-    path.join(process.cwd(), "public/fonts/PinyonScript-Regular.ttf")
-  );
+  icons: {
+    icon: [
+      { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
+      { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
+    ],
+    apple: "/apple-touch-icon.png",
+    other: [
+      { rel: "android-chrome", url: "/android-chrome-192x192.png" },
+      { rel: "android-chrome", url: "/android-chrome-512x512.png" },
+    ],
+  },
 
-  return new ImageResponse(
-    (
-      <div
-        style={{
-          width: "1200px",
-          height: "630px",
-          background: "#FDFAF6",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
-        {/* Nombres en Pinyon */}
-        <div style={{
-          display: "flex",
-          alignItems: "center",
-          gap: "0px",
-          fontSize: "140px",
-          color: "#2C2320",
-          fontFamily: "Pinyon",
-          lineHeight: 1,
-          marginBottom: "20px",
-        }}>
-          <span>Carla</span>
-          <span style={{ fontSize: "70px", color: "#C94F4F", margin: "0 12px", position: "relative", top: "-20px" }}>&amp;</span>
-          <span>Hely</span>
-        </div>
+  manifest: "/site.webmanifest",
+};
 
-        {/* Línea dorada */}
-        <div style={{
-          width: "440px",
-          height: "1px",
-          background: "#D4A832",
-          opacity: 0.5,
-          marginBottom: "36px",
-          display: "flex",
-        }} />
-
-        {/* Fecha — serif del sistema */}
-        <div style={{
-          fontSize: "28px",
-          letterSpacing: "0.22em",
-          color: "#9A8880",
-          fontFamily: "Georgia, serif",
-          fontStyle: "italic",
-          marginBottom: "14px",
-        }}>
-          Sábado · 13 de Junio · 2026
-        </div>
-
-        {/* Lugar */}
-        <div style={{
-          fontSize: "22px",
-          letterSpacing: "0.15em",
-          color: "#D4693A",
-          fontFamily: "Georgia, serif",
-          fontStyle: "italic",
-        }}>
-          Brisas del Renacer · Falcón
-        </div>
-      </div>
-    ),
-    {
-      ...size,
-      fonts: [
-        {
-          name: "Pinyon",
-          data: pinyon,
-          style: "normal",
-          weight: 400,
-        },
-      ],
-    }
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="es">
+      <head>
+        <link rel="preload" href="/fonts/PinyonScript-Regular.ttf" as="font" type="font/ttf" crossOrigin="anonymous" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+      </head>
+      <body>{children}</body>
+    </html>
   );
 }

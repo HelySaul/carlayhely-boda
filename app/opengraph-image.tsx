@@ -1,18 +1,15 @@
 // app/opengraph-image.tsx
-
 import { ImageResponse } from "next/og";
-import fs from "fs";
-import path from "path";
+import { readFile } from "node:fs/promises";
+import { join } from "node:path";
 
-export const runtime = "nodejs";
 export const alt = "Carla & Hely · 13 de Junio 2026";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
-export default async function OGImage() {
-  // Variable fonts fallan con @next/og — usar solo Pinyon que es estática
-  const pinyon = fs.readFileSync(
-    path.join(process.cwd(), "public/fonts/PinyonScript-Regular.ttf")
+export default async function Image() {
+  const pinyon = await readFile(
+    join(process.cwd(), "public/fonts/PinyonScript-Regular.ttf")
   );
 
   return new ImageResponse(
@@ -28,11 +25,10 @@ export default async function OGImage() {
           justifyContent: "center",
         }}
       >
-        {/* Nombres en Pinyon */}
+        {/* Nombres */}
         <div style={{
           display: "flex",
           alignItems: "center",
-          gap: "24px",
           fontSize: "140px",
           color: "#2C2320",
           fontFamily: "Pinyon",
@@ -40,7 +36,14 @@ export default async function OGImage() {
           marginBottom: "20px",
         }}>
           <span>Carla</span>
-          <span style={{ fontSize: "70px", color: "#C94F4F" }}>♡</span>
+          <span style={{
+            fontSize: "70px",
+            color: "#C94F4F",
+            margin: "0 12px",
+            position: "relative",
+            top: "-20px",
+            fontFamily: "Georgia, serif",
+          }}>♡</span>
           <span>Hely</span>
         </div>
 
@@ -54,7 +57,7 @@ export default async function OGImage() {
           display: "flex",
         }} />
 
-        {/* Fecha — serif del sistema */}
+        {/* Fecha */}
         <div style={{
           fontSize: "28px",
           letterSpacing: "0.22em",
