@@ -8,6 +8,14 @@ export const metadata: Metadata = {
     title: "Carla Victoria & Hely Saul — 13 · 06 · 2026",
     description: "Con alegría en el corazón, los invitamos a celebrar el inicio de nuestra vida juntos.",
     type: "website",
+    images: [
+      {
+        url: "https://carlayhely-boda.vercel.app/opengraph-image",
+        width: 1200,
+        height: 630,
+        alt: "Carla & Hely · 13 de Junio 2026",
+      },
+    ],
   },
     icons: {
     icon: [
@@ -21,6 +29,7 @@ export const metadata: Metadata = {
     ],
   },
   manifest: "/site.webmanifest",
+  
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
