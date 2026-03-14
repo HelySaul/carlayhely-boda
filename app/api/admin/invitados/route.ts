@@ -35,7 +35,7 @@ export async function PATCH(req: NextRequest) {
   if (!id) return NextResponse.json({ error: 'ID requerido' }, { status: 400 });
 
   const body = await req.json();
-  const allowed = ['nombre', 'whatsapp', 'confirmacion_1', 'confirmacion_2', 'confirmacion_3', 'asistio'];
+  const allowed = ['nombre', 'whatsapp', 'sexo', 'confirmacion_1', 'confirmacion_2', 'confirmacion_3', 'asistio'];
   const update: Record<string, unknown> = {};
 
   for (const key of allowed) {
