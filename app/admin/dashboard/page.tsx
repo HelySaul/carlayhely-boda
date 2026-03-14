@@ -227,6 +227,14 @@ export default function AdminDashboard() {
             ))}
           </div>
           <button onClick={exportCSV} style={{ ...btnOutline, fontSize: "0.7rem", padding: "0.55rem 1rem" }}>CSV</button>
+          <button
+            onClick={() => {
+              const url = typeof window !== "undefined" ? window.location.origin : "";
+              navigator.clipboard.writeText(url);
+            }}
+            title="Copiar link de la página"
+            style={{ ...btnOutline, fontSize: "0.7rem", padding: "0.55rem 1rem" }}
+          >🔗 Página</button>
           <button onClick={logout} style={{ ...btnOutline, borderColor: "var(--ink-light)", color: "var(--ink-light)", fontSize: "0.7rem", padding: "0.55rem 1rem" }}>Salir</button>
         </div>
       </header>

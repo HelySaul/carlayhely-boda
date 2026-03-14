@@ -2,7 +2,7 @@
 // ── TabInvitaciones.tsx ───────────────────────────────────────────────────────
 
 import { useState, useCallback, useRef } from "react";
-import { Link as LinkIcon, Mail as MailIcon, CalendarCheck as CalendarCheckIcon } from "lucide-react";
+import { Mail as MailIcon, CalendarCheck as CalendarCheckIcon } from "lucide-react";
 import { type Invitacion, type Invitado, type FiltrosState } from "./types";
 import { fechaCorta } from "./helpers";
 import { ModalShell } from "./ModalShell";
@@ -62,15 +62,15 @@ function saludoInvitados(invitados: Invitado[]): string {
 function mensajeInvitacion(invitados: Invitado[], link: string): string {
   const saludo  = saludoInvitados(invitados);
   const esGrupo = invitados.length > 1;
-  return `${saludo}\n\nCon mucho cariño queremos contarte que ${esGrupo ? "son parte" : "eres parte"} de nuestra boda. Preparamos ${esGrupo ? "su" : "tu"} invitación con amor — ábrela cuando ${esGrupo ? "puedan" : "puedas"} 🤍\n\n${link}`;
+  return `${saludo}\n\n${link}\n\nCon mucho cariño queremos contarte que ${esGrupo ? "son parte" : "eres parte"} de nuestra boda. Preparamos ${esGrupo ? "su" : "tu"} invitación con amor — ábrela cuando ${esGrupo ? "puedan" : "puedas"} 🤍`;
 }
 
 function mensajeConfirmacion(invitados: Invitado[], ronda: 1 | 2 | 3, link: string): string {
   const saludo  = saludoInvitados(invitados);
   const esGrupo = invitados.length > 1;
-  if (ronda === 1) return `${saludo}\n\nCon mucho cariño queremos contarte que ${esGrupo ? "son parte" : "eres parte"} de nuestra boda. Preparamos ${esGrupo ? "su" : "tu"} invitación con amor — ábrela cuando ${esGrupo ? "puedan" : "puedas"} 🤍\n\n${link}`;
-  if (ronda === 2) return `${saludo}\n\nYa falta poco y queremos ${esGrupo ? "tenerlos presentes" : "tenerte presente"}. ${esGrupo ? "Les" : "Te"} pedimos que ${esGrupo ? "confirmen su" : "confirmes tu"} asistencia una vez más, para poder organizarlo todo con el cuidado que ${esGrupo ? "merecen" : "mereces"} 🤍\n\n${link}`;
-  return `${saludo}\n\nEste es nuestro último aviso antes del gran día. Los espacios son limitados y necesitamos ${esGrupo ? "su confirmación para reservar los suyos" : "tu confirmación para reservar el tuyo"} 🤍\n\n${link}`;
+  if (ronda === 1) return `${saludo}\n\n${link}\n\nCon mucho cariño queremos contarte que ${esGrupo ? "son parte" : "eres parte"} de nuestra boda. Preparamos ${esGrupo ? "su" : "tu"} invitación con amor — ábrela cuando ${esGrupo ? "puedan" : "puedas"} 🤍`;
+  if (ronda === 2) return `${saludo}\n\n${link}\n\nYa falta poco y queremos ${esGrupo ? "tenerlos presentes" : "tenerte presente"}. ${esGrupo ? "Les" : "Te"} pedimos que ${esGrupo ? "confirmen su" : "confirmes tu"} asistencia una vez más, para poder organizarlo todo con el cuidado que ${esGrupo ? "merecen" : "mereces"} 🤍`;
+  return `${saludo}\n\n${link}\n\nEste es nuestro último aviso antes del gran día. Los espacios son limitados y necesitamos ${esGrupo ? "su confirmación para reservar los suyos" : "tu confirmación para reservar el tuyo"} 🤍`;
 }
 
 // ── Three-way check ───────────────────────────────────────────────────────────
@@ -250,15 +250,6 @@ function BloqueAcciones({ invitados, codigo, rondaActual, onCopy }: {
   return (
     <>
       <div style={{ display: "flex", gap: "0.5rem", marginBottom: "1rem" }}>
-
-        {/* Link invitación — copia directo */}
-        <button
-          title="Copiar link de invitación"
-          onClick={e => { e.stopPropagation(); navigator.clipboard.writeText(linkInv); onCopy("Link copiado"); }}
-          style={iconBtn}
-        >
-          <LinkIcon size={15} />
-        </button>
 
         {/* Mensaje invitación — abre modal */}
         <button
