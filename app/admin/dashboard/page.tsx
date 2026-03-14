@@ -43,6 +43,7 @@ export default function AdminDashboard() {
     setToastVisible(true);
     toastRef.current = setTimeout(() => setToastVisible(false), 2000);
   }
+  const [modalNueva, setModalNueva] = useState(false);
   const [modalAdd, setModalAdd]     = useState<Invitacion | null>(null);
   const [modalUsuario, setModalUsuario] = useState(false);
 
