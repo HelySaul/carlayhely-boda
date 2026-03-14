@@ -36,9 +36,11 @@ export default async function Image() {
           marginBottom: "20px",
         }}>
           <span>Carla</span>
-          <span style={{ fontSize: "70px", color: "#C94F4F", margin: "0 8px", position: "relative", top: "-20px", display: "flex", alignItems: "center" }}>
-            <svg width="60" height="60" viewBox="0 0 24 24" fill="#C94F4F">
-              <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+          <span style={{ margin: "0 8px", position: "relative", top: "-20px", display: "flex", alignItems: "center" }}>
+            <svg width="52" height="72" viewBox="-80 -60 160 130">
+              <path d="M0,40 C0,18 -18,2 -36,2 C-54,2 -68,16 -68,34 C-68,72 0,105 0,105 C0,105 68,72 68,34 C68,16 54,2 36,2 C18,2 0,18 0,40 Z"
+                fill="none" stroke="#C94F4F" stroke-width="1.2" stroke-linecap="round"
+                transform="matrix(1,0,-0.32,1.35,0,-50)"/>
             </svg>
           </span>
           <span>Hely</span>
