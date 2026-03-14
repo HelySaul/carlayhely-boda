@@ -62,15 +62,15 @@ function saludoInvitados(invitados: Invitado[]): string {
 function mensajeInvitacion(invitados: Invitado[], link: string): string {
   const saludo  = saludoInvitados(invitados);
   const esGrupo = invitados.length > 1;
-  return `${saludo}\n\n${link}\n\nCon mucho cariño queremos contarte que ${esGrupo ? "son parte" : "eres parte"} de nuestra boda. Preparamos ${esGrupo ? "su" : "tu"} invitación con amor — ábrela cuando ${esGrupo ? "puedan" : "puedas"} 🤍`;
+  return `${link}\n\n${saludo}\n\nCon mucho cariño queremos contarte que ${esGrupo ? "son parte" : "eres parte"} de nuestra boda. Preparamos ${esGrupo ? "su" : "tu"} invitación con amor — ábrela cuando ${esGrupo ? "puedan" : "puedas"} 🤍`;
 }
 
 function mensajeConfirmacion(invitados: Invitado[], ronda: 1 | 2 | 3, link: string): string {
   const saludo  = saludoInvitados(invitados);
   const esGrupo = invitados.length > 1;
-  if (ronda === 1) return `${saludo}\n\n${link}\n\nCon mucho cariño queremos contarte que ${esGrupo ? "son parte" : "eres parte"} de nuestra boda. Preparamos ${esGrupo ? "su" : "tu"} invitación con amor — ábrela cuando ${esGrupo ? "puedan" : "puedas"} 🤍`;
-  if (ronda === 2) return `${saludo}\n\n${link}\n\nYa falta poco y queremos ${esGrupo ? "tenerlos presentes" : "tenerte presente"}. ${esGrupo ? "Les" : "Te"} pedimos que ${esGrupo ? "confirmen su" : "confirmes tu"} asistencia una vez más, para poder organizarlo todo con el cuidado que ${esGrupo ? "merecen" : "mereces"} 🤍`;
-  return `${saludo}\n\n${link}\n\nEste es nuestro último aviso antes del gran día. Los espacios son limitados y necesitamos ${esGrupo ? "su confirmación para reservar los suyos" : "tu confirmación para reservar el tuyo"} 🤍`;
+  if (ronda === 1) return `${link}\n\n${saludo}\n\nCon mucho cariño queremos contarte que ${esGrupo ? "son parte" : "eres parte"} de nuestra boda. Preparamos ${esGrupo ? "su" : "tu"} invitación con amor — ábrela cuando ${esGrupo ? "puedan" : "puedas"} 🤍`;
+  if (ronda === 2) return `${link}\n\n${saludo}\n\nYa falta poco y queremos ${esGrupo ? "tenerlos presentes" : "tenerte presente"}. ${esGrupo ? "Les" : "Te"} pedimos que ${esGrupo ? "confirmen su" : "confirmes tu"} asistencia una vez más, para poder organizarlo todo con el cuidado que ${esGrupo ? "merecen" : "mereces"} 🤍`;
+  return `${link}\n\n${saludo}\n\nEste es nuestro último aviso antes del gran día. Los espacios son limitados y necesitamos ${esGrupo ? "su confirmación para reservar los suyos" : "tu confirmación para reservar el tuyo"} 🤍`;
 }
 
 // ── Three-way check ───────────────────────────────────────────────────────────
