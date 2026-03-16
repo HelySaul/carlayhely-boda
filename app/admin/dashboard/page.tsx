@@ -5,7 +5,7 @@
 import { useState, useEffect, useMemo, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { type Invitacion, type SortKey, type SortDir, type TipoFiltro, type ConfFiltro, type FiltrosState } from "./types";
-import { token, authHeaders, parseAdminToken } from "./helpers";
+import { token, authHeaders, parseAdminToken, usePermisos } from "./helpers";
 import { btnOutline } from "./styles";
 import { StatCard }    from "./StatCard";
 import { TabsNav }     from "./TabsNav";
@@ -13,6 +13,7 @@ import { TabInvitaciones } from "./TabInvitaciones";
 import { TabLista }        from "./TabLista";
 import { TabConfirmados }  from "./TabConfirmados";
 import { TabUsuarios }     from "./TabUsuarios";
+import { TabMesas, type Mesa }        from "./TabMesas";
 import { ModalNuevaInvitacion } from "./modals/ModalNuevaInvitacion";
 import { ModalAgregarPersona }  from "./modals/ModalAgregarPersona";
 import { ModalNuevoUsuario }    from "./modals/ModalNuevoUsuario";
@@ -22,6 +23,7 @@ export default function AdminDashboard() {
 
   // ── Data ────────────────────────────────────────────────────────────────────
   const [invitaciones, setInvitaciones] = useState<Invitacion[]>([]);
+  const [mesas, setMesas]               = useState<Mesa[]>([]);
   const [loading, setLoading]           = useState(true);
   const [usuarios, setUsuarios]         = useState<{ id: string; username: string; nombre: string; created_at: string }[]>([]);
   const [rondaActual, setRondaActual]   = useState<1|2|3>(1);
@@ -35,7 +37,8 @@ export default function AdminDashboard() {
   });
 
   // ── UI state ─────────────────────────────────────────────────────────────────
-  const [tab, setTab]               = useState<"invitaciones" | "lista" | "confirmados" | "usuarios">("invitaciones");
+  const permisos = usePermisos();
+  const [tab, setTab] = useState<"invitaciones" | "lista" | "confirmados" | "mesas" | "usuarios">("invitaciones");
   const [toastVisible, setToastVisible] = useState(false);
   const toastRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   function mostrarToast() {
@@ -68,7 +71,14 @@ export default function AdminDashboard() {
     fetchData();
     fetch("/api/admin/config", { headers: { Authorization: `Bearer ${token()}` } })
       .then(r => r.json()).then(d => { if (d.ronda) setRondaActual(d.ronda); });
+    cargarMesas();
   }, [router]);
+
+  function cargarMesas() {
+    fetch("/api/admin/mesas", { headers: { Authorization: `Bearer ${token()}` } })
+      .then(r => r.ok ? r.json() : [])
+      .then(d => setMesas(d));
+  }
 
   useEffect(() => {
     if (tab !== "usuarios") return;
@@ -402,6 +412,13 @@ export default function AdminDashboard() {
           <TabLista lista={allInvFlat} filtros={filtros} />
         ) : tab === "confirmados" ? (
           <TabConfirmados lista={confirmadosFiltrados} filtros={filtros} />
+        ) : tab === "mesas" ? (
+          <TabMesas
+            mesas={mesas}
+            invitaciones={invitaciones.map(i => ({ id: i.id, codigo: i.codigo, nombre: i.nombre ?? null, invitados: i.invitados.map(x => ({ id: x.id, nombre: x.nombre })), mesa_id: (i as any).mesa_id ?? null }))}
+            onRefresh={cargarMesas}
+            puedeEditar={permisos.puedeEditarInvitados}
+          />
         ) : (
           <TabUsuarios usuarios={usuarios} onNuevo={() => setModalUsuario(true)} />
         )}

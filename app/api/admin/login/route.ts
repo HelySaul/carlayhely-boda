@@ -1,3 +1,4 @@
+// app/api/admin/login/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
 import { getSupabaseAdmin } from '@/lib/supabase';
@@ -26,7 +27,13 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Password incorrecto' }, { status: 401 });
     }
 
-    const token = signToken({ username: admin.username, nombre: admin.nombre || admin.username, id: admin.id });
+    const token = signToken({
+      id: admin.id,
+      username: admin.username,
+      nombre: admin.nombre || admin.username,
+      rol: admin.rol ?? 'organizador',
+    });
+
     return NextResponse.json({ token });
 
   } catch {

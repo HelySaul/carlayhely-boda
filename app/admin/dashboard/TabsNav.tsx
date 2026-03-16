@@ -1,11 +1,12 @@
 // ── TabsNav.tsx ───────────────────────────────────────────────────────────────
 
-type Tab = "invitaciones" | "lista" | "confirmados" | "usuarios";
+type Tab = "invitaciones" | "lista" | "confirmados" | "mesas" | "usuarios";
 
 const TABS: { key: Tab; label: string }[] = [
   { key: "invitaciones", label: "Invitaciones" },
   { key: "lista",        label: "Todos" },
   { key: "confirmados",  label: "Confirmados" },
+  { key: "mesas",        label: "Mesas" },
   { key: "usuarios",     label: "Usuarios" },
 ];
 

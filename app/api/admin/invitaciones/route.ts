@@ -1,3 +1,4 @@
+// app/api/admin/invitaciones/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import { getSupabaseAdmin } from '@/lib/supabase';
 import { getAdminFromRequest } from '@/lib/auth';
@@ -19,7 +20,7 @@ export async function GET(req: NextRequest) {
   const { data, error } = await getSupabaseAdmin()
     .from('invitaciones')
     .select(`*, invitados(*)`)
-    .order('created_at', { ascending: false });
+    .order('created_at', { ascending: true });
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
   return NextResponse.json(data);
@@ -35,7 +36,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Al menos un invitado es requerido' }, { status: 400 });
   }
 
-  // Generar código único
   let codigo = generarCodigo();
   let intentos = 0;
   while (intentos < 10) {
@@ -45,7 +45,6 @@ export async function POST(req: NextRequest) {
     intentos++;
   }
 
-  // Crear invitacion
   const { data: invitacion, error: rError } = await getSupabaseAdmin()
     .from('invitaciones')
     .insert({ codigo, nombre: nombre || null, creado_por: creado_por || null })
@@ -54,7 +53,6 @@ export async function POST(req: NextRequest) {
 
   if (rError) return NextResponse.json({ error: rError.message }, { status: 500 });
 
-  // Crear invitados
   const rows = invitados.map((inv: { nombre: string; whatsapp?: string }) => ({
     invitacion_id: invitacion.id,
     nombre: inv.nombre.trim(),
@@ -64,7 +62,6 @@ export async function POST(req: NextRequest) {
   const { error: iError } = await getSupabaseAdmin().from('invitados').insert(rows);
   if (iError) return NextResponse.json({ error: iError.message }, { status: 500 });
 
-  // Retornar invitacion completa
   const { data: full } = await getSupabaseAdmin()
     .from('invitaciones')
     .select(`*, invitados(*)`)
@@ -74,15 +71,20 @@ export async function POST(req: NextRequest) {
   return NextResponse.json(full, { status: 201 });
 }
 
-// PATCH — actualizar nombre del grupo
+// PATCH — actualizar nombre del grupo y/o mesa_id
 export async function PATCH(req: NextRequest) {
   const deny = await auth(req); if (deny) return deny;
 
   const id = req.nextUrl.searchParams.get('id');
   if (!id) return NextResponse.json({ error: 'ID requerido' }, { status: 400 });
 
-  const { nombre } = await req.json();
-  const { error } = await getSupabaseAdmin().from('invitaciones').update({ nombre: nombre || null }).eq('id', id);
+  const body = await req.json();
+  const update: Record<string, unknown> = {};
+
+  if ('nombre'  in body) update.nombre  = body.nombre  || null;
+  if ('mesa_id' in body) update.mesa_id = body.mesa_id || null;
+
+  const { error } = await getSupabaseAdmin().from('invitaciones').update(update).eq('id', id);
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
   return NextResponse.json({ ok: true });
 }

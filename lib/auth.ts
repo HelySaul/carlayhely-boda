@@ -1,23 +1,27 @@
 import jwt from 'jsonwebtoken';
-import { cookies } from 'next/headers';
 
 const SECRET = process.env.JWT_SECRET!;
-const COOKIE = 'admin_token';
 
-export function signToken(payload: object): string {
+export interface AdminPayload {
+  id: string;
+  username: string;
+  nombre: string;
+  rol: 'super_admin' | 'organizador' | 'recepcion';
+}
+
+export function signToken(payload: AdminPayload): string {
   return jwt.sign(payload, SECRET, { expiresIn: '12h' });
 }
 
-export function verifyToken(token: string): { username: string } | null {
+export function verifyToken(token: string): AdminPayload | null {
   try {
-    return jwt.verify(token, SECRET) as { username: string };
+    return jwt.verify(token, SECRET) as AdminPayload;
   } catch {
     return null;
   }
 }
 
-export async function getAdminFromRequest(req: Request): Promise<{ username: string } | null> {
-  // Check Authorization header
+export async function getAdminFromRequest(req: Request): Promise<AdminPayload | null> {
   const auth = req.headers.get('authorization');
   if (auth?.startsWith('Bearer ')) {
     return verifyToken(auth.slice(7));
