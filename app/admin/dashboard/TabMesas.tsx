@@ -44,6 +44,7 @@ export function TabMesas({ mesas, invitaciones, onRefresh, puedeEditar }: Props)
   const sinMesa = invitaciones.filter(i => !i.mesa_id);
 
   async function crearMesa() {
+    console.log('entra aqui')
     if (!nuevaNum) return;
     setCreando(true);
     await fetch("/api/admin/mesas", {
