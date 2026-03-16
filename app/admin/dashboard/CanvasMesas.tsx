@@ -237,13 +237,16 @@ export function CanvasMesas({ mesas, invitaciones, onRefresh, puedeEditar }: Pro
       const dy = ev.clientY - draggingMesa.current.startY;
       const newX = Math.max(80, Math.min(CANVAS_W - 80, draggingMesa.current.origX + dx));
       const newY = Math.max(80, Math.min(CANVAS_H - 80, draggingMesa.current.origY + dy));
-      await fetch(`/api/admin/mesas?id=${draggingMesa.current.id}`, {
-        method: "PATCH", headers: authHeaders(),
-        body: JSON.stringify({ pos_x: newX, pos_y: newY }),
-      });
+      const mesaId = draggingMesa.current.id;
       draggingMesa.current = null;
       window.removeEventListener("mousemove", onMove);
       window.removeEventListener("mouseup", onUp);
+      // Actualizar local inmediatamente, fetch en background
+      setMesasLocal(ms => ms.map(m => m.id === mesaId ? { ...m, pos_x: newX, pos_y: newY } : m));
+      fetch(`/api/admin/mesas?id=${mesaId}`, {
+        method: "PATCH", headers: authHeaders(),
+        body: JSON.stringify({ pos_x: newX, pos_y: newY }),
+      });
     }
 
     window.addEventListener("mousemove", onMove);
