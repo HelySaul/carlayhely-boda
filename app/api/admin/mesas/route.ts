@@ -17,7 +17,7 @@ export async function GET(req: NextRequest) {
   const { data, error } = await getSupabaseAdmin()
     .from('mesas')
     .select(`
-      id, numero, alias,
+      id, numero, alias, pos_x, pos_y,
       invitaciones (
         id, codigo, nombre,
         invitados ( id, nombre, sexo, confirmacion_1, confirmacion_2, confirmacion_3, asistio )
@@ -29,18 +29,38 @@ export async function GET(req: NextRequest) {
   return NextResponse.json(data);
 }
 
-// POST — crear mesa
+// POST — crear mesa con número automático
 export async function POST(req: NextRequest) {
   const admin = await auth(req);
   if (admin instanceof NextResponse) return admin;
   if (admin.rol !== 'super_admin') return NextResponse.json({ error: 'Sin permisos' }, { status: 403 });
 
-  const { numero, alias } = await req.json();
-  if (!numero) return NextResponse.json({ error: 'Número requerido' }, { status: 400 });
+  const body = await req.json().catch(() => ({}));
+  const alias = body.alias || null;
+
+  // Número automático = max(numero) + 1
+  const { data: last } = await getSupabaseAdmin()
+    .from('mesas')
+    .select('numero')
+    .order('numero', { ascending: false })
+    .limit(1)
+    .single();
+
+  const numero = (last?.numero ?? 0) + 1;
+
+  // Posición inicial escalonada para no solapar
+  const { data: todas } = await getSupabaseAdmin()
+    .from('mesas').select('pos_x, pos_y');
+  const cols = 4;
+  const idx = (todas?.length ?? 0);
+  const col = idx % cols;
+  const row = Math.floor(idx / cols);
+  const pos_x = 160 + col * 280;
+  const pos_y = 160 + row * 280;
 
   const { data, error } = await getSupabaseAdmin()
     .from('mesas')
-    .insert({ numero, alias: alias || null })
+    .insert({ numero, alias, pos_x, pos_y })
     .select()
     .single();
 
@@ -73,7 +93,7 @@ export async function PATCH(req: NextRequest) {
   return NextResponse.json(data);
 }
 
-// DELETE — eliminar mesa
+// DELETE — eliminar mesa y renumerar consecutivamente
 export async function DELETE(req: NextRequest) {
   const admin = await auth(req);
   if (admin instanceof NextResponse) return admin;
@@ -84,5 +104,9 @@ export async function DELETE(req: NextRequest) {
 
   const { error } = await getSupabaseAdmin().from('mesas').delete().eq('id', id);
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+
+  // Renumerar consecutivamente
+  await getSupabaseAdmin().rpc('renumerar_mesas');
+
   return NextResponse.json({ ok: true });
 }

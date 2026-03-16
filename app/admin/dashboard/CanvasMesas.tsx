@@ -1,6 +1,5 @@
 "use client";
 // ── CanvasMesas.tsx ───────────────────────────────────────────────────────────
-// Canvas libre con mesas circulares, drag de mesas y drag de grupos a mesas.
 
 import { useState, useRef, useCallback, useEffect } from "react";
 import { authHeaders } from "./helpers";
@@ -35,168 +34,152 @@ interface Props {
 }
 
 const CANVAS_W = 2400;
-const CANVAS_H = 1600;
-const RADIO_BASE = 56; // radio mínimo de la mesa
-const AVATAR_R = 14;   // radio de cada cabecita
+const CANVAS_H = 1800;
+const AVATAR_R = 18;
 
-function mesaRadio(totalPersonas: number) {
-  // Radio crece con más personas para que quepan las cabecitas
-  const circunferencia = Math.max(totalPersonas, 4) * (AVATAR_R * 2 + 6);
-  return Math.max(RADIO_BASE, circunferencia / (2 * Math.PI));
+function mesaRadio(n: number) {
+  const circ = Math.max(n, 4) * (AVATAR_R * 2 + 10);
+  return Math.max(70, circ / (2 * Math.PI));
 }
 
-function posicionesAlrededor(cx: number, cy: number, r: number, n: number) {
+function posicionesAlrededor(r: number, n: number) {
   return Array.from({ length: n }, (_, i) => {
     const angle = (2 * Math.PI * i) / n - Math.PI / 2;
-    return { x: cx + r * Math.cos(angle), y: cy + r * Math.sin(angle) };
+    return { x: r * Math.cos(angle), y: r * Math.sin(angle) };
   });
 }
 
-function inicialNombre(nombre: string) {
-  return nombre.trim().charAt(0).toUpperCase();
-}
+function inicialNombre(n: string) { return n.trim().charAt(0).toUpperCase(); }
 
-function colorPorInicial(inicial: string) {
-  const colores = ["var(--red)", "var(--terracotta)", "var(--gold)", "var(--olive)", "var(--lavender)", "var(--periwinkle)"];
-  return colores[inicial.charCodeAt(0) % colores.length];
-}
-
-// ── Tooltip ───────────────────────────────────────────────────────────────────
-function Tooltip({ nombre, x, y }: { nombre: string; x: number; y: number }) {
-  return (
-    <div style={{
-      position: "absolute",
-      left: x, top: y - 32,
-      transform: "translateX(-50%)",
-      background: "var(--ink)", color: "var(--cream)",
-      padding: "0.2rem 0.5rem", borderRadius: "4px",
-      fontFamily: "'Montserrat',sans-serif", fontSize: "0.6rem",
-      whiteSpace: "nowrap", pointerEvents: "none", zIndex: 100,
-    }}>
-      {nombre}
-    </div>
-  );
+function colorPorInicial(c: string) {
+  const cols = ["#C94F4F","#D4693A","#D4A832","#7A9438","#9B8BB4","#7A8FBC"];
+  return cols[c.charCodeAt(0) % cols.length];
 }
 
 // ── MesaCirculo ───────────────────────────────────────────────────────────────
-function MesaCirculo({ mesa, onDragMesaStart, onDropInv, isDragOver, puedeEditar, onEliminar }: {
-  mesa: MesaCanvas;
+function MesaCirculo({ mesa, onDragMesaStart, onDragOver, onDrop, onDragLeave, isDragOver, puedeEditar, onEliminar }: {
+  mesa: MesaCanvas & { pos_x: number; pos_y: number };
   onDragMesaStart: (e: React.MouseEvent, id: string) => void;
-  onDropInv: (e: React.DragEvent, mesaId: string) => void;
+  onDragOver: (e: React.DragEvent, id: string) => void;
+  onDrop: (e: React.DragEvent, id: string) => void;
+  onDragLeave: () => void;
   isDragOver: boolean;
   puedeEditar: boolean;
   onEliminar: (id: string, numero: number) => void;
 }) {
   const [tooltip, setTooltip] = useState<{ nombre: string; x: number; y: number } | null>(null);
-  const totalPersonas = mesa.invitaciones.reduce((a, i) => a + i.invitados.length, 0);
-  const r = mesaRadio(totalPersonas);
-  const todosInvitados = mesa.invitaciones.flatMap(i => i.invitados);
-  const posiciones = posicionesAlrededor(0, 0, r + AVATAR_R + 4, todosInvitados.length);
+  const todos = mesa.invitaciones.flatMap(i => i.invitados);
+  const r = mesaRadio(todos.length);
+  const posAv = posicionesAlrededor(r + AVATAR_R + 8, todos.length);
+  const SIZE = (r + AVATAR_R + 28) * 2 + 60; // +60 para nombres arriba
+  const cx = SIZE / 2;
+  const cy = SIZE / 2 + 30; // bajar el centro para dejar espacio arriba
 
-  // Info del header: grupos + individuales
-  const grupos = mesa.invitaciones.filter(i => i.invitados.length > 1);
-  const individuales = mesa.invitaciones.filter(i => i.invitados.length === 1);
-  const headerTexto = [
-    ...grupos.map(g => g.nombre || g.invitados.map(x => x.nombre.split(" ")[0]).join(" & ")),
-    ...individuales.map(i => i.invitados[0].nombre.split(" ")[0]),
-  ].join(", ");
-
-  const SIZE = (r + AVATAR_R + 20) * 2;
+  // Nombres de grupos para header
+  const lineasHeader: string[] = mesa.invitaciones.map(inv =>
+    inv.nombre || inv.invitados.map(x => x.nombre.split(" ")[0]).join(" & ")
+  );
 
   return (
     <div
       style={{
         position: "absolute",
-        left: mesa.pos_x ?? 100, top: mesa.pos_y ?? 100,
-        width: SIZE, height: SIZE,
+        left: mesa.pos_x,
+        top: mesa.pos_y,
+        width: SIZE,
         transform: "translate(-50%, -50%)",
         cursor: puedeEditar ? "grab" : "default",
         userSelect: "none",
       }}
       onMouseDown={e => puedeEditar && onDragMesaStart(e, mesa.id)}
-      onDragOver={e => e.preventDefault()}
-      onDrop={e => onDropInv(e, mesa.id)}
+      onDragOver={e => onDragOver(e, mesa.id)}
+      onDrop={e => onDrop(e, mesa.id)}
+      onDragLeave={onDragLeave}
     >
-      <svg width={SIZE} height={SIZE} style={{ overflow: "visible", position: "absolute", top: 0, left: 0 }}>
-        {/* Círculo de la mesa */}
-        <circle
-          cx={SIZE / 2} cy={SIZE / 2} r={r}
-          fill={isDragOver ? "rgba(212,105,58,0.12)" : "rgba(212,105,58,0.07)"}
-          stroke={isDragOver ? "var(--terracotta)" : "var(--border-medium)"}
-          strokeWidth={isDragOver ? 2 : 1.5}
+      <svg width={SIZE} height={SIZE + 10} style={{ overflow: "visible" }}>
+
+        {/* Círculo mesa */}
+        <circle cx={cx} cy={cy} r={r}
+          fill={isDragOver ? "rgba(212,105,58,0.15)" : "rgba(212,105,58,0.08)"}
+          stroke={isDragOver ? "#D4693A" : "rgba(212,105,58,0.4)"}
+          strokeWidth={isDragOver ? 2.5 : 1.5}
         />
 
-        {/* Número de mesa */}
-        <text x={SIZE / 2} y={SIZE / 2 - 6} textAnchor="middle"
-          style={{ fontFamily: "'Montserrat',sans-serif", fontSize: "1.1rem", fontWeight: 700, fill: "var(--terracotta)" }}>
+        {/* Número */}
+        <text x={cx} y={cy - 8} textAnchor="middle"
+          style={{ fontFamily: "'Montserrat',sans-serif", fontSize: "22px", fontWeight: 800, fill: "var(--terracotta)" }}>
           {mesa.numero}
         </text>
+
+        {/* Alias */}
         {mesa.alias && (
-          <text x={SIZE / 2} y={SIZE / 2 + 10} textAnchor="middle"
-            style={{ fontFamily: "'Montserrat',sans-serif", fontSize: "0.52rem", fill: "var(--ink-light)" }}>
+          <text x={cx} y={cy + 14} textAnchor="middle"
+            style={{ fontFamily: "'Montserrat',sans-serif", fontSize: "11px", fill: "var(--ink-mid)" }}>
             {mesa.alias}
           </text>
         )}
-        <text x={SIZE / 2} y={SIZE / 2 + (mesa.alias ? 24 : 12)} textAnchor="middle"
-          style={{ fontFamily: "'Montserrat',sans-serif", fontSize: "0.5rem", fill: "var(--ink-light)" }}>
-          {totalPersonas}p
+
+        {/* Total personas */}
+        <text x={cx} y={cy + (mesa.alias ? 30 : 14)} textAnchor="middle"
+          style={{ fontFamily: "'Montserrat',sans-serif", fontSize: "11px", fill: "var(--ink-light)" }}>
+          {todos.length} {todos.length === 1 ? "persona" : "personas"}
         </text>
 
-        {/* Cabecitas alrededor */}
-        {todosInvitados.map((inv, i) => {
-          const pos = posiciones[i];
-          const cx = SIZE / 2 + pos.x;
-          const cy = SIZE / 2 + pos.y;
-          const inicial = inicialNombre(inv.nombre);
-          const color = colorPorInicial(inicial);
+        {/* Cabecitas */}
+        {todos.map((inv, i) => {
+          const p = posAv[i];
+          const ax = cx + p.x;
+          const ay = cy + p.y;
+          const ini = inicialNombre(inv.nombre);
+          const col = colorPorInicial(ini);
           return (
-            <g key={inv.id}
-              style={{ cursor: "pointer" }}
-              onMouseEnter={() => setTooltip({ nombre: inv.nombre, x: cx, y: cy })}
+            <g key={inv.id} style={{ cursor: "pointer" }}
+              onMouseEnter={() => setTooltip({ nombre: inv.nombre, x: ax, y: ay })}
               onMouseLeave={() => setTooltip(null)}
-              onClick={() => setTooltip(t => t?.nombre === inv.nombre ? null : { nombre: inv.nombre, x: cx, y: cy })}
+              onClick={() => setTooltip(t => t?.nombre === inv.nombre ? null : { nombre: inv.nombre, x: ax, y: ay })}
             >
-              <circle cx={cx} cy={cy} r={AVATAR_R}
-                fill={color} opacity={0.85}
-                stroke="var(--cream)" strokeWidth={1.5}
-              />
-              <text x={cx} y={cy + 4} textAnchor="middle"
-                style={{ fontFamily: "'Montserrat',sans-serif", fontSize: "0.65rem", fontWeight: 600, fill: "var(--cream)", pointerEvents: "none" }}>
-                {inicial}
+              <circle cx={ax} cy={ay} r={AVATAR_R} fill={col} opacity={0.88} stroke="#FDFAF6" strokeWidth={2}/>
+              <text x={ax} y={ay + 5} textAnchor="middle"
+                style={{ fontFamily: "'Montserrat',sans-serif", fontSize: "13px", fontWeight: 700, fill: "#FDFAF6", pointerEvents: "none" }}>
+                {ini}
               </text>
             </g>
           );
         })}
 
-        {/* Eliminar */}
+        {/* Nombres de grupos — arriba en vertical, negrita */}
+        {lineasHeader.map((linea, i) => (
+          <text key={i}
+            x={cx} y={cy - r - AVATAR_R - 16 - (lineasHeader.length - 1 - i) * 18}
+            textAnchor="middle"
+            style={{ fontFamily: "'Montserrat',sans-serif", fontSize: "12px", fontWeight: 700, fill: "var(--ink)" }}>
+            {linea}
+          </text>
+        ))}
+
+        {/* Botón eliminar */}
         {puedeEditar && (
           <g style={{ cursor: "pointer" }}
             onClick={e => { e.stopPropagation(); onEliminar(mesa.id, mesa.numero); }}>
-            <circle cx={SIZE / 2 + r - 2} cy={SIZE / 2 - r + 2} r={9}
-              fill="var(--cream)" stroke="var(--border-subtle)" strokeWidth={1}/>
-            <text x={SIZE / 2 + r - 2} y={SIZE / 2 - r + 6} textAnchor="middle"
-              style={{ fontFamily: "sans-serif", fontSize: "0.7rem", fill: "var(--ink-light)" }}>×</text>
+            <circle cx={cx + r - 4} cy={cy - r + 4} r={11} fill="#FDFAF6" stroke="rgba(201,79,79,0.3)" strokeWidth={1}/>
+            <text x={cx + r - 4} y={cy - r + 9} textAnchor="middle"
+              style={{ fontFamily: "sans-serif", fontSize: "14px", fill: "var(--ink-light)" }}>×</text>
           </g>
         )}
       </svg>
 
       {/* Tooltip */}
       {tooltip && (
-        <Tooltip nombre={tooltip.nombre} x={tooltip.x} y={tooltip.y} />
-      )}
-
-      {/* Header info grupos */}
-      {totalPersonas > 0 && (
         <div style={{
-          position: "absolute", top: -28, left: "50%",
+          position: "absolute",
+          left: tooltip.x, top: tooltip.y - 36,
           transform: "translateX(-50%)",
-          whiteSpace: "nowrap", maxWidth: "200px",
-          overflow: "hidden", textOverflow: "ellipsis",
-          fontFamily: "'Montserrat',sans-serif", fontSize: "0.52rem",
-          color: "var(--ink-mid)", letterSpacing: "0.04em",
-          pointerEvents: "none",
+          background: "var(--ink)", color: "var(--cream)",
+          padding: "0.25rem 0.6rem", borderRadius: "4px",
+          fontFamily: "'Montserrat',sans-serif", fontSize: "0.62rem",
+          whiteSpace: "nowrap", pointerEvents: "none", zIndex: 200,
         }}>
-          {headerTexto}
+          {tooltip.nombre}
         </div>
       )}
     </div>
@@ -205,43 +188,41 @@ function MesaCirculo({ mesa, onDragMesaStart, onDropInv, isDragOver, puedeEditar
 
 // ── CanvasMesas ───────────────────────────────────────────────────────────────
 export function CanvasMesas({ mesas, invitaciones, onRefresh, puedeEditar }: Props) {
-  const canvasRef = useRef<HTMLDivElement>(null);
   const [dragOverMesa, setDragOverMesa] = useState<string | null>(null);
-  const [dragInvId, setDragInvId] = useState<string | null>(null);
-
-  // Drag de mesa en canvas
+  const [dragInvId, setDragInvId]       = useState<string | null>(null);
+  const [busqueda, setBusqueda]         = useState("");
+  const [mesasLocal, setMesasLocal]     = useState<MesaCanvas[]>(mesas);
   const draggingMesa = useRef<{ id: string; startX: number; startY: number; origX: number; origY: number } | null>(null);
-  const [mesasLocal, setMesasLocal] = useState<MesaCanvas[]>(mesas);
 
   useEffect(() => { setMesasLocal(mesas); }, [mesas]);
 
+  // ── Drag de mesa ──────────────────────────────────────────────────────────
   const onDragMesaStart = useCallback((e: React.MouseEvent, id: string) => {
     e.stopPropagation();
     const mesa = mesasLocal.find(m => m.id === id);
     if (!mesa) return;
-    draggingMesa.current = { id, startX: e.clientX, startY: e.clientY, origX: mesa.pos_x ?? 100, origY: mesa.pos_y ?? 100 };
+    draggingMesa.current = { id, startX: e.clientX, startY: e.clientY, origX: mesa.pos_x ?? 160, origY: mesa.pos_y ?? 160 };
 
     function onMove(ev: MouseEvent) {
       if (!draggingMesa.current) return;
       const dx = ev.clientX - draggingMesa.current.startX;
       const dy = ev.clientY - draggingMesa.current.startY;
       setMesasLocal(ms => ms.map(m => m.id === draggingMesa.current!.id
-        ? { ...m, pos_x: Math.max(80, Math.min(CANVAS_W - 80, draggingMesa.current!.origX + dx)), pos_y: Math.max(80, Math.min(CANVAS_H - 80, draggingMesa.current!.origY + dy)) }
+        ? { ...m, pos_x: Math.max(120, Math.min(CANVAS_W - 120, draggingMesa.current!.origX + dx)), pos_y: Math.max(120, Math.min(CANVAS_H - 120, draggingMesa.current!.origY + dy)) }
         : m
       ));
     }
 
-    async function onUp(ev: MouseEvent) {
+    function onUp(ev: MouseEvent) {
       if (!draggingMesa.current) return;
       const dx = ev.clientX - draggingMesa.current.startX;
       const dy = ev.clientY - draggingMesa.current.startY;
-      const newX = Math.max(80, Math.min(CANVAS_W - 80, draggingMesa.current.origX + dx));
-      const newY = Math.max(80, Math.min(CANVAS_H - 80, draggingMesa.current.origY + dy));
+      const newX = Math.max(120, Math.min(CANVAS_W - 120, draggingMesa.current.origX + dx));
+      const newY = Math.max(120, Math.min(CANVAS_H - 120, draggingMesa.current.origY + dy));
       const mesaId = draggingMesa.current.id;
       draggingMesa.current = null;
       window.removeEventListener("mousemove", onMove);
       window.removeEventListener("mouseup", onUp);
-      // Actualizar local inmediatamente, fetch en background
       setMesasLocal(ms => ms.map(m => m.id === mesaId ? { ...m, pos_x: newX, pos_y: newY } : m));
       fetch(`/api/admin/mesas?id=${mesaId}`, {
         method: "PATCH", headers: authHeaders(),
@@ -253,7 +234,7 @@ export function CanvasMesas({ mesas, invitaciones, onRefresh, puedeEditar }: Pro
     window.addEventListener("mouseup", onUp);
   }, [mesasLocal]);
 
-  // Drag de invitación a mesa
+  // ── Drag de invitación ────────────────────────────────────────────────────
   function onInvDragStart(invId: string) { setDragInvId(invId); }
 
   async function onDropInv(e: React.DragEvent, mesaId: string) {
@@ -263,19 +244,17 @@ export function CanvasMesas({ mesas, invitaciones, onRefresh, puedeEditar }: Pro
       method: "PATCH", headers: authHeaders(),
       body: JSON.stringify({ mesa_id: mesaId }),
     });
-    setDragInvId(null);
-    onRefresh();
+    setDragInvId(null); onRefresh();
   }
 
-  async function onDropSinMesa(e: React.DragEvent) {
+  async function onDropCanvas(e: React.DragEvent) {
     e.preventDefault();
     if (!dragInvId) return;
     await fetch(`/api/admin/invitaciones?id=${dragInvId}`, {
       method: "PATCH", headers: authHeaders(),
       body: JSON.stringify({ mesa_id: null }),
     });
-    setDragInvId(null);
-    onRefresh();
+    setDragInvId(null); onRefresh();
   }
 
   async function eliminarMesa(id: string, numero: number) {
@@ -284,47 +263,88 @@ export function CanvasMesas({ mesas, invitaciones, onRefresh, puedeEditar }: Pro
     onRefresh();
   }
 
-  const sinMesa = invitaciones.filter(i => !i.mesa_id);
+  const sinMesa    = invitaciones.filter(i => !i.mesa_id);
+  const conMesa    = invitaciones.filter(i => !!i.mesa_id);
+
+  const busqLower  = busqueda.toLowerCase();
+  function filtrar(inv: InvSimple) {
+    if (!busqueda) return true;
+    return (inv.nombre ?? "").toLowerCase().includes(busqLower)
+      || inv.invitados.some(x => x.nombre.toLowerCase().includes(busqLower))
+      || inv.codigo.includes(busqueda);
+  }
+
+  const sinMesaFiltradas = sinMesa.filter(filtrar);
+  const conMesaFiltradas = conMesa.filter(filtrar);
+
+  const inputSt: React.CSSProperties = {
+    width: "100%", padding: "0.4rem 0.6rem", boxSizing: "border-box",
+    border: "1px solid var(--border-subtle)", borderRadius: "2px",
+    fontFamily: "'Montserrat',sans-serif", fontSize: "0.7rem",
+    color: "var(--ink)", background: "transparent", outline: "none",
+    marginBottom: "0.8rem",
+  };
 
   return (
-    <div style={{ display: "flex", gap: "1rem", height: "calc(100vh - 300px)", minHeight: "500px" }}>
+    <div style={{ display: "flex", gap: "1rem", height: "calc(100vh - 260px)", minHeight: "550px" }}>
 
-      {/* Panel izquierdo — sin mesa */}
-      <div style={{ width: "180px", flexShrink: 0, display: "flex", flexDirection: "column", gap: "0.5rem" }}>
-        <p className="sans" style={{ fontSize: "0.55rem", letterSpacing: "0.15em", textTransform: "uppercase", color: "var(--ink-light)" }}>
+      {/* Panel lateral */}
+      <div style={{ width: "200px", flexShrink: 0, display: "flex", flexDirection: "column", gap: "0.4rem", overflowY: "auto" }}>
+
+        {/* Buscador */}
+        <input
+          value={busqueda}
+          onChange={e => setBusqueda(e.target.value)}
+          placeholder="Buscar grupo o persona..."
+          style={inputSt}
+        />
+
+        {/* Sin mesa */}
+        <p className="sans" style={{ fontSize: "0.52rem", letterSpacing: "0.15em", textTransform: "uppercase", color: "var(--ink-light)", marginBottom: "0.2rem" }}>
           Sin mesa · {sinMesa.length}
         </p>
         <div
-          style={{ flex: 1, overflowY: "auto", border: "2px dashed var(--border-subtle)", borderRadius: "2px", padding: "0.6rem" }}
+          style={{ border: "2px dashed var(--border-subtle)", borderRadius: "2px", padding: "0.5rem", minHeight: "60px", marginBottom: "1rem" }}
           onDragOver={e => e.preventDefault()}
-          onDrop={onDropSinMesa}
+          onDrop={onDropCanvas}
         >
-          {sinMesa.map(inv => {
-            const nombres = inv.invitados.map(i => i.nombre.split(" ")[0]).join(", ");
-            return (
-              <div key={inv.id}
-                draggable={puedeEditar}
-                onDragStart={() => onInvDragStart(inv.id)}
-                style={{ padding: "0.45rem 0.5rem", marginBottom: "0.35rem", border: "1px solid var(--border-subtle)", borderRadius: "2px", cursor: puedeEditar ? "grab" : "default" }}
-              >
-                {inv.nombre && <p className="sans" style={{ fontSize: "0.65rem", fontWeight: 600, color: "var(--ink)", marginBottom: "0.1rem" }}>{inv.nombre}</p>}
-                <p className="sans" style={{ fontSize: "0.58rem", color: "var(--ink-light)" }}>{nombres}</p>
-                <p className="sans" style={{ fontSize: "0.52rem", color: "var(--terracotta)" }}>{inv.codigo}</p>
-              </div>
-            );
+          {sinMesaFiltradas.length === 0
+            ? <p className="sans" style={{ fontSize: "0.65rem", color: "var(--ink-light)", fontStyle: "italic" }}>
+                {busqueda ? "Sin resultados" : "Todos asignados"}
+              </p>
+            : sinMesaFiltradas.map(inv => (
+              <TarjetaPanel key={inv.id} inv={inv} mesaLabel={null} onDragStart={onInvDragStart} />
+            ))
+          }
+        </div>
+
+        {/* Con mesa */}
+        <p className="sans" style={{ fontSize: "0.52rem", letterSpacing: "0.15em", textTransform: "uppercase", color: "var(--ink-light)", marginBottom: "0.2rem" }}>
+          Asignados · {conMesa.length}
+        </p>
+        <div style={{ flex: 1, overflowY: "auto" }}>
+          {conMesaFiltradas.map(inv => {
+            const mesa = mesasLocal.find(m => m.invitaciones.some(i => i.id === inv.id));
+            const label = mesa ? `Mesa ${mesa.numero}${mesa.alias ? ` — ${mesa.alias}` : ""}` : null;
+            return <TarjetaPanel key={inv.id} inv={inv} mesaLabel={label} onDragStart={onInvDragStart} />;
           })}
         </div>
       </div>
 
       {/* Canvas */}
-      <div style={{ flex: 1, position: "relative", overflow: "auto", border: "1px solid var(--border-subtle)", borderRadius: "2px", background: "var(--cream-mid)" }}>
-        <div ref={canvasRef} style={{ width: CANVAS_W, height: CANVAS_H, position: "relative" }}>
+      <div style={{ flex: 1, position: "relative", overflow: "auto", border: "1px solid var(--border-subtle)", borderRadius: "2px", background: "rgba(253,250,246,0.6)" }}>
+        <div style={{ width: CANVAS_W, height: CANVAS_H, position: "relative" }}
+          onDragOver={e => e.preventDefault()}
+          onDrop={onDropCanvas}
+        >
           {mesasLocal.map(mesa => (
             <MesaCirculo
               key={mesa.id}
-              mesa={mesa}
+              mesa={{ ...mesa, pos_x: mesa.pos_x ?? 160, pos_y: mesa.pos_y ?? 160 }}
               onDragMesaStart={onDragMesaStart}
-              onDropInv={onDropInv}
+              onDragOver={(e, id) => { e.preventDefault(); setDragOverMesa(id); }}
+              onDrop={onDropInv}
+              onDragLeave={() => setDragOverMesa(null)}
               isDragOver={dragOverMesa === mesa.id}
               puedeEditar={puedeEditar}
               onEliminar={eliminarMesa}
@@ -332,6 +352,28 @@ export function CanvasMesas({ mesas, invitaciones, onRefresh, puedeEditar }: Pro
           ))}
         </div>
       </div>
+    </div>
+  );
+}
+
+// ── TarjetaPanel ──────────────────────────────────────────────────────────────
+function TarjetaPanel({ inv, mesaLabel, onDragStart }: {
+  inv: InvSimple; mesaLabel: string | null; onDragStart: (id: string) => void;
+}) {
+  const nombres = inv.invitados.map(i => i.nombre.split(" ")[0]).join(", ");
+  return (
+    <div
+      draggable
+      onDragStart={() => onDragStart(inv.id)}
+      style={{ padding: "0.45rem 0.5rem", marginBottom: "0.3rem", border: "1px solid var(--border-subtle)", borderRadius: "2px", cursor: "grab", background: "transparent" }}
+    >
+      {inv.nombre && (
+        <p className="sans" style={{ fontSize: "0.7rem", fontWeight: 700, color: "var(--ink)", marginBottom: "0.1rem" }}>{inv.nombre}</p>
+      )}
+      <p className="sans" style={{ fontSize: "0.62rem", color: "var(--ink-light)" }}>{nombres}</p>
+      {mesaLabel && (
+        <p className="sans" style={{ fontSize: "0.58rem", color: "var(--terracotta)", marginTop: "0.2rem" }}>{mesaLabel}</p>
+      )}
     </div>
   );
 }

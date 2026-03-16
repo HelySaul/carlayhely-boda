@@ -37,22 +37,18 @@ interface Props {
 
 export function TabMesas({ mesas, invitaciones, onRefresh, puedeEditar }: Props) {
   const isDesktop = useIsDesktop();
-  const [nuevaNum, setNuevaNum] = useState("");
   const [nuevoAlias, setNuevoAlias] = useState("");
   const [creando, setCreando] = useState(false);
 
-  // Mobile: selector
-  const [dragOver, setDragOver] = useState<string | null>(null);
   const sinMesa = invitaciones.filter(i => !i.mesa_id);
 
   async function crearMesa() {
-    if (!nuevaNum) return;
     setCreando(true);
     await fetch("/api/admin/mesas", {
       method: "POST", headers: authHeaders(),
-      body: JSON.stringify({ numero: parseInt(nuevaNum), alias: nuevoAlias || null }),
+      body: JSON.stringify({ alias: nuevoAlias || null }),
     });
-    setNuevaNum(""); setNuevoAlias(""); setCreando(false);
+    setNuevoAlias(""); setCreando(false);
     onRefresh();
   }
 
@@ -76,17 +72,12 @@ export function TabMesas({ mesas, invitaciones, onRefresh, puedeEditar }: Props)
       {/* Crear nueva mesa */}
       {puedeEditar && (
         <div style={{ display: "flex", gap: "0.6rem", alignItems: "flex-end", flexWrap: "wrap", padding: "1rem", border: "1px solid var(--border-subtle)", borderRadius: "2px" }}>
-          <div>
-            <label style={labelStyle}>Número</label>
-            <input value={nuevaNum} onChange={e => setNuevaNum(e.target.value)} placeholder="1" type="number" min="1"
-              style={{ ...inputStyle, width: "70px" }} />
-          </div>
           <div style={{ flex: 1 }}>
-            <label style={labelStyle}>Alias (opcional)</label>
+            <label style={labelStyle}>Nombre de mesa (opcional)</label>
             <input value={nuevoAlias} onChange={e => setNuevoAlias(e.target.value)} placeholder="Ej. Familia García"
               style={inputStyle} />
           </div>
-          <button onClick={crearMesa} disabled={creando || !nuevaNum}
+          <button onClick={crearMesa} disabled={creando}
             style={{ ...btnPrimary, padding: "0.55rem 1rem", fontSize: "0.65rem" }}>
             + Mesa
           </button>
