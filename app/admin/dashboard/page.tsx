@@ -80,6 +80,17 @@ export default function AdminDashboard() {
       .then(d => setMesas(d));
   }
 
+  function cargarInvitaciones() {
+    fetch("/api/admin/invitaciones", { headers: { Authorization: `Bearer ${token()}` } })
+      .then(r => r.ok ? r.json() : [])
+      .then(d => setInvitaciones(d));
+  }
+
+  function cargarTodo() {
+    cargarMesas();
+    cargarInvitaciones();
+  }
+
   useEffect(() => {
     if (tab !== "usuarios") return;
     let activo = true;
@@ -416,7 +427,7 @@ export default function AdminDashboard() {
           <TabMesas
             mesas={mesas}
             invitaciones={invitaciones.map(i => ({ id: i.id, codigo: i.codigo, nombre: i.nombre ?? null, invitados: i.invitados.map(x => ({ id: x.id, nombre: x.nombre })), mesa_id: (i as any).mesa_id ?? null }))}
-            onRefresh={cargarMesas}
+            onRefresh={cargarTodo}
             puedeEditar={permisos.puedeEditarInvitados}
           />
         ) : (
