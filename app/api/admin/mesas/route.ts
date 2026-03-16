@@ -48,19 +48,23 @@ export async function POST(req: NextRequest) {
   return NextResponse.json(data, { status: 201 });
 }
 
-// PATCH — editar alias o asignar invitación a mesa
+// PATCH — editar alias y/o posición
 export async function PATCH(req: NextRequest) {
   const admin = await auth(req);
   if (admin instanceof NextResponse) return admin;
-  if (admin.rol !== 'super_admin') return NextResponse.json({ error: 'Sin permisos' }, { status: 403 });
 
   const id = req.nextUrl.searchParams.get('id');
   if (!id) return NextResponse.json({ error: 'ID requerido' }, { status: 400 });
 
   const body = await req.json();
+  const update: Record<string, unknown> = {};
+  if ('alias' in body) update.alias = body.alias ?? null;
+  if ('pos_x' in body) update.pos_x = body.pos_x;
+  if ('pos_y' in body) update.pos_y = body.pos_y;
+
   const { data, error } = await getSupabaseAdmin()
     .from('mesas')
-    .update({ alias: body.alias ?? null })
+    .update(update)
     .eq('id', id)
     .select()
     .single();
