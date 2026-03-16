@@ -36,7 +36,10 @@ interface Props {
 const CANVAS_W = 2400;
 const CANVAS_H = 1800;
 const AVATAR_R = 18;
-const LINE_H   = 18; // altura por línea de texto arriba
+const LINE_H   = 18;
+const ZOOM_MIN = 0.3;
+const ZOOM_MAX = 2;
+const ZOOM_STEP = 0.15;
 
 function mesaRadio(n: number) {
   const circ = Math.max(n, 4) * (AVATAR_R * 2 + 10);
@@ -57,66 +60,53 @@ function colorPorInicial(c: string) {
 }
 
 // ── MesaCirculo ───────────────────────────────────────────────────────────────
-function MesaCirculo({ mesa, onDragMesaStart, onDragOver, onDrop, onDragLeave, isDragOver, puedeEditar, onEliminar }: {
+function MesaCirculo({ mesa, onDragMesaStart, onDropInv, isDragOver, puedeEditar, onEliminar }: {
   mesa: MesaCanvas & { pos_x: number; pos_y: number };
   onDragMesaStart: (e: React.MouseEvent, id: string) => void;
-  onDragOver: (e: React.DragEvent, id: string) => void;
-  onDrop: (e: React.DragEvent, id: string) => void;
-  onDragLeave: () => void;
+  onDropInv: (mesaId: string) => void;
   isDragOver: boolean;
   puedeEditar: boolean;
   onEliminar: (id: string, numero: number) => void;
 }) {
   const [tooltip, setTooltip] = useState<{ nombre: string; x: number; y: number } | null>(null);
-
-  const todos      = mesa.invitaciones.flatMap(i => i.invitados);
-  const r          = mesaRadio(todos.length);
-  const posAv      = posicionesAlrededor(r + AVATAR_R + 8, todos.length);
-  const lineas     = mesa.invitaciones.map(inv =>
+  const todos  = mesa.invitaciones.flatMap(i => i.invitados);
+  const r      = mesaRadio(todos.length);
+  const posAv  = posicionesAlrededor(r + AVATAR_R + 8, todos.length);
+  const lineas = mesa.invitaciones.map(inv =>
     inv.nombre || inv.invitados.map(x => x.nombre.split(" ")[0]).join(" & ")
   );
-
-  // Espacio vertical para los nombres arriba: una línea por grupo
   const espacioArriba = lineas.length * LINE_H + 12;
   const radioTotal    = r + AVATAR_R + 8;
-
-  // SVG size — incluye espacio arriba para nombres + círculo + abajo
   const SVG_W = (radioTotal + 30) * 2;
   const SVG_H = espacioArriba + (radioTotal + 30) * 2;
   const cx    = SVG_W / 2;
-  const cy    = espacioArriba + radioTotal + 20; // centro del círculo, debajo del texto
+  const cy    = espacioArriba + radioTotal + 20;
 
   return (
     <div
       style={{
         position: "absolute",
-        left: mesa.pos_x,
-        top: mesa.pos_y,
+        left: mesa.pos_x, top: mesa.pos_y,
         width: SVG_W,
         transform: "translate(-50%, -50%)",
         cursor: puedeEditar ? "grab" : "default",
         userSelect: "none",
       }}
-      onMouseDown={e => puedeEditar && onDragMesaStart(e, mesa.id)}
-      onDragOver={e => onDragOver(e, mesa.id)}
-      onDrop={e => onDrop(e, mesa.id)}
-      onDragLeave={onDragLeave}
+      onMouseDown={e => { if (e.button === 0 && puedeEditar) onDragMesaStart(e, mesa.id); }}
+      onDragOver={e => e.preventDefault()}
+      onDrop={e => { e.preventDefault(); e.stopPropagation(); onDropInv(mesa.id); }}
     >
       <svg width={SVG_W} height={SVG_H} style={{ overflow: "visible" }}>
 
-        {/* Nombres de grupos arriba — cada uno en su propia línea, negrita */}
+        {/* Nombres arriba */}
         {lineas.map((linea, i) => (
-          <text key={i}
-            x={cx}
-            y={12 + i * LINE_H}
-            textAnchor="middle"
-            style={{ fontFamily: "'Montserrat',sans-serif", fontSize: "12px", fontWeight: 700, fill: "var(--ink)" }}
-          >
+          <text key={i} x={cx} y={12 + i * LINE_H} textAnchor="middle"
+            style={{ fontFamily: "'Montserrat',sans-serif", fontSize: "12px", fontWeight: 700, fill: "var(--ink)" }}>
             {linea}
           </text>
         ))}
 
-        {/* Círculo mesa */}
+        {/* Círculo */}
         <circle cx={cx} cy={cy} r={r}
           fill={isDragOver ? "rgba(212,105,58,0.15)" : "rgba(212,105,58,0.08)"}
           stroke={isDragOver ? "#D4693A" : "rgba(212,105,58,0.4)"}
@@ -129,7 +119,6 @@ function MesaCirculo({ mesa, onDragMesaStart, onDragOver, onDrop, onDragLeave, i
           {mesa.numero}
         </text>
 
-        {/* Alias */}
         {mesa.alias && (
           <text x={cx} y={cy + 14} textAnchor="middle"
             style={{ fontFamily: "'Montserrat',sans-serif", fontSize: "11px", fill: "var(--ink-mid)" }}>
@@ -137,7 +126,6 @@ function MesaCirculo({ mesa, onDragMesaStart, onDragOver, onDrop, onDragLeave, i
           </text>
         )}
 
-        {/* Total personas */}
         <text x={cx} y={cy + (mesa.alias ? 30 : 14)} textAnchor="middle"
           style={{ fontFamily: "'Montserrat',sans-serif", fontSize: "11px", fill: "var(--ink-light)" }}>
           {todos.length}p
@@ -145,7 +133,7 @@ function MesaCirculo({ mesa, onDragMesaStart, onDragOver, onDrop, onDragLeave, i
 
         {/* Cabecitas */}
         {todos.map((inv, i) => {
-          const p = posAv[i];
+          const p  = posAv[i];
           const ax = cx + p.x;
           const ay = cy + p.y;
           const ini = inicialNombre(inv.nombre);
@@ -165,7 +153,7 @@ function MesaCirculo({ mesa, onDragMesaStart, onDragOver, onDrop, onDragLeave, i
           );
         })}
 
-        {/* Botón eliminar */}
+        {/* Eliminar */}
         {puedeEditar && (
           <g style={{ cursor: "pointer" }}
             onClick={e => { e.stopPropagation(); onEliminar(mesa.id, mesa.numero); }}>
@@ -176,11 +164,9 @@ function MesaCirculo({ mesa, onDragMesaStart, onDragOver, onDrop, onDragLeave, i
         )}
       </svg>
 
-      {/* Tooltip */}
       {tooltip && (
         <div style={{
-          position: "absolute",
-          left: tooltip.x, top: tooltip.y - 36,
+          position: "absolute", left: tooltip.x, top: tooltip.y - 36,
           transform: "translateX(-50%)",
           background: "var(--ink)", color: "var(--cream)",
           padding: "0.25rem 0.6rem", borderRadius: "4px",
@@ -197,11 +183,17 @@ function MesaCirculo({ mesa, onDragMesaStart, onDragOver, onDrop, onDragLeave, i
 // ── CanvasMesas ───────────────────────────────────────────────────────────────
 export function CanvasMesas({ mesas, invitaciones, onRefresh, puedeEditar }: Props) {
   const [dragOverMesa, setDragOverMesa] = useState<string | null>(null);
-  const [dragInvId, setDragInvId]       = useState<string | null>(null);
   const [busqueda, setBusqueda]         = useState("");
   const [tabPanel, setTabPanel]         = useState<"sin" | "con">("sin");
+  const [zoom, setZoom]                 = useState(1);
   const [mesasLocal, setMesasLocal]     = useState<MesaCanvas[]>(mesas);
-  const draggingMesa = useRef<{ id: string; startX: number; startY: number; origX: number; origY: number } | null>(null);
+
+  // Ref para el invId siendo arrastrado — NO estado para evitar stale closures
+  const dragInvIdRef = useRef<string | null>(null);
+
+  const draggingMesa = useRef<{
+    id: string; startX: number; startY: number; origX: number; origY: number;
+  } | null>(null);
 
   useEffect(() => { setMesasLocal(mesas); }, [mesas]);
 
@@ -210,22 +202,29 @@ export function CanvasMesas({ mesas, invitaciones, onRefresh, puedeEditar }: Pro
     e.stopPropagation();
     const mesa = mesasLocal.find(m => m.id === id);
     if (!mesa) return;
-    draggingMesa.current = { id, startX: e.clientX, startY: e.clientY, origX: mesa.pos_x ?? 160, origY: mesa.pos_y ?? 160 };
+    draggingMesa.current = {
+      id,
+      startX: e.clientX, startY: e.clientY,
+      origX: mesa.pos_x ?? 160, origY: mesa.pos_y ?? 160,
+    };
 
     function onMove(ev: MouseEvent) {
       if (!draggingMesa.current) return;
-      const dx = ev.clientX - draggingMesa.current.startX;
-      const dy = ev.clientY - draggingMesa.current.startY;
+      const dx = (ev.clientX - draggingMesa.current.startX) / zoom;
+      const dy = (ev.clientY - draggingMesa.current.startY) / zoom;
       setMesasLocal(ms => ms.map(m => m.id === draggingMesa.current!.id
-        ? { ...m, pos_x: Math.max(120, Math.min(CANVAS_W - 120, draggingMesa.current!.origX + dx)), pos_y: Math.max(120, Math.min(CANVAS_H - 120, draggingMesa.current!.origY + dy)) }
+        ? { ...m,
+            pos_x: Math.max(120, Math.min(CANVAS_W - 120, draggingMesa.current!.origX + dx)),
+            pos_y: Math.max(120, Math.min(CANVAS_H - 120, draggingMesa.current!.origY + dy)),
+          }
         : m
       ));
     }
 
     function onUp(ev: MouseEvent) {
       if (!draggingMesa.current) return;
-      const dx = ev.clientX - draggingMesa.current.startX;
-      const dy = ev.clientY - draggingMesa.current.startY;
+      const dx = (ev.clientX - draggingMesa.current.startX) / zoom;
+      const dy = (ev.clientY - draggingMesa.current.startY) / zoom;
       const newX = Math.max(120, Math.min(CANVAS_W - 120, draggingMesa.current.origX + dx));
       const newY = Math.max(120, Math.min(CANVAS_H - 120, draggingMesa.current.origY + dy));
       const mesaId = draggingMesa.current.id;
@@ -241,27 +240,32 @@ export function CanvasMesas({ mesas, invitaciones, onRefresh, puedeEditar }: Pro
 
     window.addEventListener("mousemove", onMove);
     window.addEventListener("mouseup", onUp);
-  }, [mesasLocal]);
+  }, [mesasLocal, zoom]);
 
-  // ── Drag de invitación ────────────────────────────────────────────────────
-  function onInvDragStart(invId: string) { setDragInvId(invId); }
+  // ── Drag de invitación — usar ref para evitar stale closure ───────────────
+  function onInvDragStart(invId: string) {
+    dragInvIdRef.current = invId;
+  }
 
-  async function onDropInv(e: React.DragEvent, mesaId: string) {
-    e.preventDefault(); setDragOverMesa(null);
-    if (!dragInvId) return;
-    await fetch(`/api/admin/invitaciones?id=${dragInvId}`, {
+  async function asignarAMesa(mesaId: string) {
+    const invId = dragInvIdRef.current;
+    if (!invId) return;
+    dragInvIdRef.current = null;
+    setDragOverMesa(null);
+    const res = await fetch(`/api/admin/invitaciones?id=${invId}`, {
       method: "PATCH", headers: authHeaders(),
       body: JSON.stringify({ mesa_id: mesaId }),
     });
-    setDragInvId(null); onRefresh();
+    if (res.ok) onRefresh();
   }
 
-  async function quitarMesa(invId: string) {
-    await fetch(`/api/admin/invitaciones?id=${invId}`, {
+  async function quitarDeMesa(invId: string) {
+    dragInvIdRef.current = null;
+    const res = await fetch(`/api/admin/invitaciones?id=${invId}`, {
       method: "PATCH", headers: authHeaders(),
       body: JSON.stringify({ mesa_id: null }),
     });
-    onRefresh();
+    if (res.ok) onRefresh();
   }
 
   async function eliminarMesa(id: string, numero: number) {
@@ -290,16 +294,21 @@ export function CanvasMesas({ mesas, invitaciones, onRefresh, puedeEditar }: Pro
     marginBottom: "-1px",
   });
 
+  const btnZoom: React.CSSProperties = {
+    width: "32px", height: "32px", borderRadius: "4px",
+    border: "1px solid var(--border-subtle)", background: "var(--cream)",
+    fontFamily: "sans-serif", fontSize: "1rem", cursor: "pointer",
+    display: "flex", alignItems: "center", justifyContent: "center",
+    color: "var(--ink-mid)",
+  };
+
   return (
     <div style={{ display: "flex", gap: "1rem", height: "calc(100vh - 260px)", minHeight: "550px" }}>
 
       {/* ── Panel lateral ── */}
       <div style={{ width: "210px", flexShrink: 0, display: "flex", flexDirection: "column" }}>
-
-        {/* Buscador */}
         <input
-          value={busqueda}
-          onChange={e => setBusqueda(e.target.value)}
+          value={busqueda} onChange={e => setBusqueda(e.target.value)}
           placeholder="Buscar..."
           style={{
             width: "100%", padding: "0.4rem 0.6rem", marginBottom: "0.6rem",
@@ -309,8 +318,6 @@ export function CanvasMesas({ mesas, invitaciones, onRefresh, puedeEditar }: Pro
             boxSizing: "border-box",
           }}
         />
-
-        {/* Tabs */}
         <div style={{ display: "flex", borderBottom: "1px solid var(--border-subtle)", marginBottom: "0.6rem" }}>
           <button style={tabStyle(tabPanel === "sin")} onClick={() => setTabPanel("sin")}>
             Sin mesa ({sinMesa.length})
@@ -319,25 +326,23 @@ export function CanvasMesas({ mesas, invitaciones, onRefresh, puedeEditar }: Pro
             Asignados ({conMesa.length})
           </button>
         </div>
-
-        {/* Lista */}
         <div style={{ flex: 1, overflowY: "auto" }}
           onDragOver={e => e.preventDefault()}
-          onDrop={async e => {
+          onDrop={e => {
             e.preventDefault();
-            if (dragInvId) { await quitarMesa(dragInvId); setDragInvId(null); }
+            const invId = dragInvIdRef.current;
+            if (invId) quitarDeMesa(invId);
           }}
         >
-          {tabPanel === "sin" ? (
-            sinMesa.filter(filtrar).length === 0
+          {tabPanel === "sin"
+            ? sinMesa.filter(filtrar).length === 0
               ? <p className="sans" style={{ fontSize: "0.68rem", color: "var(--ink-light)", fontStyle: "italic", padding: "0.5rem" }}>
                   {busqueda ? "Sin resultados" : "Todos asignados ✓"}
                 </p>
               : sinMesa.filter(filtrar).map(inv => (
                 <TarjetaPanel key={inv.id} inv={inv} mesaLabel={null} onDragStart={onInvDragStart} />
               ))
-          ) : (
-            conMesa.filter(filtrar).length === 0
+            : conMesa.filter(filtrar).length === 0
               ? <p className="sans" style={{ fontSize: "0.68rem", color: "var(--ink-light)", fontStyle: "italic", padding: "0.5rem" }}>
                   {busqueda ? "Sin resultados" : "Ninguno asignado"}
                 </p>
@@ -346,32 +351,50 @@ export function CanvasMesas({ mesas, invitaciones, onRefresh, puedeEditar }: Pro
                 const label = mesa ? `Mesa ${mesa.numero}${mesa.alias ? ` — ${mesa.alias}` : ""}` : null;
                 return <TarjetaPanel key={inv.id} inv={inv} mesaLabel={label} onDragStart={onInvDragStart} />;
               })
-          )}
+          }
         </div>
       </div>
 
       {/* ── Canvas ── */}
-      <div style={{ flex: 1, position: "relative", overflow: "auto", border: "1px solid var(--border-subtle)", borderRadius: "2px", background: "rgba(253,250,246,0.6)" }}>
-        <div style={{ width: CANVAS_W, height: CANVAS_H, position: "relative" }}
-          onDragOver={e => e.preventDefault()}
-          onDrop={async e => {
-            e.preventDefault();
-            if (dragInvId) { await quitarMesa(dragInvId); setDragInvId(null); }
-          }}
-        >
-          {mesasLocal.map(mesa => (
-            <MesaCirculo
-              key={mesa.id}
-              mesa={{ ...mesa, pos_x: mesa.pos_x ?? 160, pos_y: mesa.pos_y ?? 160 }}
-              onDragMesaStart={onDragMesaStart}
-              onDragOver={(e, id) => { e.preventDefault(); setDragOverMesa(id); }}
-              onDrop={onDropInv}
-              onDragLeave={() => setDragOverMesa(null)}
-              isDragOver={dragOverMesa === mesa.id}
-              puedeEditar={puedeEditar}
-              onEliminar={eliminarMesa}
-            />
-          ))}
+      <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+
+        {/* Controles de zoom */}
+        <div style={{ display: "flex", gap: "0.4rem", alignItems: "center" }}>
+          <button style={btnZoom} onClick={() => setZoom(z => Math.max(ZOOM_MIN, +(z - ZOOM_STEP).toFixed(2)))}>−</button>
+          <span className="sans" style={{ fontSize: "0.65rem", color: "var(--ink-light)", minWidth: "36px", textAlign: "center" }}>
+            {Math.round(zoom * 100)}%
+          </span>
+          <button style={btnZoom} onClick={() => setZoom(z => Math.min(ZOOM_MAX, +(z + ZOOM_STEP).toFixed(2)))}>+</button>
+          <button style={{ ...btnZoom, width: "auto", padding: "0 0.6rem", fontSize: "0.6rem", fontFamily: "'Montserrat',sans-serif" }}
+            onClick={() => setZoom(1)}>100%</button>
+        </div>
+
+        {/* Canvas scrollable */}
+        <div style={{ flex: 1, overflow: "auto", border: "1px solid var(--border-subtle)", borderRadius: "2px", background: "rgba(253,250,246,0.6)" }}>
+          <div
+            style={{ width: CANVAS_W * zoom, height: CANVAS_H * zoom, position: "relative" }}
+            onDragOver={e => e.preventDefault()}
+            onDrop={e => {
+              e.preventDefault();
+              const invId = dragInvIdRef.current;
+              if (invId) quitarDeMesa(invId);
+            }}
+          >
+            {/* Capa escalada */}
+            <div style={{ width: CANVAS_W, height: CANVAS_H, transform: `scale(${zoom})`, transformOrigin: "0 0", position: "absolute" }}>
+              {mesasLocal.map(mesa => (
+                <MesaCirculo
+                  key={mesa.id}
+                  mesa={{ ...mesa, pos_x: mesa.pos_x ?? 160, pos_y: mesa.pos_y ?? 160 }}
+                  onDragMesaStart={onDragMesaStart}
+                  onDropInv={asignarAMesa}
+                  isDragOver={dragOverMesa === mesa.id}
+                  puedeEditar={puedeEditar}
+                  onEliminar={eliminarMesa}
+                />
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -384,7 +407,8 @@ function TarjetaPanel({ inv, mesaLabel, onDragStart }: {
 }) {
   const nombres = inv.invitados.map(i => i.nombre).join(", ");
   return (
-    <div draggable onDragStart={() => onDragStart(inv.id)}
+    <div draggable
+      onDragStart={e => { e.dataTransfer.setData("invId", inv.id); onDragStart(inv.id); }}
       style={{ padding: "0.45rem 0.5rem", marginBottom: "0.3rem", border: "1px solid var(--border-subtle)", borderRadius: "2px", cursor: "grab" }}>
       {inv.nombre && (
         <p className="sans" style={{ fontSize: "0.7rem", fontWeight: 700, color: "var(--ink)", marginBottom: "0.1rem" }}>{inv.nombre}</p>
