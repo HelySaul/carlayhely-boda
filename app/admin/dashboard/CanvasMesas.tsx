@@ -382,7 +382,7 @@ export function CanvasMesas({ mesas, invitaciones, onRefresh, puedeEditar }: Pro
 function TarjetaPanel({ inv, mesaLabel, onDragStart }: {
   inv: InvSimple; mesaLabel: string | null; onDragStart: (id: string) => void;
 }) {
-  const nombres = inv.invitados.map(i => i.nombre.split(" ")[0]).join(", ");
+  const nombres = inv.invitados.map(i => i.nombre).join(", ");
   return (
     <div draggable onDragStart={() => onDragStart(inv.id)}
       style={{ padding: "0.45rem 0.5rem", marginBottom: "0.3rem", border: "1px solid var(--border-subtle)", borderRadius: "2px", cursor: "grab" }}>

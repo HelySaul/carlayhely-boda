@@ -144,14 +144,15 @@ function TarjetaMobile({ inv, mesas, puedeEditar, onAsignar, mesaActual }: {
   onAsignar: (invId: string, mesaId: string | null) => void;
   mesaActual?: string;
 }) {
-  const nombres = inv.invitados.map(i => i.nombre.split(" ")[0]).join(", ");
+  const nombres = inv.invitados.map(i => i.nombre).join(", ");
   return (
     <div style={{ padding: "0.5rem 0.6rem", marginBottom: "0.4rem", border: "1px solid var(--border-subtle)", borderRadius: "2px" }}>
-      {inv.nombre && <p className="sans" style={{ fontSize: "0.75rem", fontWeight: 600, color: "var(--ink)", marginBottom: "0.1rem" }}>{inv.nombre}</p>}
-      <p className="sans" style={{ fontSize: "0.65rem", color: "var(--ink-light)" }}>{nombres} · {inv.codigo}</p>
+      {inv.nombre && <p className="sans" style={{ fontSize: "0.75rem", fontWeight: 700, color: "var(--ink)", marginBottom: "0.1rem" }}>{inv.nombre}</p>}
+      <p className="sans" style={{ fontSize: "0.65rem", color: "var(--ink-light)", marginBottom: "0.25rem" }}>{nombres}</p>
+      <p className="sans" style={{ fontSize: "0.58rem", color: "var(--terracotta)", marginBottom: "0.3rem" }}>{inv.codigo}</p>
       {puedeEditar && (
         <select value={mesaActual ?? ""} onChange={e => onAsignar(inv.id, e.target.value || null)}
-          style={{ fontFamily: "'Montserrat',sans-serif", fontSize: "0.6rem", marginTop: "0.4rem", width: "100%", padding: "0.3rem 0.4rem", border: "1px solid var(--border-subtle)", borderRadius: "2px", background: "transparent", color: "var(--ink)", cursor: "pointer" }}>
+          style={{ fontFamily: "'Montserrat',sans-serif", fontSize: "0.65rem", width: "100%", padding: "0.35rem 0.4rem", border: "1px solid var(--border-subtle)", borderRadius: "2px", background: "transparent", color: "var(--ink)", cursor: "pointer" }}>
           <option value="">Sin mesa</option>
           {mesas.map(m => (
             <option key={m.id} value={m.id}>Mesa {m.numero}{m.alias ? ` — ${m.alias}` : ""}</option>
