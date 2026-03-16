@@ -36,6 +36,7 @@ interface Props {
 const CANVAS_W = 2400;
 const CANVAS_H = 1800;
 const AVATAR_R = 18;
+const LINE_H   = 18; // altura por línea de texto arriba
 
 function mesaRadio(n: number) {
   const circ = Math.max(n, 4) * (AVATAR_R * 2 + 10);
@@ -50,7 +51,6 @@ function posicionesAlrededor(r: number, n: number) {
 }
 
 function inicialNombre(n: string) { return n.trim().charAt(0).toUpperCase(); }
-
 function colorPorInicial(c: string) {
   const cols = ["#C94F4F","#D4693A","#D4A832","#7A9438","#9B8BB4","#7A8FBC"];
   return cols[c.charCodeAt(0) % cols.length];
@@ -68,17 +68,23 @@ function MesaCirculo({ mesa, onDragMesaStart, onDragOver, onDrop, onDragLeave, i
   onEliminar: (id: string, numero: number) => void;
 }) {
   const [tooltip, setTooltip] = useState<{ nombre: string; x: number; y: number } | null>(null);
-  const todos = mesa.invitaciones.flatMap(i => i.invitados);
-  const r = mesaRadio(todos.length);
-  const posAv = posicionesAlrededor(r + AVATAR_R + 8, todos.length);
-  const SIZE = (r + AVATAR_R + 28) * 2 + 60; // +60 para nombres arriba
-  const cx = SIZE / 2;
-  const cy = SIZE / 2 + 30; // bajar el centro para dejar espacio arriba
 
-  // Nombres de grupos para header
-  const lineasHeader: string[] = mesa.invitaciones.map(inv =>
+  const todos      = mesa.invitaciones.flatMap(i => i.invitados);
+  const r          = mesaRadio(todos.length);
+  const posAv      = posicionesAlrededor(r + AVATAR_R + 8, todos.length);
+  const lineas     = mesa.invitaciones.map(inv =>
     inv.nombre || inv.invitados.map(x => x.nombre.split(" ")[0]).join(" & ")
   );
+
+  // Espacio vertical para los nombres arriba: una línea por grupo
+  const espacioArriba = lineas.length * LINE_H + 12;
+  const radioTotal    = r + AVATAR_R + 8;
+
+  // SVG size — incluye espacio arriba para nombres + círculo + abajo
+  const SVG_W = (radioTotal + 30) * 2;
+  const SVG_H = espacioArriba + (radioTotal + 30) * 2;
+  const cx    = SVG_W / 2;
+  const cy    = espacioArriba + radioTotal + 20; // centro del círculo, debajo del texto
 
   return (
     <div
@@ -86,7 +92,7 @@ function MesaCirculo({ mesa, onDragMesaStart, onDragOver, onDrop, onDragLeave, i
         position: "absolute",
         left: mesa.pos_x,
         top: mesa.pos_y,
-        width: SIZE,
+        width: SVG_W,
         transform: "translate(-50%, -50%)",
         cursor: puedeEditar ? "grab" : "default",
         userSelect: "none",
@@ -96,7 +102,19 @@ function MesaCirculo({ mesa, onDragMesaStart, onDragOver, onDrop, onDragLeave, i
       onDrop={e => onDrop(e, mesa.id)}
       onDragLeave={onDragLeave}
     >
-      <svg width={SIZE} height={SIZE + 10} style={{ overflow: "visible" }}>
+      <svg width={SVG_W} height={SVG_H} style={{ overflow: "visible" }}>
+
+        {/* Nombres de grupos arriba — cada uno en su propia línea, negrita */}
+        {lineas.map((linea, i) => (
+          <text key={i}
+            x={cx}
+            y={12 + i * LINE_H}
+            textAnchor="middle"
+            style={{ fontFamily: "'Montserrat',sans-serif", fontSize: "12px", fontWeight: 700, fill: "var(--ink)" }}
+          >
+            {linea}
+          </text>
+        ))}
 
         {/* Círculo mesa */}
         <circle cx={cx} cy={cy} r={r}
@@ -122,7 +140,7 @@ function MesaCirculo({ mesa, onDragMesaStart, onDragOver, onDrop, onDragLeave, i
         {/* Total personas */}
         <text x={cx} y={cy + (mesa.alias ? 30 : 14)} textAnchor="middle"
           style={{ fontFamily: "'Montserrat',sans-serif", fontSize: "11px", fill: "var(--ink-light)" }}>
-          {todos.length} {todos.length === 1 ? "persona" : "personas"}
+          {todos.length}p
         </text>
 
         {/* Cabecitas */}
@@ -146,16 +164,6 @@ function MesaCirculo({ mesa, onDragMesaStart, onDragOver, onDrop, onDragLeave, i
             </g>
           );
         })}
-
-        {/* Nombres de grupos — arriba en vertical, negrita */}
-        {lineasHeader.map((linea, i) => (
-          <text key={i}
-            x={cx} y={cy - r - AVATAR_R - 16 - (lineasHeader.length - 1 - i) * 18}
-            textAnchor="middle"
-            style={{ fontFamily: "'Montserrat',sans-serif", fontSize: "12px", fontWeight: 700, fill: "var(--ink)" }}>
-            {linea}
-          </text>
-        ))}
 
         {/* Botón eliminar */}
         {puedeEditar && (
@@ -191,6 +199,7 @@ export function CanvasMesas({ mesas, invitaciones, onRefresh, puedeEditar }: Pro
   const [dragOverMesa, setDragOverMesa] = useState<string | null>(null);
   const [dragInvId, setDragInvId]       = useState<string | null>(null);
   const [busqueda, setBusqueda]         = useState("");
+  const [tabPanel, setTabPanel]         = useState<"sin" | "con">("sin");
   const [mesasLocal, setMesasLocal]     = useState<MesaCanvas[]>(mesas);
   const draggingMesa = useRef<{ id: string; startX: number; startY: number; origX: number; origY: number } | null>(null);
 
@@ -247,14 +256,12 @@ export function CanvasMesas({ mesas, invitaciones, onRefresh, puedeEditar }: Pro
     setDragInvId(null); onRefresh();
   }
 
-  async function onDropCanvas(e: React.DragEvent) {
-    e.preventDefault();
-    if (!dragInvId) return;
-    await fetch(`/api/admin/invitaciones?id=${dragInvId}`, {
+  async function quitarMesa(invId: string) {
+    await fetch(`/api/admin/invitaciones?id=${invId}`, {
       method: "PATCH", headers: authHeaders(),
       body: JSON.stringify({ mesa_id: null }),
     });
-    setDragInvId(null); onRefresh();
+    onRefresh();
   }
 
   async function eliminarMesa(id: string, numero: number) {
@@ -263,79 +270,94 @@ export function CanvasMesas({ mesas, invitaciones, onRefresh, puedeEditar }: Pro
     onRefresh();
   }
 
-  const sinMesa    = invitaciones.filter(i => !i.mesa_id);
-  const conMesa    = invitaciones.filter(i => !!i.mesa_id);
+  const sinMesa = invitaciones.filter(i => !i.mesa_id);
+  const conMesa = invitaciones.filter(i => !!i.mesa_id);
+  const busqL   = busqueda.toLowerCase();
 
-  const busqLower  = busqueda.toLowerCase();
   function filtrar(inv: InvSimple) {
     if (!busqueda) return true;
-    return (inv.nombre ?? "").toLowerCase().includes(busqLower)
-      || inv.invitados.some(x => x.nombre.toLowerCase().includes(busqLower))
+    return (inv.nombre ?? "").toLowerCase().includes(busqL)
+      || inv.invitados.some(x => x.nombre.toLowerCase().includes(busqL))
       || inv.codigo.includes(busqueda);
   }
 
-  const sinMesaFiltradas = sinMesa.filter(filtrar);
-  const conMesaFiltradas = conMesa.filter(filtrar);
-
-  const inputSt: React.CSSProperties = {
-    width: "100%", padding: "0.4rem 0.6rem", boxSizing: "border-box",
-    border: "1px solid var(--border-subtle)", borderRadius: "2px",
-    fontFamily: "'Montserrat',sans-serif", fontSize: "0.7rem",
-    color: "var(--ink)", background: "transparent", outline: "none",
-    marginBottom: "0.8rem",
-  };
+  const tabStyle = (active: boolean): React.CSSProperties => ({
+    flex: 1, padding: "0.4rem 0", background: "none", border: "none",
+    borderBottom: active ? "2px solid var(--terracotta)" : "2px solid transparent",
+    color: active ? "var(--terracotta)" : "var(--ink-light)",
+    fontFamily: "'Montserrat',sans-serif", fontSize: "0.58rem",
+    letterSpacing: "0.1em", textTransform: "uppercase", cursor: "pointer",
+    marginBottom: "-1px",
+  });
 
   return (
     <div style={{ display: "flex", gap: "1rem", height: "calc(100vh - 260px)", minHeight: "550px" }}>
 
-      {/* Panel lateral */}
-      <div style={{ width: "200px", flexShrink: 0, display: "flex", flexDirection: "column", gap: "0.4rem", overflowY: "auto" }}>
+      {/* ── Panel lateral ── */}
+      <div style={{ width: "210px", flexShrink: 0, display: "flex", flexDirection: "column" }}>
 
         {/* Buscador */}
         <input
           value={busqueda}
           onChange={e => setBusqueda(e.target.value)}
-          placeholder="Buscar grupo o persona..."
-          style={inputSt}
+          placeholder="Buscar..."
+          style={{
+            width: "100%", padding: "0.4rem 0.6rem", marginBottom: "0.6rem",
+            border: "1px solid var(--border-subtle)", borderRadius: "2px",
+            fontFamily: "'Montserrat',sans-serif", fontSize: "0.7rem",
+            color: "var(--ink)", background: "transparent", outline: "none",
+            boxSizing: "border-box",
+          }}
         />
 
-        {/* Sin mesa */}
-        <p className="sans" style={{ fontSize: "0.52rem", letterSpacing: "0.15em", textTransform: "uppercase", color: "var(--ink-light)", marginBottom: "0.2rem" }}>
-          Sin mesa · {sinMesa.length}
-        </p>
-        <div
-          style={{ border: "2px dashed var(--border-subtle)", borderRadius: "2px", padding: "0.5rem", minHeight: "60px", marginBottom: "1rem" }}
-          onDragOver={e => e.preventDefault()}
-          onDrop={onDropCanvas}
-        >
-          {sinMesaFiltradas.length === 0
-            ? <p className="sans" style={{ fontSize: "0.65rem", color: "var(--ink-light)", fontStyle: "italic" }}>
-                {busqueda ? "Sin resultados" : "Todos asignados"}
-              </p>
-            : sinMesaFiltradas.map(inv => (
-              <TarjetaPanel key={inv.id} inv={inv} mesaLabel={null} onDragStart={onInvDragStart} />
-            ))
-          }
+        {/* Tabs */}
+        <div style={{ display: "flex", borderBottom: "1px solid var(--border-subtle)", marginBottom: "0.6rem" }}>
+          <button style={tabStyle(tabPanel === "sin")} onClick={() => setTabPanel("sin")}>
+            Sin mesa ({sinMesa.length})
+          </button>
+          <button style={tabStyle(tabPanel === "con")} onClick={() => setTabPanel("con")}>
+            Asignados ({conMesa.length})
+          </button>
         </div>
 
-        {/* Con mesa */}
-        <p className="sans" style={{ fontSize: "0.52rem", letterSpacing: "0.15em", textTransform: "uppercase", color: "var(--ink-light)", marginBottom: "0.2rem" }}>
-          Asignados · {conMesa.length}
-        </p>
-        <div style={{ flex: 1, overflowY: "auto" }}>
-          {conMesaFiltradas.map(inv => {
-            const mesa = mesasLocal.find(m => m.invitaciones.some(i => i.id === inv.id));
-            const label = mesa ? `Mesa ${mesa.numero}${mesa.alias ? ` — ${mesa.alias}` : ""}` : null;
-            return <TarjetaPanel key={inv.id} inv={inv} mesaLabel={label} onDragStart={onInvDragStart} />;
-          })}
+        {/* Lista */}
+        <div style={{ flex: 1, overflowY: "auto" }}
+          onDragOver={e => e.preventDefault()}
+          onDrop={async e => {
+            e.preventDefault();
+            if (dragInvId) { await quitarMesa(dragInvId); setDragInvId(null); }
+          }}
+        >
+          {tabPanel === "sin" ? (
+            sinMesa.filter(filtrar).length === 0
+              ? <p className="sans" style={{ fontSize: "0.68rem", color: "var(--ink-light)", fontStyle: "italic", padding: "0.5rem" }}>
+                  {busqueda ? "Sin resultados" : "Todos asignados ✓"}
+                </p>
+              : sinMesa.filter(filtrar).map(inv => (
+                <TarjetaPanel key={inv.id} inv={inv} mesaLabel={null} onDragStart={onInvDragStart} />
+              ))
+          ) : (
+            conMesa.filter(filtrar).length === 0
+              ? <p className="sans" style={{ fontSize: "0.68rem", color: "var(--ink-light)", fontStyle: "italic", padding: "0.5rem" }}>
+                  {busqueda ? "Sin resultados" : "Ninguno asignado"}
+                </p>
+              : conMesa.filter(filtrar).map(inv => {
+                const mesa = mesasLocal.find(m => m.invitaciones.some(i => i.id === inv.id));
+                const label = mesa ? `Mesa ${mesa.numero}${mesa.alias ? ` — ${mesa.alias}` : ""}` : null;
+                return <TarjetaPanel key={inv.id} inv={inv} mesaLabel={label} onDragStart={onInvDragStart} />;
+              })
+          )}
         </div>
       </div>
 
-      {/* Canvas */}
+      {/* ── Canvas ── */}
       <div style={{ flex: 1, position: "relative", overflow: "auto", border: "1px solid var(--border-subtle)", borderRadius: "2px", background: "rgba(253,250,246,0.6)" }}>
         <div style={{ width: CANVAS_W, height: CANVAS_H, position: "relative" }}
           onDragOver={e => e.preventDefault()}
-          onDrop={onDropCanvas}
+          onDrop={async e => {
+            e.preventDefault();
+            if (dragInvId) { await quitarMesa(dragInvId); setDragInvId(null); }
+          }}
         >
           {mesasLocal.map(mesa => (
             <MesaCirculo
@@ -362,17 +384,14 @@ function TarjetaPanel({ inv, mesaLabel, onDragStart }: {
 }) {
   const nombres = inv.invitados.map(i => i.nombre.split(" ")[0]).join(", ");
   return (
-    <div
-      draggable
-      onDragStart={() => onDragStart(inv.id)}
-      style={{ padding: "0.45rem 0.5rem", marginBottom: "0.3rem", border: "1px solid var(--border-subtle)", borderRadius: "2px", cursor: "grab", background: "transparent" }}
-    >
+    <div draggable onDragStart={() => onDragStart(inv.id)}
+      style={{ padding: "0.45rem 0.5rem", marginBottom: "0.3rem", border: "1px solid var(--border-subtle)", borderRadius: "2px", cursor: "grab" }}>
       {inv.nombre && (
         <p className="sans" style={{ fontSize: "0.7rem", fontWeight: 700, color: "var(--ink)", marginBottom: "0.1rem" }}>{inv.nombre}</p>
       )}
       <p className="sans" style={{ fontSize: "0.62rem", color: "var(--ink-light)" }}>{nombres}</p>
       {mesaLabel && (
-        <p className="sans" style={{ fontSize: "0.58rem", color: "var(--terracotta)", marginTop: "0.2rem" }}>{mesaLabel}</p>
+        <p className="sans" style={{ fontSize: "0.58rem", color: "var(--terracotta)", marginTop: "0.15rem" }}>{mesaLabel}</p>
       )}
     </div>
   );
