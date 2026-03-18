@@ -41,7 +41,7 @@
   --border-subtle:   rgba(212, 105, 58, 0.18);
   --border-medium:   rgba(212, 105, 58, 0.28);
 
-  /* Fondos por sección — casi crema, apenas un toque de color */
+  /* Fondos por sección */
   --bg-hero:        linear-gradient(160deg, #FDFAF6 0%, #FAF2EA 50%, #F6F8F2 100%);
   --bg-story:       linear-gradient(170deg, #FDFAF6 0%, #FAF3EB 50%, #F5F8F2 100%);
   --bg-program:     linear-gradient(150deg, #FAF6F0 0%, #F6F8F3 50%, #F7F4FB 100%);
@@ -58,11 +58,8 @@
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-html, body {
-  overflow-x: hidden;
-}
-
 html {
+  overflow-x: hidden;
   scroll-behavior: smooth;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -70,13 +67,19 @@ html {
 }
 
 body {
+  overflow-x: hidden;
+  position: relative; /* necesario para que overflow-x:hidden funcione en todos los browsers */
   background-color: var(--cream);
   color: var(--ink);
   font-family: 'Montserrat', sans-serif;
   font-weight: 300;
   line-height: 1;
   max-width: 100%;
-  position: relative;
+}
+
+/* Clipa cualquier section con overflow:visible sin afectar scroll vertical */
+section {
+  overflow-x: clip;
 }
 
 /* ── Tipografías ── */
