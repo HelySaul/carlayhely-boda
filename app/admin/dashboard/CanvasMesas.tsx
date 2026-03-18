@@ -237,22 +237,21 @@ export function CanvasMesas({ mesas, invitaciones, onRefresh, puedeEditar }: Pro
   useEffect(() => { setMesasLocal(mesas); }, [mesas]);
 
   // ── Crear mesa al click en canvas ─────────────────────────────────────────
-  function iniciarColocacion() {
-    setColocandoMesa(true);
-  }
+  function iniciarColocacion() { setColocandoMesa(true); }
 
   async function colocarMesa(e: React.MouseEvent) {
     if (!colocandoMesa) return;
+    e.stopPropagation();
     const rect = canvasInnerRef.current?.getBoundingClientRect();
     if (!rect) return;
+    // Coordenadas en espacio del canvas (sin zoom)
     const x = (e.clientX - rect.left) / zoom;
     const y = (e.clientY - rect.top) / zoom;
     setColocandoMesa(false);
     setCursorPos(null);
-
     const res = await fetch("/api/admin/mesas", {
       method: "POST", headers: authHeaders(),
-      body: JSON.stringify({ alias: aliasPendiente || null, pos_x: x, pos_y: y }),
+      body: JSON.stringify({ alias: aliasPendiente || null, pos_x: Math.round(x), pos_y: Math.round(y) }),
     });
     if (res.ok) { setAliasPendiente(""); onRefresh(); }
   }
@@ -261,7 +260,12 @@ export function CanvasMesas({ mesas, invitaciones, onRefresh, puedeEditar }: Pro
     if (!colocandoMesa) return;
     const rect = canvasInnerRef.current?.getBoundingClientRect();
     if (!rect) return;
+    // Coordenadas visuales (con zoom) para posicionar el ghost
     setCursorPos({ x: e.clientX - rect.left, y: e.clientY - rect.top });
+  }
+
+  function onMouseLeaveCanvas() {
+    if (colocandoMesa) setCursorPos(null);
   }
 
   // ── Drag de mesa ──────────────────────────────────────────────────────────
@@ -421,19 +425,19 @@ export function CanvasMesas({ mesas, invitaciones, onRefresh, puedeEditar }: Pro
                 </span>
               </>
             ) : (
-              <button onClick={iniciarColocacion}
-                style={{ padding: "0.4rem 0.9rem", background: "var(--terracotta)", color: "var(--cream)", border: "none", borderRadius: "2px", fontFamily: "'Montserrat',sans-serif", fontSize: "0.62rem", letterSpacing: "0.15em", textTransform: "uppercase", cursor: "pointer" }}>
+              <button onClick={iniciarColocacion} disabled={colocandoMesa}
+                style={{ padding: "0.4rem 0.9rem", background: colocandoMesa ? "var(--border-subtle)" : "var(--terracotta)", color: colocandoMesa ? "var(--ink-light)" : "var(--cream)", border: "none", borderRadius: "2px", fontFamily: "'Montserrat',sans-serif", fontSize: "0.62rem", letterSpacing: "0.15em", textTransform: "uppercase", cursor: colocandoMesa ? "not-allowed" : "pointer" }}>
                 + Mesa
               </button>
             )
           )}
         </div>
 
-        {/* Canvas scrollable */}
         <div style={{ flex: 1, overflow: "auto", border: "1px solid var(--border-subtle)", borderRadius: "2px", background: "rgba(253,250,246,0.6)", cursor: colocandoMesa ? "crosshair" : "default" }}>
           <div ref={canvasInnerRef}
             style={{ width: CANVAS_W * zoom, height: CANVAS_H * zoom, position: "relative" }}
             onMouseMove={onMouseMoveCanvas}
+            onMouseLeave={onMouseLeaveCanvas}
             onClick={colocandoMesa ? colocarMesa : undefined}
             onDragOver={e => e.preventDefault()}
             onDrop={e => { e.preventDefault(); const invId = dragInvIdRef.current; if (invId) quitarDeMesa(invId); }}
@@ -454,21 +458,30 @@ export function CanvasMesas({ mesas, invitaciones, onRefresh, puedeEditar }: Pro
               ))}
             </div>
 
-            {/* Preview de mesa siguiendo el cursor */}
+            {/* Ghost de mesa siguiendo el cursor (coordenadas visuales) */}
             {colocandoMesa && cursorPos && (
               <div style={{
                 position: "absolute",
                 left: cursorPos.x, top: cursorPos.y,
                 transform: "translate(-50%, -50%)",
-                pointerEvents: "none",
-                opacity: 0.6,
+                pointerEvents: "none", zIndex: 50,
               }}>
-                <svg width={120} height={120}>
-                  <circle cx={60} cy={60} r={50} fill="rgba(212,105,58,0.15)" stroke="#D4693A" strokeWidth={2} strokeDasharray="6 3"/>
-                  <text x={60} y={65} textAnchor="middle"
-                    style={{ fontFamily: "'Montserrat',sans-serif", fontSize: "18px", fontWeight: 800, fill: "var(--terracotta)" }}>
-                    {(mesasLocal.length + 1)}
+                <svg width={160} height={160}>
+                  <circle cx={80} cy={80} r={60}
+                    fill="rgba(212,105,58,0.1)"
+                    stroke="#D4693A" strokeWidth={2}
+                    strokeDasharray="8 4"
+                  />
+                  <text x={80} y={74} textAnchor="middle"
+                    style={{ fontFamily: "'Montserrat',sans-serif", fontSize: "22px", fontWeight: 800, fill: "rgba(212,105,58,0.5)" }}>
+                    {mesasLocal.length + 1}
                   </text>
+                  {aliasPendiente && (
+                    <text x={80} y={96} textAnchor="middle"
+                      style={{ fontFamily: "'Montserrat',sans-serif", fontSize: "11px", fill: "rgba(212,105,58,0.5)" }}>
+                      {aliasPendiente}
+                    </text>
+                  )}
                 </svg>
               </div>
             )}
