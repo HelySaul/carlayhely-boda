@@ -77,11 +77,6 @@ body {
   max-width: 100%;
 }
 
-/* Clipa cualquier section con overflow:visible sin afectar scroll vertical */
-section {
-  overflow-x: clip;
-}
-
 /* ── Tipografías ── */
 .script { font-family: 'Pinyon Script', cursive; }
 .serif  { font-family: 'Cormorant Garamond', serif; }
