@@ -1,16 +1,16 @@
 "use client";
 import { useState, useCallback } from "react";
-import Loader       from "@/components/Loader";
-import Navbar       from "@/components/Navbar";
-import Hero         from "@/components/Hero";
-import OurStory     from "@/components/OurStory";
-import Schedule     from "@/components/Schedule";
-import Venue        from "@/components/Venue";
-import Palette      from "@/components/Palette";
-import Etiquette    from "@/components/Etiquette";
+import Loader from "@/components/Loader";
+import Navbar from "@/components/Navbar";
+import Hero from "@/components/Hero";
+import OurStory from "@/components/OurStory";
+import Schedule from "@/components/Schedule";
+import Venue from "@/components/Venue";
+import Palette from "@/components/Palette";
+import Etiquette from "@/components/Etiquette";
 import DriveSection from "@/components/DriveSection";
-import Footer       from "@/components/Footer";
-import BibleVerse   from "@/components/BibleVerse";
+import Footer from "@/components/Footer";
+import BibleVerse from "@/components/BibleVerse";
 
 export default function Home() {
   const [loaded, setLoaded] = useState(false);
@@ -22,8 +22,9 @@ export default function Home() {
 
       <div
         style={{
-          opacity:    loaded ? 1 : 0,
+          opacity: loaded ? 1 : 0,
           transition: "opacity 0.7s ease",
+          overflowX: "hidden",
         }}
       >
         <Navbar />
