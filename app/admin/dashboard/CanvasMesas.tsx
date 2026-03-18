@@ -71,7 +71,7 @@ function MesaCirculo({ mesa, onDragMesaStart, onDropInv, isDragOver, puedeEditar
   const [tooltipAvatar, setTooltipAvatar] = useState<{ nombre: string; x: number; y: number } | null>(null);
   const [tooltipGrupos, setTooltipGrupos] = useState(false);
 
-  const todos  = mesa.invitaciones.flatMap(i => i.invitados);
+  const todos  = mesa.invitaciones.flatMap(i => i.invitados ?? []);
   const r      = mesaRadio(todos.length);
   const posAv  = posicionesAlrededor(r + AVATAR_R + 8, todos.length);
 
@@ -104,10 +104,10 @@ function MesaCirculo({ mesa, onDragMesaStart, onDropInv, isDragOver, puedeEditar
         <div key={inv.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.3rem", gap: "0.4rem" }}>
           <div>
             <p className="sans" style={{ fontSize: "0.68rem", fontWeight: 700, color: "var(--ink)", lineHeight: 1.2 }}>
-              {inv.nombre || inv.invitados.map(x => x.nombre.split(" ")[0]).join(" & ")}
+              {inv.nombre || (inv.invitados ?? []).map(x => x.nombre.split(" ")[0]).join(" & ")}
             </p>
             <p className="sans" style={{ fontSize: "0.6rem", color: "var(--ink-light)" }}>
-              {inv.invitados.map(x => x.nombre).join(", ")}
+              {(inv.invitados ?? []).map(x => x.nombre).join(", ")}
             </p>
           </div>
           {puedeEditar && (
@@ -344,7 +344,7 @@ export function CanvasMesas({ mesas, invitaciones, onRefresh, puedeEditar }: Pro
   function filtrar(inv: InvSimple) {
     if (!busqueda) return true;
     return (inv.nombre ?? "").toLowerCase().includes(busqL)
-      || inv.invitados.some(x => x.nombre.toLowerCase().includes(busqL))
+      || (inv.invitados ?? []).some(x => x.nombre.toLowerCase().includes(busqL))
       || inv.codigo.includes(busqueda);
   }
 
@@ -496,7 +496,7 @@ export function CanvasMesas({ mesas, invitaciones, onRefresh, puedeEditar }: Pro
 function TarjetaPanel({ inv, mesaLabel, onDragStart }: {
   inv: InvSimple; mesaLabel: string | null; onDragStart: (id: string) => void;
 }) {
-  const nombres = inv.invitados.map(i => i.nombre).join(", ");
+  const nombres = (inv.invitados ?? []).map(i => i.nombre).join(", ");
   return (
     <div draggable
       onDragStart={e => { e.dataTransfer.setData("invId", inv.id); onDragStart(inv.id); }}

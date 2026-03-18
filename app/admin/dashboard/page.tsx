@@ -426,7 +426,7 @@ export default function AdminDashboard() {
         ) : tab === "mesas" ? (
           <TabMesas
             mesas={mesas}
-            invitaciones={invitaciones.map(i => ({ id: i.id, codigo: i.codigo, nombre: i.nombre ?? null, invitados: i.invitados.map(x => ({ id: x.id, nombre: x.nombre })), mesa_id: (i as any).mesa_id ?? null }))}
+            invitaciones={invitaciones.map(i => ({ id: i.id, codigo: i.codigo, nombre: i.nombre ?? null, invitados: (i.invitados ?? []).map(x => ({ id: x.id, nombre: x.nombre })), mesa_id: (i as any).mesa_id ?? null }))}
             onRefresh={cargarTodo}
             puedeEditar={permisos.puedeEditarInvitados}
           />
