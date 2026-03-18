@@ -118,7 +118,14 @@ export default function Navbar() {
 
           {LINKS.map((link, i) => (
             <a key={link.href} href={link.href}
-              onClick={() => setOpen(false)}
+              onClick={e => {
+                e.preventDefault();
+                setOpen(false);
+                setTimeout(() => {
+                  const target = document.querySelector(link.href);
+                  if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
+                }, 50); // pequeño delay para que el drawer cierre primero
+              }}
               className="serif hover-line"
               style={{
                 fontSize:       "clamp(1.3rem, 5vw, 1.7rem)",
