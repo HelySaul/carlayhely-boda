@@ -10,6 +10,7 @@ const FOTOS = [
 ];
 
 const OBJECT_POSITIONS = ["center", "center", "center", "top"];
+const ROTACIONES = [-7, -2, 4, 9];
 const TRANSLATES  = [[-55, 8], [-18, -4], [18, 6], [55, 1]];
 
 export default function PhotoAlbum() {
