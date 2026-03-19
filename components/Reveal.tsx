@@ -15,6 +15,16 @@ export default function Reveal({ children, delay = 0, className = "", style = {}
     const el = ref.current;
     if (!el) return;
 
+    // Si ya es visible en el viewport al montar (ej. navegación por anchor),
+    // mostrar inmediatamente sin animación para no bloquear el scroll
+    const rect = el.getBoundingClientRect();
+    const inView = rect.top < window.innerHeight && rect.bottom > 0;
+    if (inView) {
+      el.style.transition = "none";
+      el.classList.add("visible");
+      return;
+    }
+
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
