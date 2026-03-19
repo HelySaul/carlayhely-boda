@@ -109,5 +109,10 @@ body {
   to { stroke-dashoffset: 0; }
 }
 
+/* ── Fix scroll iOS — cada section permite pan vertical sin bounce ── */
+section, main, footer {
+  touch-action: pan-y;
+}
+
 /* ── Admin tabs scroll sin scrollbar visible ── */
 .tabs-scroll::-webkit-scrollbar { display: none; }
