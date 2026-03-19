@@ -1,6 +1,7 @@
 "use client";
 import Reveal from "./Reveal";
 import FloralAccent from "./FloralAccent";
+import PhotoAlbum from "./PhotoAlbum";
 
 const MOMENTS = [
   { label: "El comienzo", text: "En abril de 2025, Dios cruzó nuestros caminos. No fue casualidad — fue un propósito que Él ya había escrito antes de que cualquiera de los dos naciéramos. Sin prisa, sin presiones, con la certeza de que algo hermoso estaba comenzando a crecer en cada uno de nosotros: el amor." },
@@ -37,15 +38,10 @@ export default function OurStory() {
           </div>
         </Reveal>
 
-        {/* Foto placeholder */}
-        <Reveal delay={0.2}>
-          <div style={{ margin: "3rem auto", width: "100%", maxWidth: "300px", aspectRatio: "3/4", borderRadius: "2px", background: "linear-gradient(160deg, var(--blush-pale) 0%, var(--cream-deep) 50%, var(--cream-mid) 100%)", border: "1px solid var(--border-medium)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", position: "relative" }}>
-            <div style={{ position: "absolute", inset: "10px", border: "1px solid var(--border-subtle)", borderRadius: "1px", pointerEvents: "none" }} />
-            <p className="serif" style={{ fontStyle: "italic", color: "var(--ink-light)", fontSize: "0.9rem", letterSpacing: "0.1em" }}>Carla Victoria &amp; Hely Saul</p>
-            <div style={{ width: "40px", height: "1px", background: "var(--blush-light)", margin: "0.8rem auto" }} />
-            <p className="sans" style={{ fontSize: "0.65rem", color: "var(--ink-light)", letterSpacing: "0.15em", textTransform: "uppercase" }}>fotografía próximamente</p>
-          </div>
-        </Reveal>
+        {/* Mini álbum de fotos */}
+        <div style={{ margin: "3rem 0" }}>
+          <PhotoAlbum />
+        </div>
 
         {/* Timeline */}
         <div style={{ textAlign: "left" }}>
