@@ -111,3 +111,28 @@ body {
 
 /* ── Admin tabs scroll sin scrollbar visible ── */
 .tabs-scroll::-webkit-scrollbar { display: none; }
+
+/* ── Reveal on scroll ── */
+.reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  /* Avisar al browser con anticipación — promueve al compositor antes de animar */
+  will-change: opacity, transform;
+  /* Transición solo en propiedades del compositor — sin reflow */
+  transition: opacity 0.7s ease, transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Respetar preferencias de movimiento reducido */
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    opacity: 1;
+    transform: none;
+    will-change: auto;
+    transition: none;
+  }
+}
