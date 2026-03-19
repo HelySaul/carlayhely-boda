@@ -10,7 +10,7 @@ const MOMENTS = [
 
 export default function OurStory() {
   return (
-    <section id="nosotros" style={{ padding: "6rem 1.5rem", background: "var(--bg-story)", textAlign: "center", position: "relative", overflow: "visible" }}>
+    <section id="nosotros" style={{ padding: "6rem 1.5rem", background: "var(--bg-story)", textAlign: "center", position: "relative", overflow: "clip" }}>
       {/* Manchas decorativas */}
 
       {/* Manchas — clip propio */}

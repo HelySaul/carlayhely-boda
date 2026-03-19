@@ -37,7 +37,7 @@ export default function Hero() {
       alignItems: "center", justifyContent: "center",
       padding: "6rem 1.5rem 4rem", textAlign: "center",
       background: "var(--bg-hero)",
-      position: "relative", overflow: "visible",
+      position: "relative", overflow: "clip",
     }}>
       {/* Manchas — clip propio para no crear scroll horizontal */}
       <div style={{ position: "absolute", inset: 0, overflow: "hidden", pointerEvents: "none", zIndex: 0 }}>

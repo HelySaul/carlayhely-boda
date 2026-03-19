@@ -4,7 +4,7 @@ import FloralAccent from "./FloralAccent";
 
 export default function Footer() {
   return (
-    <footer style={{ padding: "5rem 1.5rem 4rem", background: "var(--bg-footer)", textAlign: "center", position: "relative", overflow: "visible" }}>
+    <footer style={{ padding: "5rem 1.5rem 4rem", background: "var(--bg-footer)", textAlign: "center", position: "relative", overflow: "clip" }}>
       {/* Manchas decorativas */}
 
       {/* Manchas — clip propio */}

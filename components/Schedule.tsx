@@ -4,7 +4,7 @@ import FloralAccent from "./FloralAccent";
 
 export default function Schedule() {
   return (
-    <section id="programa" style={{ padding: "6rem 1.5rem", background: "var(--bg-program)", textAlign: "center", position: "relative", overflow: "visible" }}>
+    <section id="programa" style={{ padding: "6rem 1.5rem", background: "var(--bg-program)", textAlign: "center", position: "relative", overflow: "clip" }}>
       {/* Manchas decorativas */}
 
       {/* Manchas — clip propio */}
