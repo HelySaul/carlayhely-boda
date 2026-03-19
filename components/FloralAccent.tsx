@@ -38,26 +38,18 @@ export default function FloralAccent({
 }: FloralAccentProps) {
   const yProp = y.startsWith("top") ? "top" : "bottom";
   const yVal  = y.replace("top:", "").replace("bottom:", "").trim();
-
-  // Usamos translateX en vez de left/right negativo
-  // Así el elemento no desborda el viewport pero visualmente se asoma
-  const xNum = parseInt(x); // ej. -8 de "-8px"
-  const translateX = side === "left"
-    ? `translateX(${xNum}px)`           // negativo = hacia afuera a la izquierda
-    : `scaleX(-1) translateX(${xNum}px)`; // flip + empujar
+  const xNum  = parseInt(x);
+  const flip  = side === "right" ? "scaleX(-1)" : undefined;
 
   return (
     <div style={{
       position:      "absolute",
-      [side === "left" ? "left" : "right"]: 0,
+      [side === "left" ? "left" : "right"]: `${xNum}px`,
       [yProp]:       yVal,
       pointerEvents: "none",
       opacity,
-      transform:     translateX,
+      transform:     flip,
       zIndex:        10,
-      // will-change para que el browser lo maneje en su propio layer
-      // y no interfiera con el scroll del documento
-      willChange:    "transform",
     }}>
       <div style={{ position: "relative", display: "inline-block" }}>
         <Tulip size={size} petalColor={petalColor} petalColor2={petalColor2} rotate={rotate} />
