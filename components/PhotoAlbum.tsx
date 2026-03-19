@@ -9,7 +9,7 @@ const FOTOS = [
   { src: "/fotos/foto4.jpg", caption: "para siempre" },
 ];
 
-const ROTACIONES = [-7, -2, 4, 9];
+const OBJECT_POSITIONS = ["center", "center", "center", "top"];
 const TRANSLATES  = [[-55, 8], [-18, -4], [18, 6], [55, 1]];
 
 export default function PhotoAlbum() {
@@ -64,7 +64,7 @@ export default function PhotoAlbum() {
                 <img
                   src={foto.src}
                   alt={foto.caption}
-                  style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+                  style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: OBJECT_POSITIONS[i], display: "block" }}
                   onError={e => { (e.target as HTMLImageElement).style.display = "none"; }}
                 />
               </div>
@@ -99,7 +99,7 @@ export default function PhotoAlbum() {
             <img
               src={FOTOS[mobileIdx].src}
               alt={FOTOS[mobileIdx].caption}
-              style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+              style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: OBJECT_POSITIONS[mobileIdx], display: "block" }}
               onError={e => { (e.target as HTMLImageElement).style.display = "none"; }}
             />
           </div>
