@@ -20,6 +20,7 @@ export async function GET(req: NextRequest) {
   const { data, error } = await getSupabaseAdmin()
     .from('invitaciones')
     .select(`*, invitados(*)`)
+    .order("created_at", { referencedTable: "invitados", ascending: true })
     .order('created_at', { ascending: true });
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
@@ -65,6 +66,7 @@ export async function POST(req: NextRequest) {
   const { data: full } = await getSupabaseAdmin()
     .from('invitaciones')
     .select(`*, invitados(*)`)
+    .order("created_at", { referencedTable: "invitados", ascending: true })
     .eq('id', invitacion.id)
     .single();
 

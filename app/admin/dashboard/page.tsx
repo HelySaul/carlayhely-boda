@@ -436,7 +436,7 @@ export default function AdminDashboard() {
       </main>
 
       {/* Modales */}
-      {modalNueva   && <ModalNuevaInvitacion onClose={() => setModalNueva(false)} onCreated={r => setInvitaciones(rs => [r, ...rs])} nombreAdmin={nombreAdmin} />}
+      {modalNueva   && <ModalNuevaInvitacion onClose={() => setModalNueva(false)} onCreated={r => setInvitaciones(rs => [...rs, r])} nombreAdmin={nombreAdmin} />}
       {modalAdd     && <ModalAgregarPersona  invitacion={modalAdd} onClose={() => setModalAdd(null)} onAdded={inv => { setInvitaciones(rs => rs.map(r => r.id !== modalAdd.id ? r : { ...r, invitados: [...r.invitados, inv] })); }} />}
       {modalUsuario && <ModalNuevoUsuario    onClose={() => setModalUsuario(false)} onCreated={cargarUsuarios} />}
     </div>
