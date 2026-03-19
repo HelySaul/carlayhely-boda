@@ -59,14 +59,12 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 html {
-  overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
 }
 
 body {
-  overflow-x: hidden;
   background-color: var(--cream);
   color: var(--ink);
   font-family: 'Montserrat', sans-serif;
@@ -107,11 +105,6 @@ body {
 
 @keyframes draw {
   to { stroke-dashoffset: 0; }
-}
-
-/* ── Fix scroll iOS — cada section permite pan vertical sin bounce ── */
-section, main, footer {
-  touch-action: pan-y;
 }
 
 /* ── Admin tabs scroll sin scrollbar visible ── */
