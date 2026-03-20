@@ -58,10 +58,10 @@ function BloqueVerBoda() {
   return (
     <Link href="/" style={{ textDecoration: "none", display: "block" }}>
       <div style={{ marginTop: "1.4rem", background: "linear-gradient(135deg, rgba(212,168,50,0.10) 0%, rgba(212,105,58,0.08) 100%)", border: "1px solid rgba(212,168,50,0.30)", borderRadius: "3px", padding: "1.2rem 1.4rem", textAlign: "center", cursor: "pointer" }}>
-        <p className="serif" style={{ fontStyle: "italic", fontSize: "0.88rem", color: "#5C4A42", lineHeight: 1.75, marginBottom: "0.8rem" }}>
+        <p className="serif" style={{ fontStyle: "italic", fontSize: "0.94rem", color: "#5C4A42", lineHeight: 1.75, marginBottom: "0.8rem" }}>
           Preparamos una página especial para ustedes, llena de todo lo que necesitan saber sobre nosotros y sobre este día tan importante. La hicimos con mucho amor para que puedan vivirlo con nosotros desde ya.
         </p>
-        <span style={{ fontFamily: "'Montserrat', sans-serif", fontSize: "0.55rem", letterSpacing: "0.22em", textTransform: "uppercase", color: "#D4693A", borderBottom: "1px solid rgba(212,105,58,0.4)", paddingBottom: "0.2rem" }}>
+        <span style={{ fontFamily: "'Montserrat', sans-serif", fontSize: "0.58rem", letterSpacing: "0.22em", textTransform: "uppercase", color: "#D4693A", borderBottom: "1px solid rgba(212,105,58,0.4)", paddingBottom: "0.2rem" }}>
           Conoce nuestra historia y todos los detalles de la boda →
         </span>
       </div>
@@ -153,14 +153,14 @@ export function PaginaConfirmarCliente() {
   );
 
   const pieDecor = (
-    <p className="sans" style={{ textAlign: "center", fontSize: "0.44rem", letterSpacing: "0.15em", textTransform: "uppercase", color: "#C0AFA0", marginTop: "1rem" }}>
+    <p className="sans" style={{ textAlign: "center", fontSize: "0.5rem", letterSpacing: "0.15em", textTransform: "uppercase", color: "#C0AFA0", marginTop: "1rem" }}>
       Carla &amp; Hely · 13 · 06 · 2026
     </p>
   );
 
   if (error) return (
     <div style={fondoPage}>
-      <p className="serif" style={{ fontStyle: "italic", color: "#9A8880", textAlign: "center" }}>{error}</p>
+      <p className="serif" style={{ fontStyle: "italic", fontSize: "1rem", color: "#9A8880", textAlign: "center" }}>{error}</p>
     </div>
   );
 
@@ -184,14 +184,14 @@ export function PaginaConfirmarCliente() {
           <Manchas />
           <div style={{ position: "relative", zIndex: 1 }}>
             <div style={{ textAlign: "center", marginBottom: "1.6rem" }}>
-              <p className="sans" style={{ fontSize: "0.45rem", letterSpacing: "0.25em", textTransform: "uppercase", color: "#9A8880", marginBottom: "0.5rem" }}>
+              <p className="sans" style={{ fontSize: "0.5rem", letterSpacing: "0.25em", textTransform: "uppercase", color: "#9A8880", marginBottom: "0.5rem" }}>
                 Confirmación · Ronda {ronda} de 3
               </p>
-              <h1 className="script" style={{ fontSize: "clamp(2.8rem,14vw,4rem)", color: "#2C2320", lineHeight: 1 }}>
+              <h1 className="script" style={{ fontSize: "clamp(2.6rem,14vw,3.8rem)", color: "#2C2320", lineHeight: 1 }}>
                 {alguienVa ? "¡Nos vemos pronto!" : "Lo entendemos"}
               </h1>
               {lineaDecor}
-              <p className="serif" style={{ fontStyle: "italic", fontSize: "0.95rem", color: "#5C4A42", lineHeight: 1.75 }}>
+              <p className="serif" style={{ fontStyle: "italic", fontSize: "1rem", color: "#5C4A42", lineHeight: 1.75 }}>
                 {alguienVa ? "Ya confirmaste tu asistencia en esta ronda. Tu respuesta está guardada." : "Ya registramos que no podrás acompañarnos. Gracias por avisarnos."}
               </p>
             </div>
@@ -199,8 +199,8 @@ export function PaginaConfirmarCliente() {
             <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem", marginBottom: "1.6rem" }}>
               {inv.invitados.map(i => (
                 <div key={i.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0.75rem 1rem", background: confirmaciones[i.id] ? "radial-gradient(ellipse at left, rgba(122,148,56,0.10) 0%, transparent 80%)" : "radial-gradient(ellipse at left, rgba(201,79,79,0.07) 0%, transparent 80%)", border: `1px solid ${confirmaciones[i.id] ? "rgba(122,148,56,0.30)" : "rgba(201,79,79,0.22)"}`, borderRadius: "2px" }}>
-                  <span className="serif" style={{ fontSize: "1rem", color: "#2C2320" }}>{i.nombre}</span>
-                  <span className="sans" style={{ fontSize: "0.52rem", letterSpacing: "0.14em", textTransform: "uppercase", color: confirmaciones[i.id] ? "#7A9438" : "#C94F4F" }}>
+                  <span className="serif" style={{ fontSize: "1.05rem", color: "#2C2320" }}>{i.nombre}</span>
+                  <span className="sans" style={{ fontSize: "0.58rem", letterSpacing: "0.14em", textTransform: "uppercase", color: confirmaciones[i.id] ? "#7A9438" : "#C94F4F" }}>
                     {confirmaciones[i.id] ? "✓ Va" : "No va"}
                   </span>
                 </div>
@@ -220,12 +220,12 @@ export function PaginaConfirmarCliente() {
         <div style={tarjetaStyle}>
           <Manchas />
           <div style={{ position: "relative", zIndex: 1, textAlign: "center" }}>
-            <p className="sans" style={{ fontSize: "0.45rem", letterSpacing: "0.25em", textTransform: "uppercase", color: "#9A8880", marginBottom: "0.5rem" }}>
+            <p className="sans" style={{ fontSize: "0.5rem", letterSpacing: "0.25em", textTransform: "uppercase", color: "#9A8880", marginBottom: "0.5rem" }}>
               Confirmación · Ronda {ronda} de 3
             </p>
-            <h1 className="script" style={{ fontSize: "clamp(3rem,14vw,4.2rem)", color: "#2C2320", lineHeight: 1 }}>Gracias</h1>
+            <h1 className="script" style={{ fontSize: "clamp(2.8rem,14vw,4rem)", color: "#2C2320", lineHeight: 1 }}>Gracias</h1>
             {lineaDecor}
-            <p className="serif" style={{ fontStyle: "italic", fontSize: "0.95rem", color: "#5C4A42", lineHeight: 1.75 }}>
+            <p className="serif" style={{ fontStyle: "italic", fontSize: "1rem", color: "#5C4A42", lineHeight: 1.75 }}>
               {ronda === 3 ? "¡Nos vemos el 13 de Junio! Tu presencia hará este día aún más especial." : ronda === 2 ? "Estaremos en contacto pronto con los últimos detalles." : "Recibimos tu respuesta. Estaremos en contacto pronto."}
             </p>
             <BloqueVerBoda />
@@ -243,42 +243,42 @@ export function PaginaConfirmarCliente() {
           <Manchas />
           <div style={{ position: "relative", zIndex: 1 }}>
             <div style={{ textAlign: "center", marginBottom: "1.4rem" }}>
-              <p className="sans" style={{ fontSize: "0.45rem", letterSpacing: "0.25em", textTransform: "uppercase", color: "#9A8880", marginBottom: "0.5rem" }}>
+              <p className="sans" style={{ fontSize: "0.5rem", letterSpacing: "0.25em", textTransform: "uppercase", color: "#9A8880", marginBottom: "0.5rem" }}>
                 Carla &amp; Hely · Confirmación · Ronda {ronda} de 3
               </p>
-              <h1 className="script" style={{ fontSize: "clamp(2.4rem,12vw,3.4rem)", color: "#2C2320", lineHeight: 1.05, marginBottom: "0.5rem" }}>{msg.titulo}</h1>
+              <h1 className="script" style={{ fontSize: "clamp(2.2rem,12vw,3.2rem)", color: "#2C2320", lineHeight: 1.05, marginBottom: "0.5rem" }}>{msg.titulo}</h1>
               {lineaDecor}
-              <p className="serif" style={{ fontStyle: "italic", fontSize: "0.95rem", color: "#5C4A42", lineHeight: 1.7 }}>{msg.subtitulo(nombres)}</p>
+              <p className="serif" style={{ fontStyle: "italic", fontSize: "1rem", color: "#5C4A42", lineHeight: 1.7 }}>{msg.subtitulo(nombres)}</p>
             </div>
             <Separador />
             <div style={{ background: "linear-gradient(135deg, rgba(212,168,50,0.07) 0%, rgba(212,105,58,0.05) 100%)", border: "1px solid rgba(212,168,50,0.22)", borderRadius: "2px", padding: "1rem 1.2rem", marginBottom: "1.3rem" }}>
-              <p className="serif" style={{ fontStyle: "italic", fontSize: "0.92rem", color: "#5C4A42", lineHeight: 1.75 }}>{msg.cuerpo}</p>
+              <p className="serif" style={{ fontStyle: "italic", fontSize: "0.98rem", color: "#5C4A42", lineHeight: 1.75 }}>{msg.cuerpo}</p>
             </div>
             {msg.disclaimer && (
               <div style={{ background: "radial-gradient(ellipse at top left, rgba(201,79,79,0.06) 0%, transparent 70%)", border: "1px solid rgba(201,79,79,0.18)", borderRadius: "2px", padding: "0.9rem 1.1rem", marginBottom: "1.3rem", display: "flex", gap: "0.7rem", alignItems: "flex-start" }}>
-                <span style={{ fontSize: "0.85rem", flexShrink: 0, marginTop: "0.1rem" }}>🔒</span>
-                <p className="serif" style={{ fontStyle: "italic", fontSize: "0.88rem", color: "#7A3030", lineHeight: 1.7, margin: 0 }}>{msg.disclaimer}</p>
+                <span style={{ fontSize: "0.9rem", flexShrink: 0, marginTop: "0.1rem" }}>🔒</span>
+                <p className="serif" style={{ fontStyle: "italic", fontSize: "0.94rem", color: "#7A3030", lineHeight: 1.7, margin: 0 }}>{msg.disclaimer}</p>
               </div>
             )}
             {esIndividual ? (
               <div style={{ display: "flex", gap: "0.8rem", marginBottom: "1.3rem" }}>
-                <button onClick={() => { setConfirmaciones({ ...confirmaciones, [inv.invitados[0].id]: true }); setDeclinados({ ...declinados, [inv.invitados[0].id]: false }); }} style={{ flex: 1, padding: "0.95rem", background: confirmaciones[inv.invitados[0].id] ? "linear-gradient(135deg, #7A9438, #9AB060)" : "transparent", color: confirmaciones[inv.invitados[0].id] ? "white" : "#7A9438", border: `1.5px solid ${confirmaciones[inv.invitados[0].id] ? "#7A9438" : "rgba(122,148,56,0.45)"}`, borderRadius: "2px", fontFamily: "'Montserrat', sans-serif", fontSize: "0.62rem", letterSpacing: "0.15em", textTransform: "uppercase", cursor: "pointer", transition: "all 0.2s" }}>✓ {msg.btnSi}</button>
-                <button onClick={() => { setDeclinados({ ...declinados, [inv.invitados[0].id]: true }); setConfirmaciones({ ...confirmaciones, [inv.invitados[0].id]: false }); }} style={{ flex: 1, padding: "0.95rem", background: declinados[inv.invitados[0].id] ? "linear-gradient(135deg, #C94F4F, #D4693A)" : "transparent", color: declinados[inv.invitados[0].id] ? "white" : "#9A8880", border: `1.5px solid ${declinados[inv.invitados[0].id] ? "#C94F4F" : "rgba(154,136,128,0.35)"}`, borderRadius: "2px", fontFamily: "'Montserrat', sans-serif", fontSize: "0.62rem", letterSpacing: "0.15em", textTransform: "uppercase", cursor: "pointer", transition: "all 0.2s" }}>{msg.btnNo}</button>
+                <button onClick={() => { setConfirmaciones({ ...confirmaciones, [inv.invitados[0].id]: true }); setDeclinados({ ...declinados, [inv.invitados[0].id]: false }); }} style={{ flex: 1, padding: "0.95rem", background: confirmaciones[inv.invitados[0].id] ? "linear-gradient(135deg, #7A9438, #9AB060)" : "transparent", color: confirmaciones[inv.invitados[0].id] ? "white" : "#7A9438", border: `1.5px solid ${confirmaciones[inv.invitados[0].id] ? "#7A9438" : "rgba(122,148,56,0.45)"}`, borderRadius: "2px", fontFamily: "'Montserrat', sans-serif", fontSize: "0.68rem", letterSpacing: "0.15em", textTransform: "uppercase", cursor: "pointer", transition: "all 0.2s" }}>✓ {msg.btnSi}</button>
+                <button onClick={() => { setDeclinados({ ...declinados, [inv.invitados[0].id]: true }); setConfirmaciones({ ...confirmaciones, [inv.invitados[0].id]: false }); }} style={{ flex: 1, padding: "0.95rem", background: declinados[inv.invitados[0].id] ? "linear-gradient(135deg, #C94F4F, #D4693A)" : "transparent", color: declinados[inv.invitados[0].id] ? "white" : "#9A8880", border: `1.5px solid ${declinados[inv.invitados[0].id] ? "#C94F4F" : "rgba(154,136,128,0.35)"}`, borderRadius: "2px", fontFamily: "'Montserrat', sans-serif", fontSize: "0.68rem", letterSpacing: "0.15em", textTransform: "uppercase", cursor: "pointer", transition: "all 0.2s" }}>{msg.btnNo}</button>
               </div>
             ) : (
               <div style={{ marginBottom: "1.3rem", display: "flex", flexDirection: "column", gap: "0.55rem" }}>
                 {inv.invitados.map(i => (
                   <div key={i.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0.75rem 1rem", background: confirmaciones[i.id] ? "radial-gradient(ellipse at left, rgba(122,148,56,0.08) 0%, transparent 80%)" : declinados[i.id] ? "radial-gradient(ellipse at left, rgba(201,79,79,0.06) 0%, transparent 80%)" : "transparent", border: `1px solid ${confirmaciones[i.id] ? "rgba(122,148,56,0.28)" : declinados[i.id] ? "rgba(201,79,79,0.20)" : "rgba(212,168,50,0.20)"}`, borderRadius: "2px", transition: "all 0.2s" }}>
-                    <span className="serif" style={{ fontSize: "1rem", color: "#2C2320" }}>{i.nombre}</span>
+                    <span className="serif" style={{ fontSize: "1.05rem", color: "#2C2320" }}>{i.nombre}</span>
                     <div style={{ display: "flex", gap: "0.4rem" }}>
-                      <button onClick={() => { setConfirmaciones({ ...confirmaciones, [i.id]: true }); setDeclinados({ ...declinados, [i.id]: false }); }} style={{ padding: "0.4rem 0.85rem", background: confirmaciones[i.id] ? "linear-gradient(135deg, #7A9438, #9AB060)" : "transparent", color: confirmaciones[i.id] ? "white" : "#7A9438", border: "1.5px solid rgba(122,148,56,0.55)", borderRadius: "2px", fontFamily: "'Montserrat', sans-serif", fontSize: "0.58rem", letterSpacing: "0.1em", textTransform: "uppercase", cursor: "pointer", transition: "all 0.2s" }}>Sí</button>
-                      <button onClick={() => { setDeclinados({ ...declinados, [i.id]: true }); setConfirmaciones({ ...confirmaciones, [i.id]: false }); }} style={{ padding: "0.4rem 0.85rem", background: declinados[i.id] ? "linear-gradient(135deg, #C94F4F, #D4693A)" : "transparent", color: declinados[i.id] ? "white" : "#9A8880", border: `1.5px solid ${declinados[i.id] ? "#C94F4F" : "rgba(154,136,128,0.35)"}`, borderRadius: "2px", fontFamily: "'Montserrat', sans-serif", fontSize: "0.58rem", letterSpacing: "0.1em", textTransform: "uppercase", cursor: "pointer", transition: "all 0.2s" }}>No</button>
+                      <button onClick={() => { setConfirmaciones({ ...confirmaciones, [i.id]: true }); setDeclinados({ ...declinados, [i.id]: false }); }} style={{ padding: "0.4rem 0.85rem", background: confirmaciones[i.id] ? "linear-gradient(135deg, #7A9438, #9AB060)" : "transparent", color: confirmaciones[i.id] ? "white" : "#7A9438", border: "1.5px solid rgba(122,148,56,0.55)", borderRadius: "2px", fontFamily: "'Montserrat', sans-serif", fontSize: "0.62rem", letterSpacing: "0.1em", textTransform: "uppercase", cursor: "pointer", transition: "all 0.2s" }}>Sí</button>
+                      <button onClick={() => { setDeclinados({ ...declinados, [i.id]: true }); setConfirmaciones({ ...confirmaciones, [i.id]: false }); }} style={{ padding: "0.4rem 0.85rem", background: declinados[i.id] ? "linear-gradient(135deg, #C94F4F, #D4693A)" : "transparent", color: declinados[i.id] ? "white" : "#9A8880", border: `1.5px solid ${declinados[i.id] ? "#C94F4F" : "rgba(154,136,128,0.35)"}`, borderRadius: "2px", fontFamily: "'Montserrat', sans-serif", fontSize: "0.62rem", letterSpacing: "0.1em", textTransform: "uppercase", cursor: "pointer", transition: "all 0.2s" }}>No</button>
                     </div>
                   </div>
                 ))}
               </div>
             )}
-            <button onClick={confirmar} disabled={enviando || !todoMarcado} style={{ width: "100%", padding: "0.9rem", background: todoMarcado ? "linear-gradient(135deg, #C94F4F, #D4693A)" : "rgba(200,185,170,0.35)", color: todoMarcado ? "white" : "#B5A090", border: todoMarcado ? "none" : "1px solid rgba(181,160,144,0.4)", borderRadius: "2px", fontFamily: "'Montserrat', sans-serif", fontSize: "0.62rem", letterSpacing: "0.22em", textTransform: "uppercase", cursor: todoMarcado ? "pointer" : "not-allowed", transition: "all 0.25s", marginBottom: "0.4rem" }}>
+            <button onClick={confirmar} disabled={enviando || !todoMarcado} style={{ width: "100%", padding: "0.9rem", background: todoMarcado ? "linear-gradient(135deg, #C94F4F, #D4693A)" : "rgba(200,185,170,0.35)", color: todoMarcado ? "white" : "#B5A090", border: todoMarcado ? "none" : "1px solid rgba(181,160,144,0.4)", borderRadius: "2px", fontFamily: "'Montserrat', sans-serif", fontSize: "0.68rem", letterSpacing: "0.22em", textTransform: "uppercase", cursor: todoMarcado ? "pointer" : "not-allowed", transition: "all 0.25s", marginBottom: "0.4rem" }}>
               {enviando ? "Enviando..." : "Guardar respuesta"}
             </button>
             <BloqueVerBoda />

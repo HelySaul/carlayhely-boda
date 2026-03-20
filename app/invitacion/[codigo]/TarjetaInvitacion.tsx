@@ -80,7 +80,7 @@ export default function TarjetaInvitacion({ inv, rondaActual, codigo }: Props) {
 
           {/* Querido/a */}
           <p className="sans" style={{
-            fontSize: '0.48rem', letterSpacing: '0.3em',
+            fontSize: '0.54rem', letterSpacing: '0.3em',
             textTransform: 'uppercase', color: '#9A8880', marginBottom: '0.7rem',
           }}>
             {esIndividual
@@ -92,7 +92,7 @@ export default function TarjetaInvitacion({ inv, rondaActual, codigo }: Props) {
           {/* Nombre(s) en grande */}
           {esIndividual ? (
             <p className="script" style={{
-              fontSize: 'clamp(2.4rem, 11vw, 3.4rem)',
+              fontSize: 'clamp(2.3rem, 10.5vw, 3.2rem)',
               color: '#5C4A42',
               lineHeight: 1.05,
               letterSpacing: '0.01em',
@@ -103,7 +103,7 @@ export default function TarjetaInvitacion({ inv, rondaActual, codigo }: Props) {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.1rem' }}>
               {inv.invitados.map((i, idx) => (
                 <p key={i.id} className="script" style={{
-                  fontSize: 'clamp(2rem, 9vw, 2.8rem)',
+                  fontSize: 'clamp(1.9rem, 8.5vw, 2.7rem)',
                   color: '#5C4A42',
                   lineHeight: 1.05,
                   opacity: idx === 0 ? 1 : 0.75,
@@ -123,7 +123,7 @@ export default function TarjetaInvitacion({ inv, rondaActual, codigo }: Props) {
 
           {/* Texto de invitación */}
           <p className="serif" style={{
-            fontStyle: 'italic', fontSize: '0.92rem',
+            fontStyle: 'italic', fontSize: '0.98rem',
             color: '#5C4A42', lineHeight: 1.75,
           }}>
             {esIndividual
@@ -137,7 +137,7 @@ export default function TarjetaInvitacion({ inv, rondaActual, codigo }: Props) {
 
         {/* Fecha y horarios */}
         <div style={{ textAlign: 'center', marginBottom: '1.2rem' }}>
-          <p className="sans" style={{ fontSize: '0.5rem', letterSpacing: '0.25em', textTransform: 'uppercase', color: '#9A8880', marginBottom: '0.5rem' }}>
+          <p className="sans" style={{ fontSize: '0.56rem', letterSpacing: '0.25em', textTransform: 'uppercase', color: '#9A8880', marginBottom: '0.5rem' }}>
             Sábado · 13 de Junio · 2026
           </p>
           <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'stretch' }}>
@@ -151,8 +151,8 @@ export default function TarjetaInvitacion({ inv, rondaActual, codigo }: Props) {
 
         {/* Lugar */}
         <div style={{ textAlign: 'center', marginBottom: '1.3rem' }}>
-          <p className="serif" style={{ fontSize: '1.05rem', color: '#2C2320' }}>Brisas del Renacer</p>
-          <p className="serif" style={{ fontStyle: 'italic', fontSize: '0.84rem', color: '#5C4A42', lineHeight: 1.65, marginTop: '0.2rem' }}>
+          <p className="serif" style={{ fontSize: '1.1rem', color: '#2C2320' }}>Brisas del Renacer</p>
+          <p className="serif" style={{ fontStyle: 'italic', fontSize: '0.88rem', color: '#5C4A42', lineHeight: 1.65, marginTop: '0.2rem' }}>
             A 600 metros de la entrada de Zambrano<br />
             Vía Coro–Churuguara, Falcón
           </p>
@@ -161,10 +161,10 @@ export default function TarjetaInvitacion({ inv, rondaActual, codigo }: Props) {
         {/* Versículo */}
         <div style={{ textAlign: 'center', marginBottom: '1.6rem' }}>
           <div style={{ width: '180px', height: '1px', background: 'linear-gradient(90deg, transparent, #D4A832 40%, #D4693A 60%, transparent)', margin: '0 auto 0.9rem', opacity: 0.4 }} />
-          <p className="serif" style={{ fontStyle: 'italic', fontSize: '0.92rem', color: '#5C4A42', lineHeight: 1.65 }}>
+          <p className="serif" style={{ fontStyle: 'italic', fontSize: '1rem', color: '#5C4A42', lineHeight: 1.65 }}>
             &ldquo;Todo lo hizo hermoso en su tiempo&rdquo;
           </p>
-          <p className="sans" style={{ fontSize: '0.55rem', color: '#D4693A', letterSpacing: '0.18em', textTransform: 'uppercase', marginTop: '0.3rem' }}>
+          <p className="sans" style={{ fontSize: '0.6rem', color: '#D4693A', letterSpacing: '0.18em', textTransform: 'uppercase', marginTop: '0.3rem' }}>
             Eclesiastés 3 · 11
           </p>
         </div>
@@ -175,7 +175,7 @@ export default function TarjetaInvitacion({ inv, rondaActual, codigo }: Props) {
         {/* Confirmación */}
         {todosConfirm ? (
           <div style={{ textAlign: 'center' }}>
-            <p className="serif" style={{ fontSize: '1rem', color: '#7A9438', fontStyle: 'italic', marginBottom: '1rem' }}>
+            <p className="serif" style={{ fontSize: '1.05rem', color: '#7A9438', fontStyle: 'italic', marginBottom: '1rem' }}>
               {esIndividual ? '¡Ya confirmaste tu asistencia!' : '¡Ya confirmaron su asistencia!'}
             </p>
           </div>
@@ -186,7 +186,7 @@ export default function TarjetaInvitacion({ inv, rondaActual, codigo }: Props) {
               style={{
                 display: 'block', background: '#C94F4F', color: '#FDFAF6',
                 borderRadius: '2px', padding: '0.88rem 2rem',
-                fontFamily: "'Montserrat', sans-serif", fontSize: '0.62rem',
+                fontFamily: "'Montserrat', sans-serif", fontSize: '0.68rem',
                 letterSpacing: '0.22em', textTransform: 'uppercase',
                 textDecoration: 'none', textAlign: 'center',
               }}
@@ -194,7 +194,7 @@ export default function TarjetaInvitacion({ inv, rondaActual, codigo }: Props) {
               Confirmar asistencia
             </Link>
             {algunoConfirm && (
-              <p className="sans" style={{ fontSize: '0.6rem', color: '#9A8880' }}>
+              <p className="sans" style={{ fontSize: '0.65rem', color: '#9A8880' }}>
                 Algunas personas ya confirmaron.
               </p>
             )}
@@ -232,14 +232,14 @@ function BloqueVerBoda() {
         cursor: 'pointer',
       }}>
         <p className="serif" style={{
-          fontStyle: 'italic', fontSize: '0.88rem',
+          fontStyle: 'italic', fontSize: '0.94rem',
           color: '#5C4A42', lineHeight: 1.75, marginBottom: '0.8rem',
         }}>
           Preparamos una página especial para ustedes, llena de todo lo que necesitan saber sobre nosotros y sobre este día tan importante. La hicimos con mucho amor para que puedan vivirlo con nosotros desde ya.
         </p>
         <span style={{
           fontFamily: "'Montserrat', sans-serif",
-          fontSize: '0.55rem', letterSpacing: '0.22em',
+          fontSize: '0.58rem', letterSpacing: '0.22em',
           textTransform: 'uppercase', color: '#D4693A',
           borderBottom: '1px solid rgba(212,105,58,0.4)',
           paddingBottom: '0.2rem',
@@ -254,10 +254,10 @@ function BloqueVerBoda() {
 function Horario({ label, hora }: { label: string; hora: string }) {
   return (
     <div style={{ textAlign: 'center', padding: '0 1.3rem' }}>
-      <p className="sans" style={{ fontSize: '0.48rem', letterSpacing: '0.2em', textTransform: 'uppercase', color: '#9A8880', marginBottom: '0.25rem' }}>
+      <p className="sans" style={{ fontSize: '0.52rem', letterSpacing: '0.2em', textTransform: 'uppercase', color: '#9A8880', marginBottom: '0.25rem' }}>
         {label}
       </p>
-      <p className="serif" style={{ fontSize: '1.2rem', color: '#2C2320' }}>{hora}</p>
+      <p className="serif" style={{ fontSize: '1.25rem', color: '#2C2320' }}>{hora}</p>
     </div>
   )
 }
